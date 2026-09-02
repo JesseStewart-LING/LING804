@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Dr. Jesse Stewart" />
+
+<meta name="date" content="2026-09-01" />
+
+<title>Descriptive Statistics in Linguistics</title>
+
+<script src="descriptive_files/header-attrs-2.28/header-attrs.js"></script>
+<script src="descriptive_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="descriptive_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="descriptive_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="descriptive_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="descriptive_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="descriptive_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="descriptive_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="descriptive_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="descriptive_files/navigation-1.1/tabsets.js"></script>
+<link href="descriptive_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="descriptive_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Descriptive Statistics in Linguistics</h1>
+<h4 class="author">Dr. Jesse Stewart</h4>
+<h4 class="date">2026-09-01</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>Before we can test a hypothesis, fit a statistical model, or make
+claims about a larger population, we need to understand the data we
+actually collected. <strong>Descriptive statistics</strong> summarize
+the observations in a dataset. They tell us things such as:</p>
+<ul>
+<li>how many observations we have;</li>
+<li>where values tend to cluster;</li>
+<li>how much the values vary;</li>
+<li>whether a distribution is symmetrical or skewed;</li>
+<li>whether there are unusual observations or outliers; and</li>
+<li>how frequently different categorical outcomes occur.</li>
+</ul>
+<p>Descriptive statistics do <strong>not</strong> tell us whether a
+pattern is statistically significant or whether it generalizes beyond
+the sample. That is the job of inferential statistics, which we will
+cover later in the course. The goal here is simpler but essential: learn
+how to describe a linguistic dataset accurately before trying to explain
+it.</p>
+<hr />
+<p>In this module, we will:</p>
+<ul>
+<li>distinguish between <strong>continuous</strong> and
+<strong>categorical</strong> data;</li>
+<li>visualize the distribution of a continuous variable with histograms,
+density plots, and boxplots;</li>
+<li>calculate and interpret the <strong>mean</strong>,
+<strong>median</strong>, <strong>quartiles</strong>,
+<strong>range</strong>, <strong>interquartile range</strong>, and
+<strong>standard deviation</strong>;</li>
+<li>examine skewness, kurtosis, unusual values, and the effect of
+outliers;</li>
+<li>summarize categorical variables with <strong>counts</strong> and
+<strong>proportions</strong>;</li>
+<li>calculate descriptive statistics for groups within a dataset;
+and</li>
+<li>practise writing descriptive results in the style of an academic
+paper.</li>
+</ul>
+</div>
+<div id="getting-started-in-r" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Getting Started in
+R</h1>
+<p>We’ll use a Media Lengua formant dataset for the examples in this
+module. The dataset contains acoustic measurements of vowels along with
+information about the speaker, vowel, language, and linguistic
+context.</p>
+<p>We’ll work with the following libraries:</p>
+<pre class="r"><code>library(readxl)
+library(readr) #in case you&#39;re using a *.csv file.
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(fBasics)</code></pre>
+<p>Open <a
+href="datasets/Formant_dataset.xlsx">Formant_dataset.xlsx</a>:</p>
+<pre class="r"><code>dataset &lt;- read_excel(&quot;datasets/Formant_dataset.xlsx&quot;)
+View(dataset)</code></pre>
+<p>Before doing anything else, inspect the dataset.</p>
+<pre class="r"><code>dim(dataset)
+names(dataset)
+head(dataset)</code></pre>
+<p><code>dim()</code> tells us the number of rows and columns,
+<code>names()</code> shows the variables, and <code>head()</code>
+displays the first six rows. These simple checks are useful every time
+you open a new dataset.</p>
+</div>
+<div id="continuous-data" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Continuous Data</h1>
+<p>A <strong>continuous variable</strong> is numeric and can, in
+principle, take many values along a scale. Common examples in
+linguistics include:</p>
+<p><em>Phonetics</em></p>
+<ul>
+<li>vowel formant frequencies (Hz);</li>
+<li>voice onset time (ms);</li>
+<li>segment duration (ms);</li>
+<li>speech rate;</li>
+<li>reaction time;</li>
+<li>pitch (Hz); and</li>
+<li>intensity (dB).</li>
+</ul>
+<p><em>Non-phonetics</em></p>
+<ul>
+<li>number of words produced per minute;</li>
+<li>lexical frequency;</li>
+<li>utterance or sentence length;</li>
+<li>reading time;</li>
+<li>fixation duration in eye-tracking studies; and</li>
+<li>scores on language proficiency or acceptability-rating
+measures.</li>
+</ul>
+<p>For our first example, we’ll examine the F1 values of Media Lengua
+/i/.</p>
+<pre class="r"><code>i &lt;- subset(dataset, Vowel == &quot;i&quot;)
+ML_i &lt;- subset(i, Language == &quot;ML&quot;)
+
+View(ML_i)</code></pre>
+<p>How many observations do we have?</p>
+<pre class="r"><code>nrow(ML_i)</code></pre>
+<div id="looking-at-the-distribution" class="section level2"
+number="3.1">
+<h2><span class="header-section-number">3.1</span> Looking at the
+Distribution</h2>
+<p>A single average cannot tell us everything about a dataset. Before
+calculating summary statistics, it is useful to look at the
+<strong>distribution</strong>.</p>
+<p>A histogram divides the values into intervals and shows how many
+observations fall into each interval.</p>
+<pre class="r"><code>ML_i_hist &lt;- ggplot(ML_i, aes(x = F1)) +
+  geom_histogram(binwidth = 25, colour = &quot;black&quot;, fill = &quot;grey70&quot;) +
+  labs(
+    title = &quot;Distribution of F1 values in Media Lengua /i/&quot;,
+    x = &quot;F1 frequency (Hz)&quot;,
+    y = &quot;Count&quot;
+  )
+
+ML_i_hist</code></pre>
+<p><img src="descriptive_images/F1_hist.jpg" alt="F1 distribution of /i/ in Media Lengua" width="500"/></p>
+<p>A <strong>density plot</strong> provides a smoothed representation of
+the same distribution. It is useful for seeing where observations
+cluster and whether the distribution is symmetrical, skewed, or has more
+than one peak.</p>
+<pre class="r"><code>ML_i_den &lt;- ggplot(ML_i, aes(x = F1)) +
+  geom_density(alpha = 0.2, fill = &quot;#FF6666&quot;) +
+  labs(
+    title = &quot;Distribution of F1 values in Media Lengua /i/&quot;,
+    x = &quot;F1 frequency (Hz)&quot;,
+    y = &quot;Density&quot;
+  )
+
+ML_i_den</code></pre>
+<p><img src="descriptive_images/F1_dist.jpg" alt="F1 distribution of /i/ in Media Lengua" width="500"/></p>
+<p>When describing a distribution, pay attention to three broad
+properties:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Centre</strong>: where are the values concentrated?</li>
+<li><strong>Spread</strong>: how widely dispersed are the values?</li>
+<li><strong>Shape</strong>: is the distribution symmetrical, skewed,
+multimodal, or affected by unusual values?</li>
+</ol>
+<p>For linguistic data, this distribution looks quite nice 😊.</p>
+</div>
+</div>
+<div id="the-median-and-quartiles" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> The Median and
+Quartiles</h1>
+<p>The <strong>median</strong> is the middle value of an ordered
+dataset. Half of the observations fall below it and half fall above
+it.</p>
+<p>We can see this manually by ordering the F1 values:</p>
+<pre class="r"><code>#Order the F1 values from lowest to highest (decending order)
+F1_i_ML_ordered &lt;- sort(ML_i$F1, decreasing = TRUE)
+length(F1_i_ML_ordered)
+
+#Convert to a data frame
+F1_i_ML_ordered_df=as.data.frame(F1_i_ML_ordered) #convert to a data frame
+View(F1_i_ML_ordered_df)
+
+#Find the middle
+length(F1_i_ML_ordered)/2
+</code></pre>
+<p><img src="descriptive_images/Median1.jpg" alt="Finding the median in an ordered dataset" width="250"/></p>
+<p>R can calculate the median directly:</p>
+<pre class="r"><code>median(ML_i$F1, na.rm = TRUE)</code></pre>
+<p>The median is related to two other useful values:</p>
+<ul>
+<li><strong>First quartile (Q1):</strong> 25% of the observations fall
+below this value.</li>
+<li><strong>Third quartile (Q3):</strong> 75% of the observations fall
+below this value.</li>
+</ul>
+<p>Together, Q1 and Q3 define the middle 50% of the data.</p>
+<pre class="r"><code>quantile(ML_i$F1, probs = c(.25, .50, .75), na.rm = TRUE)
+#   25%    50%    75% 
+#326.30 378.77 436.50 </code></pre>
+<p>The distance between Q1 and Q3 is called the <strong>interquartile
+range (IQR)</strong>:</p>
+<pre class="r"><code>IQR(ML_i$F1, na.rm = TRUE)
+#110.2</code></pre>
+<p>The IQR is useful because it describes the spread of the middle 50%
+of the observations and is relatively resistant to extreme values. In
+our data, the IQR for the F1 of /i/ is 110.2 Hz, meaning that the middle
+50% of the F1 observations span 110.2 Hz. You can confirm this by
+subtracting Q3 from Q1.</p>
+<p>The range describes the full span of the data, from the minimum to
+the maximum value. Unlike the IQR, it is highly sensitive to extreme
+observations.</p>
+<pre class="r"><code>range(ML_i$F1, na.rm = TRUE)
+# 221.00 709.79
+
+diff(range(ML_i$F1, na.rm = TRUE))
+# 488.79</code></pre>
+<p>The range describes the spread of the entire dataset, whereas the IQR
+describes the spread of the middle 50%.</p>
+<div id="boxplots" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Boxplots</h2>
+<p>A <strong>boxplot</strong> gives us a visual summary of the median,
+quartiles, IQR, and potential outliers.</p>
+<pre class="r"><code>ML_i_box = ggplot(ML_i, aes(x = Vowel, y = F1, fill = Vowel)) +
+  geom_boxplot() +
+  stat_summary(fun = mean, geom = &quot;point&quot;, shape = 4, size = 2) +
+  theme(legend.position = &quot;none&quot;) +
+  labs(
+      title = &quot;Boxplot of F1 values in Media Lengua&quot;,
+      x = &quot;F1 Frequency (Hz)&quot;,
+      y = &quot;Density&quot;)
+
+ML_i_box</code></pre>
+<p><img src="descriptive_images/F1_box.jpg" alt="Boxplot of F1 values in Media Lengua /i/" width="500"/></p>
+<p>The main parts of a boxplot are:</p>
+<ul>
+<li>the <strong>box</strong>, which contains the middle 50% of the
+observations;</li>
+<li>the <strong>median</strong>, shown by the line inside the box;</li>
+<li><strong>Q1</strong>, the lower edge of the box;</li>
+<li><strong>Q3</strong>, the upper edge of the box;</li>
+<li>the <strong>IQR</strong>, calculated as <code>Q3 - Q1</code>;</li>
+<li>the <strong>whiskers</strong>, which extend to the most extreme
+observations within 1.5 * IQR of the box; and</li>
+<li>points beyond the whiskers, which are plotted as outliers.</li>
+</ul>
+<p><strong>Note:</strong> A point beyond a whisker is not automatically
+a mistake or something that should be removed. It is simply unusual
+relative to the rest of the distribution and should be investigated.</p>
+<p>We can also place a horizontal boxplot above the density plot to
+compare the numerical summary with the full distribution.</p>
+<pre class="r"><code>ML_i_box2 &lt;- ggplot(ML_i, aes(x = F1)) +
+  geom_boxplot(fill = &quot;tomato&quot;, alpha = 0.7) +
+  labs(x = NULL, y = NULL) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+
+ML_i_den2 &lt;- ggplot(ML_i, aes(x = F1)) +
+  geom_density(alpha = 0.2, fill = &quot;#FF6666&quot;) +
+  labs(
+    x = &quot;F1 frequency (Hz)&quot;,
+    y = NULL
+  ) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+grid.arrange(ML_i_box2, ML_i_den2, ncol = 1, heights = c(1, 3))</code></pre>
+<p><img src="descriptive_images/F1_stack.jpg" alt="Boxplot and density plot of F1 values in Media Lengua /i/" width="800"/></p>
+<p>R’s <code>summary()</code> function gives us several of these
+descriptive statistics at once:</p>
+<pre class="r"><code>summary(ML_i$F1)</code></pre>
+<p><img src="descriptive_images/ML_summ.jpg" alt="Summary output for Media Lengua /i/ F1" width="400"/></p>
+<p>Everything in the <code>summary()</code> output can be related back
+to the boxplot and density plot. The median and quartiles line up with
+the bulkiest part of the distribution, the whiskers extend into the
+tails, and the outlying points fall beyond the whiskers.</p>
+<p><img src="descriptive_images/Median.jpg" alt="Anatomy of a boxplot" width="1000"/></p>
+</div>
+</div>
+<div id="the-mean-and-standard-deviation" class="section level1"
+number="5">
+<h1><span class="header-section-number">5</span> The Mean and Standard
+Deviation</h1>
+<p>The <strong>mean</strong> is calculated by adding all values together
+and dividing by the number of observations.</p>
+<pre class="r"><code>sum(ML_i$F1, na.rm = TRUE)
+length(na.omit(ML_i$F1))
+
+sum(ML_i$F1, na.rm = TRUE)/length(na.omit(ML_i$F1))
+
+mean(ML_i$F1, na.rm = TRUE)</code></pre>
+<p>The <strong>standard deviation (SD)</strong> describes how dispersed
+the observations are around the mean. A smaller SD means the values are
+relatively tightly clustered around the mean; a larger SD means they are
+more widely spread.</p>
+<p><img src="descriptive_images/sd.jpg" alt="Standard deviation formula" width="300"/></p>
+<pre class="r"><code>sqrt(sum((ML_i$F1-398.1)^2)/(621-1))
+#90.22337
+
+sd(ML_i$F1)
+#90.22337</code></pre>
+<p>We can calculate the mean and standard deviation together:</p>
+<pre class="r"><code>ML_i %&gt;%
+  summarise(
+    n = sum(!is.na(F1)),
+    mean = mean(F1, na.rm = TRUE),
+    sd = sd(F1, na.rm = TRUE),
+    median = median(F1, na.rm = TRUE),
+    min = min(F1, na.rm = TRUE),
+    max = max(F1, na.rm = TRUE),
+    IQR = IQR(F1, na.rm = TRUE)
+  )</code></pre>
+<p>For a distribution that is approximately normal, the familiar
+<strong>68–95–99.7 rule</strong> gives a useful interpretation of the
+SD:</p>
+<ul>
+<li>about 68% of observations fall within ±1 SD of the mean;</li>
+<li>about 95% fall within ±2 SD; and</li>
+<li>about 99.7% fall within ±3 SD.</li>
+</ul>
+<p>This rule applies to approximately normal distributions; it should
+not be treated as a universal property of all datasets.</p>
+<p>We can display the mean and ±1 and ±2 SD on the density plot:</p>
+<pre class="r"><code>mi=mean(ML_i$F1)
+sdi=sd(ML_i$F1)
+
+meani = ggplot(ML_i, aes(x=F1)) +
+  geom_density(alpha=.2, fill=&quot;#FF6666&quot;) +
+  theme(axis.title.y=element_blank(), axis.text.y=element_blank(),legend.position=&quot;none&quot;) +
+  geom_vline(xintercept=mi,color=&quot;red&quot;, linetype=&quot;dashed&quot;, size=1)+geom_vline(xintercept=mi+sdi, linetype = &quot;longdash&quot;, color=&quot;blue&quot;)+geom_vline(xintercept=mi-sdi, linetype = &quot;longdash&quot;, color=&quot;blue&quot;) +
+  geom_vline(xintercept=mi+(sdi*2), linetype = &quot;longdash&quot;, color=&quot;purple&quot;)+ geom_vline(xintercept=mi-(sdi*2), linetype = &quot;longdash&quot;, color=&quot;purple&quot;)
+
+meani
+
+grid.arrange(ML_i_box2, ML_i_den2, meani, ncol = 1)</code></pre>
+<p><img src="descriptive_images/mean.jpg" alt="Mean and standard deviation on a distribution" width="1000"/></p>
+</div>
+<div id="mean-vs.-median" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Mean vs. Median</h1>
+<p>The mean and median both describe the centre of a distribution, but
+they respond differently to extreme values.</p>
+<p>The <strong>mean</strong> uses the value of every observation, so
+unusually high or low values can pull it in their direction. The
+<strong>median</strong> depends only on the ordered middle of the
+dataset and is therefore much less sensitive to extremes.</p>
+<p>Consider a simplified income example:</p>
+<pre class="r"><code>MvM=c(50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,100000,50000,50000,50000,50000,50000,50000,50000,50000,50000,50000,40000,40000,40000,40000,40000,40000,40000,40000,60000,60000,60000,60000,60000,60000,60000,60000,30000,30000,30000,30000,30000,30000,70000,70000,70000,70000,70000,70000,20000,20000,20000,20000,80000,80000,80000,80000,10000,10000,90000,90000,7000,500000,400000,250000,600000,100000,600000,800000,100000,1000000,1000000,1000000,100000,1000000,1000000,1000000)
+
+MvM=as.data.frame(MvM)
+perM &lt;- mean(MvM$MvM)
+perMed &lt;- median(MvM$MvM)
+
+NormData &lt;- ggplot(MvM, aes(x = MvM)) +
+  geom_histogram(binwidth = 10000, fill = &quot;grey70&quot;, color = &quot;black&quot;) +
+  geom_vline(xintercept = perM,   color = &quot;red&quot;,  linetype = &quot;dotted&quot;, size = 1) +
+  geom_vline(xintercept = perMed, color = &quot;blue&quot;, linetype = &quot;solid&quot;,  size = 1) +
+  labs(
+    title = &quot;Income gap&quot;,
+    x = &quot;Income&quot;,
+    y = &quot;Count&quot;
+  )
+
+NormData
+
+mean(MvM$MvM)
+# 66266.42
+median(MvM$MvM)
+# 50000</code></pre>
+<p><img src="descriptive_images/income.jpg" alt="Skewed income distribution" width="800"/></p>
+<p>The very high income pulls the mean upward, while the median remains
+near the centre of the majority of observations. This is why medians are
+often reported for strongly skewed variables.</p>
+<p>There is no rule that the mean is “better” than the median or vice
+versa. The appropriate summary depends on the distribution and on what
+you want the statistic to represent.</p>
+</div>
+<div id="transforming-skewed-variables" class="section level1"
+number="7">
+<h1><span class="header-section-number">7</span> Transforming Skewed
+Variables</h1>
+<p>Sometimes a variable is so strongly skewed that it is worth trying a
+transformation. This is common with strictly positive measurements such
+as <strong>durations</strong>, <strong>reaction times</strong>,
+<strong>formant values</strong>, or variables like
+<strong>income</strong>. Transformations do not “fix” bad data, but they
+can sometimes make a distribution easier to summarize and can improve
+the behaviour of a later statistical model.</p>
+<p>Three common strategies are:</p>
+<ul>
+<li><strong>log transformation</strong>: strongly compresses the upper
+tail;</li>
+<li><strong>square-root transformation</strong>: also reduces right
+skew, but more gently; and</li>
+<li><strong>z-standardization</strong>: rescales a variable to have mean
+0 and SD 1, but does <strong>not</strong> remove skewness by
+itself.</li>
+</ul>
+<p>Here is a simple illustration using the income data above:</p>
+<pre class="r"><code>#Log
+MvM$F1log &lt;- log(MvM$MvM) 
+perM &lt;- mean(MvM$F1log)
+perMed &lt;- median(MvM$F1log)
+
+logIncome &lt;- ggplot(MvM, aes(x = F1log)) +
+    geom_histogram(binwidth = 0.2, fill = &quot;grey70&quot;, color = &quot;black&quot;) +
+    geom_vline(xintercept = perM,   color = &quot;red&quot;,  linetype = &quot;dotted&quot;, size = 1) +
+    geom_vline(xintercept = perMed, color = &quot;blue&quot;, linetype = &quot;solid&quot;,  size = 1) +
+    labs(
+        title = &quot;Income gap&quot;,
+        x = &quot;Income&quot;,
+        y = &quot;Count&quot;
+    )
+logIncome
+
+#Sqrt
+MvM$F1sqrt &lt;- sqrt(MvM$MvM) 
+perM &lt;- mean(MvM$F1sqrt)
+perMed &lt;- median(MvM$F1sqrt)
+
+sqrtIncome &lt;- ggplot(MvM, aes(x = F1sqrt)) +
+    geom_histogram(binwidth = 20, fill = &quot;grey70&quot;, color = &quot;black&quot;) +
+    geom_vline(xintercept = perM,   color = &quot;red&quot;,  linetype = &quot;dotted&quot;, size = 1) +
+    geom_vline(xintercept = perMed, color = &quot;blue&quot;, linetype = &quot;solid&quot;,  size = 1) +
+    labs(
+        title = &quot;Income gap&quot;,
+        x = &quot;Income&quot;,
+        y = &quot;Count&quot;
+    )
+sqrtIncome
+
+grid.arrange(NormData,sqrtIncome,logIncome, ncol = 1)</code></pre>
+<p><img src="descriptive_images/NLSq.jpg" alt="Raw, square-root transformed, and log-transformed income distributions" width="800"/></p>
+<p>A <strong>log transformation</strong> pulls large values inward quite
+strongly, so it is often useful when a few very large observations
+dominate the upper tail. A <strong>square-root transformation</strong>
+also reduces right skew, but less aggressively, so it preserves more of
+the spacing among larger values. In practice, both are common in
+linguistics, especially for duration and reaction-time data.</p>
+<p>Do not transform a variable automatically just because its skewness
+or kurtosis exceeds a rule-of-thumb cutoff. In a linear model, what
+matters most is whether the modelling assumptions are reasonable for the
+<strong>residuals</strong> and whether the transformed scale is
+interpretable for the question you are asking.</p>
+</div>
+<div id="shape-of-a-distribution" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Shape of a
+Distribution</h1>
+<p>Descriptive statistics are most informative when paired with a graph.
+Two datasets can have the same mean and SD but quite different
+distributions.</p>
+<div id="skewness" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Skewness</h2>
+<p>A distribution is <strong>skewed</strong> when one tail extends
+farther than the other. <strong>Skewness</strong> gives us a numerical
+description of this asymmetry.</p>
+<ul>
+<li><strong>Positive (right) skew:</strong> the long tail extends toward
+higher values.</li>
+<li><strong>Negative (left) skew:</strong> the long tail extends toward
+lower values.</li>
+<li>A skewness value near <strong>0</strong> indicates a roughly
+symmetrical distribution.</li>
+</ul>
+<p>The farther the value is from 0, the more asymmetrical the
+distribution is. As a rough descriptive guideline, values beyond about
+<strong>+1 or -1</strong> indicate fairly substantial skew. This is a
+useful warning sign, not a hard rule that determines whether a
+statistical analysis is permitted.</p>
+</div>
+<div id="kurtosis" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> Kurtosis</h2>
+<p><strong>Kurtosis</strong> describes how strongly observations are
+concentrated in the centre and, especially, in the
+<strong>tails</strong> of a distribution relative to a normal
+distribution. When <strong>excess kurtosis</strong> is reported, a
+normal distribution has a value of approximately <strong>0</strong>.</p>
+<ul>
+<li><strong>Positive kurtosis:</strong> heavier tails and more extreme
+observations than a normal distribution; the centre may also appear more
+sharply peaked.</li>
+<li><strong>Negative kurtosis:</strong> lighter tails and a flatter
+distribution.</li>
+<li><strong>Kurtosis near 0:</strong> broadly similar tail behaviour to
+a normal distribution.</li>
+</ul>
+<p>Like skewness, kurtosis is best interpreted together with a graph
+rather than as a pass/fail test.</p>
+<details>
+<summary>
+Click here to reveal the r code for the graphs:
+</summary>
+<pre class="r"><code>library(ggplot2)
+library(fBasics)
+
+perfect=c(5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,6,6,6,6,6,6,6,6,3,3,3,3,3,3,7,7,7,7,7,7,2,2,2,2,8,8,8,8,1,1,9,9,0,10)
+perfect=as.data.frame(perfect)
+
+perfBox &lt;- ggplot(perfect, aes(x=perfect)) + 
+    geom_boxplot() + 
+    labs (
+        title = &quot;Perfect plot&quot;
+    )
+
+perfDen &lt;- ggplot(perfect, aes(x = perfect)) + 
+     geom_histogram(aes(y = ..density..), binwidth = 1, colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+     geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+     labs(x = NULL, y = NULL)
+
+perfGrid &lt;- grid.arrange(perfBox,perfDen, ncol=1)
+
+pos=c(5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,6,6,6,6,6,6,6,6,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,7,7,7,7,7,7,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,8,8,8,8,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,9,0,0,0,0,0,0,0,0,0,10)
+pos=as.data.frame(pos)
+
+posBox &lt;- ggplot(pos, aes(x=pos)) + 
+    geom_boxplot() + 
+    labs (
+        title = &quot;Positive Skewness&quot;
+    )
+
+posDen &lt;- ggplot(pos, aes(x = pos)) + 
+     geom_histogram(aes(y = ..density..), binwidth = 1, colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+     geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+     labs(x = NULL, y = NULL)
+
+posGrid &lt;- grid.arrange(posBox,posDen, ncol=1)
+
+neg=c(8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,6,6,6,6,6,6,6,6,6,6,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,1,1,0,2,2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5)
+neg=as.data.frame(neg)
+
+negBox &lt;- ggplot(neg, aes(x = neg)) + 
+    geom_boxplot() + 
+    labs (
+        title = &quot;Negative Skewness&quot;
+    )
+
+negDen &lt;- ggplot(neg, aes(x = neg)) + 
+     geom_histogram(aes(y = ..density..), binwidth = 1, colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+     geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+     labs(x = NULL, y = NULL)
+
+negGrid &lt;- grid.arrange(negBox,negDen, ncol=1)
+
+Pkurtosis=c(5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,3,3,3,3,2,2,2,1,0,6,6,6,6,6,7,7,7,7,8,8,9,9,10)
+Pkurtosis=as.data.frame(Pkurtosis)
+
+posKBox &lt;- ggplot(Pkurtosis, aes(x = Pkurtosis)) + 
+    geom_boxplot() + 
+    labs (
+        title = &quot;Positive Kurtosis&quot;
+    )
+
+posKDen &lt;- ggplot(Pkurtosis, aes(x = Pkurtosis)) + 
+     geom_histogram(aes(y = ..density..), binwidth = 1, colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+     geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+     labs(x = NULL, y = NULL)
+
+posKGrid &lt;- grid.arrange(posKBox,posKDen, ncol=1)
+
+Nkurtosis=c(4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,3,3,3,3,3,3,3,3,3,7,7,7,7,7,7,7,7,7,2,2,2,2,2,2,8,8,8,8,8,8,8,8,1,1,1,1,1,0,0,9,9,9,10,10)
+Nkurtosis=as.data.frame(Nkurtosis)
+
+negKBox &lt;- ggplot(Nkurtosis, aes(x = Nkurtosis)) + 
+    geom_boxplot() + 
+    labs (
+        title = &quot;Negative Kurtosis&quot;
+    )
+
+negKDen &lt;- ggplot(Nkurtosis, aes(x = Nkurtosis)) + 
+     geom_histogram(aes(y = ..density..), binwidth = 1, colour = &quot;black&quot;, fill = &quot;white&quot;) + 
+     geom_density(alpha = .2, fill = &quot;#FF6666&quot;) +
+     labs(x = NULL, y = NULL)
+
+negKGrid &lt;- grid.arrange(negKBox,negKDen, ncol=1)
+
+grid.arrange(perfGrid,posGrid, negGrid, perfGrid, posKGrid, negKGrid, ncol=3)
+</code></pre>
+</details>
+<p><img src="descriptive_images/skewKurt.jpg" alt="Examples of skewness and kurtosis" width="1000"/></p>
+<p>We can calculate both values in R with the <code>skewness()</code>
+and <code>kurtosis()</code> functions from the <code>fBasics</code>
+package:</p>
+<pre class="r"><code>skewness(ML_i$F1, na.rm = TRUE)
+# 0.9934553
+# attr(,&quot;method&quot;)
+# &quot;moment&quot;
+
+kurtosis(ML_i$F1, na.rm = TRUE)
+# 0.9623642
+# attr(,&quot;method&quot;)
+# &quot;excess&quot;</code></pre>
+<p>For both measures, values farther from 0 indicate a greater departure
+from a symmetrical, normally shaped distribution. A common rule of thumb
+treats values outside approximately <strong>-1 to +1</strong> as worth
+investigating carefully.</p>
+<p>Do <strong>not</strong>, however, automatically transform or discard
+data because skewness or kurtosis exceeds a particular cutoff. First
+inspect the distribution and determine why it has that shape. In
+regression modelling, assumptions are also evaluated from the
+<strong>model and its residuals</strong>, not simply from the raw
+dependent variable.</p>
+</div>
+<div id="multiple-peaks" class="section level2" number="8.3">
+<h2><span class="header-section-number">8.3</span> Multiple Peaks</h2>
+<p>A distribution may also be <strong>bimodal</strong> or
+<strong>multimodal</strong>, meaning that it contains two or more
+distinct peaks. In linguistic data, this can be informative. Multiple
+peaks may indicate different speaker groups, linguistic categories,
+recording conditions, or other structure that has been combined in a
+single distribution.</p>
+<details>
+<summary>
+Click here to reveal the r code for the graphs:
+</summary>
+<pre class="r"><code>library(ggplot2)
+
+set.seed(123)
+
+# Subtle bimodal distribution
+bimodal &lt;- data.frame(
+    x = c(
+        rnorm(600, mean = 300, sd = 55),
+        rnorm(400, mean = 450, sd = 50)
+    )
+)
+
+bim=ggplot(bimodal, aes(x = x)) +
+    geom_density(alpha = 0.3, fill = &quot;grey70&quot;) +
+    labs(
+        title = &quot;Possible Bimodal Distribution&quot;,
+        x = &quot;Value&quot;,
+        y = &quot;Density&quot;
+    )
+
+set.seed(123)
+
+multimodal &lt;- data.frame(
+    x = c(
+        rnorm(500, mean = 280, sd = 50),
+        rnorm(350, mean = 420, sd = 45),
+        rnorm(250, mean = 600, sd = 50)
+    )
+)
+
+multim=ggplot(multimodal, aes(x = x)) +
+    geom_density(alpha = 0.3, fill = &quot;grey70&quot;) +
+    labs(
+        title = &quot;Possible Multimodal Distribution&quot;,
+        x = &quot;Value&quot;,
+        y = &quot;Density&quot;
+    )
+
+grid.arrange(bim, multim, ncol=2)
+
+</code></pre>
+</details>
+<p><img src="descriptive_images/BimMultim.jpg" alt="Bimodal and multimodal distribution examples" width="1000"/></p>
+</div>
+<div id="outliers" class="section level2" number="8.4">
+<h2><span class="header-section-number">8.4</span> Outliers</h2>
+<p>An <strong>outlier</strong> is an observation that lies unusually far
+from the rest of the data. Outliers can arise for many reasons:</p>
+<ul>
+<li>measurement or transcription errors;</li>
+<li>miscoding;</li>
+<li>equipment problems;</li>
+<li>an unusual speaker or lexical item; or</li>
+<li>genuine linguistic variation.</li>
+</ul>
+<p>Do not automatically delete an observation because a boxplot labels
+it as an outlier. First determine why it is unusual. A real observation
+is still data.</p>
+</div>
+</div>
+<div id="categorical-data" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Categorical Data</h1>
+<p>Not all linguistic variables are continuous. Many of the outcomes we
+study are <strong>categorical</strong>:</p>
+<ul>
+<li>OV vs. VO word order;</li>
+<li>overt vs. null subject;</li>
+<li>[f] vs. [ɸ];</li>
+<li>presence vs. absence of a segment;</li>
+<li>noun, verb, adjective, or adverb; and</li>
+<li>language or dialect category.</li>
+</ul>
+<p>For categorical variables, means and standard deviations are usually
+not useful. Instead, we describe the data using <strong>counts</strong>
+and <strong>proportions</strong>.</p>
+<p>Let’s look at vowel counts in the Media Lengua portion of the
+dataset.</p>
+<pre class="r"><code>ML &lt;- subset(dataset, Language == &quot;ML&quot;)
+
+ML %&gt;%
+  count(Vowel)
+  
+# A tibble: 5 × 2
+#  Vowel     n
+#  &lt;chr&gt; &lt;int&gt;
+#1 a       645
+#2 e       329
+#3 i       621
+#4 o       318
+#5 u       601</code></pre>
+<p>To convert counts into proportions:</p>
+<pre class="r"><code>ML %&gt;%
+  count(Vowel) %&gt;%
+  mutate(
+    proportion = n / sum(n),
+    percent = proportion * 100
+  )
+  
+# A tibble: 5 × 4
+#  Vowel     n proportion percent
+#  &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+#1 a       645      0.257    25.7
+#2 e       329      0.131    13.1
+#3 i       621      0.247    24.7
+#4 o       318      0.126    12.6
+#5 u       601      0.239    23.9</code></pre>
+<p>We can visualize those counts with a bar plot:</p>
+<pre class="r"><code>ggplot(ML, aes(x = Vowel, fill=Vowel)) +
+  geom_bar() +
+  labs(
+    title = &quot;Vowel tokens in the Media Lengua dataset&quot;,
+    x = &quot;Vowel&quot;,
+    y = &quot;Number of tokens&quot;
+  )</code></pre>
+<p><img src="descriptive_images/bar.jpg" alt="Bar plot of Vowel counts" width="1000"/></p>
+<p>For a binary variable, it is often useful to report both the raw
+count and percentage. For example, if <code>Stress</code> is coded as
+two categories:</p>
+<pre class="r"><code>Stress_summary &lt;- ML %&gt;%
+  count(Stress) %&gt;%
+  mutate(
+    proportion = n / sum(n),
+    percent = round(proportion * 100, 1)
+  )
+  
+Stress_summary
+  
+# A tibble: 2 × 4
+#  Stress          n proportion percent
+#  &lt;chr&gt;       &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+#1 NonStressed  1706      0.679    67.9
+#2 Stressed      808      0.321    32.1  
+
+ggplot(Stress_summary, aes(x = Stress, y = percent, fill = Stress)) +
+  geom_col() +
+  geom_text(aes(label = paste0(percent, &quot;%&quot;)), vjust = -0.5) +
+  labs(
+    title = &quot;Distribution of Stress&quot;,
+    x = &quot;Stress&quot;,
+    y = &quot;Percent&quot;
+  ) +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="descriptive_images/binarybar.jpg" alt="Binary Bar plot of stress counts and percentage" width="500"/></p>
+<p>This same approach will be useful later when describing variables
+such as <strong>OV vs. VO</strong>. Before fitting any statistical
+model, you should know how many tokens occur in each category and what
+percentage of the dataset they represent.</p>
+</div>
+<div id="describing-groups" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Describing Groups</h1>
+<p>Often we want descriptive statistics for more than one group. For
+example, rather than reporting one F1 mean for the entire dataset, we
+can calculate the mean and SD separately for each vowel.</p>
+<pre class="r"><code>ML %&gt;%
+  group_by(Vowel) %&gt;%
+  summarise(
+    n = sum(!is.na(F1)),
+    mean_F1 = mean(F1, na.rm = TRUE),
+    sd_F1 = sd(F1, na.rm = TRUE),
+    median_F1 = median(F1, na.rm = TRUE),
+    IQR_F1 = IQR(F1, na.rm = TRUE)
+  )</code></pre>
+<p>The corresponding boxplot lets us compare both centre and spread
+across vowels:</p>
+<pre class="r"><code>ggplot(ML, aes(x = Vowel, y = F1, fill=Vowel)) +
+  geom_boxplot() +
+  labs(
+    title = &quot;F1 by vowel in Media Lengua&quot;,
+    x = &quot;Vowel&quot;,
+    y = &quot;F1 frequency (Hz)&quot;
+  )</code></pre>
+<p><img src="descriptive_images/AllVowelBox.jpg" alt="F1 for all vowels" width="700"/></p>
+<p>A useful principle is: <strong>Describe the same grouping structure
+that matters for your research question.</strong></p>
+<p>If your question compares two speaker groups, report descriptive
+statistics for those groups. If it compares two linguistic variants,
+report the counts or measurements for those variants. A single overall
+mean can hide important differences among groups.</p>
+</div>
+<div id="choosing-what-to-report" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Choosing What to
+Report</h1>
+<p>For a <strong>continuous variable</strong>, a basic descriptive
+summary will often include:</p>
+<ul>
+<li>number of observations (<code>n</code>);</li>
+<li>mean and SD;</li>
+<li>median and IQR when the distribution is skewed or when these values
+are substantively useful;</li>
+<li>minimum and maximum where relevant; and</li>
+<li>an appropriate graph, such as a histogram, density plot, boxplot, or
+scatterplot.</li>
+</ul>
+<p>For a <strong>categorical variable</strong>, a basic descriptive
+summary will usually include:</p>
+<ul>
+<li>number of observations in each category;</li>
+<li>proportions or percentages; and</li>
+<li>a bar plot or another appropriate categorical visualization.</li>
+</ul>
+<p>Do not report every statistic simply because R can calculate it.
+Report the statistics that help the reader understand the data and
+answer the research question.</p>
+</div>
+<div id="writing-descriptive-results" class="section level1"
+number="12">
+<h1><span class="header-section-number">12</span> Writing Descriptive
+Results</h1>
+<p>Descriptive statistics should be reported in prose as well as tables
+and figures. The goal is to tell the reader what the data look like
+before moving to inferential analysis.</p>
+<p>For a continuous outcome, a results paragraph might look like
+this:</p>
+<p><img src="descriptive_images/AllVowelBox.jpg" alt="F1 for all vowels" width="500"/></p>
+<blockquote>
+<p>Figure X shows a clear separation between /a/ and the other Media
+Lengua vowels. /a/ has the highest F1 values (median = 643.2 Hz; mean =
+656.8 Hz), while /i/ has the lowest (median = 378.8 Hz; mean = 392.9
+Hz). The mid and high vowels overlap considerably, with median F1 values
+of 455.9 Hz for /o/, 418.8 Hz for /u/, and 408.4 Hz for /e/. Overall,
+the descriptive pattern distinguishes the low vowel /a/ from the
+remaining vowels much more strongly than it separates the non-low vowels
+from one another.</p>
+</blockquote>
+<p>For a categorical outcome:</p>
+<p><img src="descriptive_images/binarybar.jpg" alt="Binary Bar plot of stress counts and percentage" width="400"/></p>
+<blockquote>
+<p>Figure X shows that non-stressed tokens are more frequent than
+stressed tokens in the Media Lengua dataset. Non-stressed observations
+account for 67.9% of the data, compared with 32.1% for stressed
+observations. Thus, although both categories are well represented, the
+distribution is weighted toward non-stressed tokens.</p>
+</blockquote>
+<p>Notice that these statements <strong>describe</strong> the sample.
+They do not say that one group is “significantly” different from
+another. Statistical significance belongs to inferential analysis.</p>
+</div>
+<div id="summary" class="section level1" number="13">
+<h1><span class="header-section-number">13</span> Summary</h1>
+<p>Before moving to inferential statistics, you should be able to answer
+the following questions about your dataset:</p>
+<ol style="list-style-type: decimal">
+<li>How many observations are there?</li>
+<li>What type of variable am I describing: continuous or
+categorical?</li>
+<li>For continuous data, what are the centre and spread of the
+distribution?</li>
+<li>Is the distribution symmetrical, skewed, multimodal, or affected by
+unusual observations?</li>
+<li>For categorical data, how many observations occur in each category
+and what are their proportions?</li>
+<li>Do the descriptive statistics need to be calculated separately for
+meaningful groups?</li>
+<li>What graph best communicates the structure of the data?</li>
+</ol>
+<p>Descriptive statistics are not a preliminary nuisance to get through
+before the “real” analysis. They are the first analysis of the data. If
+you do not understand the distributions, group sizes, and unusual
+observations in your dataset, you are not yet ready to model it.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
