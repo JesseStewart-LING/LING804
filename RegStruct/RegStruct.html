@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Dr. Jesse Stewart" />
+
+<meta name="date" content="2026-09-02" />
+
+<title>Regression Structure</title>
+
+<script src="RegStruct_files/header-attrs-2.28/header-attrs.js"></script>
+<script src="RegStruct_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="RegStruct_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="RegStruct_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="RegStruct_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="RegStruct_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="RegStruct_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="RegStruct_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="RegStruct_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="RegStruct_files/navigation-1.1/tabsets.js"></script>
+<link href="RegStruct_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="RegStruct_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Regression Structure</h1>
+<h4 class="author">Dr. Jesse Stewart</h4>
+<h4 class="date">2026-09-02</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>Up to this point, we have focused on <strong>describing</strong>
+linguistic data: looking at distributions, calculating measures of
+centre and spread, and visualizing patterns across groups. Descriptive
+statistics tell us what our sample looks like.</p>
+<p>The next step is to ask whether the patterns we observe are likely to
+reflect a meaningful relationship between variables, or whether they
+could plausibly arise through ordinary variation in the data.</p>
+<p>This module introduces the basic structure of regression. We will
+begin with probability and hypothesis testing, move through correlation
+and the <em>t</em>-test, and then build a simple linear regression by
+hand before asking R to do the same calculation for us.</p>
+<p>The goal is not to memorize formulas. The goal is to understand what
+a regression model is actually doing.</p>
+<p>In this module, we will:</p>
+<ul>
+<li>review probability, chance, and statistical uncertainty;</li>
+<li>distinguish a research hypothesis from a null hypothesis;</li>
+<li>interpret <em>p</em>-values without treating them as proof;</li>
+<li>review Type I and Type II errors;</li>
+<li>distinguish correlation from causation;</li>
+<li>understand the basic structure of a linear regression;</li>
+<li>calculate a simple regression line conceptually;</li>
+<li>interpret the intercept, slope, predicted values, and
+residuals;</li>
+<li>see how a two-group <em>t</em>-test can be expressed as a
+regression;</li>
+<li>extend a regression to include more than one predictor; and</li>
+<li>introduce why linguistic data often require mixed-effects
+regression.</li>
+</ul>
+</div>
+<div id="probability-and-statistical-uncertainty" class="section level1"
+number="2">
+<h1><span class="header-section-number">2</span> Probability and
+Statistical Uncertainty</h1>
+<p>Statistical analysis is fundamentally about
+<strong>uncertainty</strong>.</p>
+<p>When we observe a pattern in a sample, we want to know whether it is
+stronger than we would expect from chance alone.</p>
+<p>A simple coin-flipping example helps illustrate this idea.</p>
+<p>If a fair coin is flipped once, the probability of heads is:</p>
+<pre class="r"><code>1 / 2
+# 0.5 (50%)</code></pre>
+<p>If it is flipped twice, the probability of getting two heads in a row
+is:</p>
+<pre class="r"><code>(1 / 2) * (1 / 2)
+# 0.25 (25%)</code></pre>
+<p>For three heads in a row:</p>
+<pre class="r"><code>(1 / 2)^3
+# 0.125 (12.5%)</code></pre>
+<p>For five heads in a row:</p>
+<pre class="r"><code>(1 / 2)^5
+# 0.03125 (3.1%)</code></pre>
+<p><img src="RegStruct_images/cointoss.jpg" alt="Coin toss" width="200"/></p>
+<p>As a particular sequence becomes more extreme or unusual under the
+chance model, its probability becomes smaller.</p>
+<div id="hypotheses" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Hypotheses</h2>
+<p>In statistical testing, we usually distinguish between two competing
+ideas.</p>
+<p>The <strong>research hypothesis</strong> represents the relationship
+or difference we are interested in.</p>
+<p>The <strong>null hypothesis</strong> represents a model in which that
+relationship or difference is absent.</p>
+<p>For example, suppose we want to know whether speech rate differs
+between two political groupings.</p>
+<p>A possible research hypothesis is:</p>
+<blockquote>
+<p>Speech rate differs between the two political groupings.</p>
+</blockquote>
+<p>The corresponding null hypothesis is:</p>
+<blockquote>
+<p>Speech rate does not differ between the two political groupings.</p>
+</blockquote>
+<p>Statistical testing does not prove that either statement is
+absolutely true. Instead, it asks how compatible our observed data are
+with the null model. For example, if Left- and Right-leaning MPs have
+different average speech rates in our sample, we want to know whether
+that difference is large enough that it would be unlikely to appear just
+by chance if the two groups did not really differ.</p>
+</div>
+<div id="what-is-a-p-value" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> What is a
+p-value?</h2>
+<p>A <em>p</em>-value tells us how likely we would be to see a result
+like ours if there were actually no real effect. In other words, <em>if
+the null hypothesis and the statistical model were true</em>.</p>
+<p>Another way to think about a p-value is in terms of repeated
+sampling. Imagine that we repeatedly collected new samples using the
+same procedure from a population in which the null hypothesis was
+actually true. The p-value tells us how often we would expect to obtain
+a result at least as extreme as the one we observed simply through
+sampling variation.</p>
+<p>A small <em>p</em>-value therefore indicates that the observed
+pattern would be relatively unusual under the null model. For example,
+if Left- and Right-leaning MPs differ in speech rate and the p-value is
+very small, that suggests a difference of that size would be unusual if
+the two political groups did not actually differ in speech rate.</p>
+<p>A conventional significance threshold is:</p>
+<pre class="r"><code>alpha &lt;- 0.05</code></pre>
+<p>Results below this threshold are often described as statistically
+significant. In other words, the smaller the p-value, the more evidence
+we have against the null hypothesis, and the more reason we have to
+reject it in favour of an alternative hypothesis, which may correspond
+to our original research hypothesis.</p>
+<p>Importantly, a <em>p</em>-value is <strong>not</strong>:</p>
+<ul>
+<li>the probability that the null hypothesis is true;</li>
+<li>the probability that our research hypothesis is true; or</li>
+<li>the probability that we have made a mistake.</li>
+</ul>
+<p>It is a probability calculated <strong>under the null model</strong>
+(the model built to test the null-hypothesis).</p>
+<p><strong>A note on significance testing:</strong> The use of p-values,
+and especially the conventional <span
+class="math inline">\(\alpha=.05\)</span> threshold, has been widely
+debated. The .05 cutoff is ultimately a convention rather than a natural
+boundary between meaningful and meaningless results, and many
+statisticians argue that effect sizes, uncertainty, replication, and the
+broader evidence should receive more emphasis. Despite these criticisms,
+p-values and the .05 significance threshold remain the standard approach
+in much of empirical research and are still widely expected in published
+work.</p>
+</div>
+<div id="type-i-and-type-ii-errors" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Type I and Type II
+Errors</h2>
+<p>No statistical decision is completely certain.</p>
+<p>A <strong>Type I error</strong> occurs when we reject a <em>true</em>
+null hypothesis. In practical terms, we conclude that an effect or
+relationship exists when it does not.</p>
+<p>For example, We conclude that Left- and Right-leaning MPs
+<em>differ</em> in speech rate when, in reality, there is
+<strong>no</strong> underlying difference between the groups. In other
+words, we detect an effect that is not really there.</p>
+<p>A <strong>Type II error</strong> occurs when we <em>fail</em> to
+reject a false null hypothesis. In practical terms, a real effect
+exists, but our analysis fails to detect it.</p>
+<p>Type II error: We conclude that there is <em>no</em> difference in
+speech rate between Left- and Right-leaning MPs when, in reality, the
+groups <strong>do</strong> differ. In other words, a real effect exists,
+but our analysis fails to detect it.</p>
+<p><img src="RegStruct_images/type12.jpg" alt="Type 1 and Type 2 errors" width="500"/></p>
+<p><strong>Sample size matters</strong> (I’ll repeat this again
+<strong><em>sample size matters</em></strong>) because larger datasets
+generally provide more information about the underlying pattern. Very
+small samples can produce unstable estimates and may fail to detect real
+effects.</p>
+<details>
+<summary>
+Click here to reveal the r code for the graphs:
+</summary>
+<pre class="r"><code>library(ggplot2)
+library(gridExtra)
+
+# -----------------------------
+# Small sample: 5 speakers
+# -----------------------------
+
+VOT_small &lt;- data.frame(
+  VOT = c(52, 58, 61, 63, 120)
+)
+
+small_plot &lt;- ggplot(VOT_small, aes(x = VOT)) +
+  geom_histogram(
+    aes(y = after_stat(density)),
+    binwidth = 10,
+    boundary = 0,
+    colour = &quot;black&quot;,
+    fill = &quot;grey70&quot;
+  ) +
+  geom_density(
+    linewidth = 1.2,
+    adjust = 1.2
+  ) +
+  scale_x_continuous(
+    limits = c(0, 150),
+    breaks = seq(0, 150, 20)
+  ) +
+  labs(
+    title = &quot;Small sample (n = 5)&quot;,
+    x = &quot;VOT (ms)&quot;,
+    y = &quot;Density&quot;
+  )
+
+small_plot
+
+set.seed(123)
+
+# -----------------------------
+# Large sample: 100 speakers
+# -----------------------------
+
+typical_VOT &lt;- rnorm(
+  95,
+  mean = 58,
+  sd = 14
+)
+
+high_VOT &lt;- c(110, 114, 118, 122, 126)
+
+VOT_large &lt;- data.frame(
+  VOT = c(typical_VOT, high_VOT)
+)
+
+large_plot &lt;- ggplot(VOT_large, aes(x = VOT)) +
+  geom_histogram(
+    aes(y = after_stat(density)),
+    binwidth = 10,
+    boundary = 0,
+    colour = &quot;black&quot;,
+    fill = &quot;grey70&quot;
+  ) +
+  geom_density(
+    linewidth = 1.2,
+    adjust = 0.8
+  ) +
+  scale_x_continuous(
+    limits = c(0, 150),
+    breaks = seq(0, 150, 20)
+  ) +
+  labs(
+    title = &quot;Large sample (n = 100)&quot;,
+    x = &quot;VOT (ms)&quot;,
+    y = &quot;Density&quot;
+  )
+
+large_plot</code></pre>
+</details>
+<p><img src="RegStruct_images/SampleSize.jpg" alt="VOT sample size example" width="900"/></p>
+</div>
+</div>
+<div id="correlation-and-relationships-between-variables"
+class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Correlation and
+Relationships Between Variables</h1>
+<p>A <strong>correlation</strong> describes the relationship between two
+variables.</p>
+<p>For example, we might ask whether longer words tend to have longer
+durations.</p>
+<p>A positive relationship would mean that, as one variable increases,
+the other tends to increase as well.</p>
+<p>A negative relationship would mean that, as one variable increases,
+the other tends to decrease.</p>
+<p><img src="RegStruct_images/PosNegCorr.jpg" alt="Positive and negative correlation" width="900"/><br />
+A: The larger a word, the longer it is.<br />
+B: Speech rate increases, as word duration decreases.</p>
+<div id="correlation-is-not-causation" class="section level2"
+number="3.1">
+<h2><span class="header-section-number">3.1</span> Correlation is not
+causation</h2>
+<p>A relationship between two variables does not automatically mean that
+one causes the other.</p>
+<p>Two variables may be related because:</p>
+<ul>
+<li>one affects the other (<em>what we are hoping to find!</em>)</li>
+<li>the causal direction is reversed;</li>
+<li>both are influenced by a third variable; or</li>
+<li>the apparent relationship arises through sampling variation or
+chance.</li>
+</ul>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Possibility</th>
+<th>Linguistic example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>One affects the other</strong></td>
+<td><strong>Speech rate &gt; vowel duration.</strong> As speakers
+increase their speech rate, vowels tend to become shorter. Here there is
+a plausible causal mechanism: speaking faster leaves less time for
+individual segments.</td>
+</tr>
+<tr class="even">
+<td><strong>The causal direction is reversed</strong></td>
+<td><strong>L2 use &lt; L2 proficiency.</strong> We might observe that
+people who use their L2 more often are more proficient and conclude that
+greater use causes proficiency. But part of the relationship may run the
+other way: people who are already more proficient may be more willing
+and able to use the L2 frequently.</td>
+</tr>
+<tr class="odd">
+<td><strong>Both are influenced by a third variable</strong></td>
+<td><strong>Vocabulary size &lt;-&gt; lexical-decision reaction time,
+with age as a third variable.</strong> Older participants may have
+larger vocabularies but slower reaction times. Vocabulary size and
+reaction time could therefore appear related even if vocabulary size
+itself is not causing slower responses.</td>
+</tr>
+<tr class="even">
+<td><strong>The apparent relationship arises by chance</strong></td>
+<td><strong>Speaker age &lt;-&gt; VOT in a very small sample.</strong>
+Suppose we measure only eight speakers and the older speakers happen, by
+chance, to have longer VOTs. The sample could show a convincing
+correlation even though age and VOT are unrelated in the wider
+population.</td>
+</tr>
+</tbody>
+</table>
+<p><img src="RegStruct_images/CnC1.jpg" alt="Correlation is not causation 1 - Credit: https://tylervigen.com/" width="900"/><br />
+<img src="RegStruct_images/CnC2.jpg" alt="Correlation is not causation 2 - Credit: https://tylervigen.com/" width="900"/><br />
+<img src="RegStruct_images/CnC3.jpg" alt="Correlation is not causation 3 - Credit: https://chrisblattman.com/" width="500"/></p>
+<p>This is one reason regression is useful: we can examine the
+relationship between a dependent variable and one predictor while also
+accounting for other predictors that may matter.</p>
+</div>
+</div>
+<div id="from-correlation-to-regression" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> From Correlation to
+Regression</h1>
+<p>A correlation tells us whether two variables move together.</p>
+<p>A <strong>regression</strong> goes further by describing the expected
+value of one variable as a function of another.</p>
+<div id="a-linguistic-example" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> A linguistic
+example</h2>
+<p>Suppose we measure the duration of a small set of words and count how
+many syllables each word contains.</p>
+<pre class="r"><code>word_data &lt;- data.frame(
+  Word = c(&quot;cat&quot;, &quot;table&quot;, &quot;banana&quot;, &quot;computer&quot;, &quot;linguistics&quot;,
+           &quot;dog&quot;, &quot;paper&quot;, &quot;tomato&quot;),
+  Syllables = c(1, 2, 3, 3, 3, 1, 2, 3),
+  Duration_ms = c(280, 390, 510, 495, 545, 260, 405, 520)
+)
+
+word_data
+
+#         Word Syllables Duration_ms
+#1         cat         1         280
+#2       table         2         390
+#3      banana         3         510
+#4    computer         3         495
+#5 linguistics         3         545
+#6         dog         1         260
+#7       paper         2         405
+#8      tomato         3         520</code></pre>
+<p>Let’s visualize the relationship:</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(word_data, aes(x = Syllables, y = Duration_ms)) +
+  geom_point(size = 3) +
+  labs(
+    title = &quot;Word duration by number of syllables&quot;,
+    x = &quot;Number of syllables&quot;,
+    y = &quot;Duration (ms)&quot;
+  )</code></pre>
+<p><img src="RegStruct_images/WordDur.jpg" alt="Word duration by number of syllables" width="500"/></p>
+</div>
+<div id="building-a-linear-regression-model" class="section level2"
+number="4.2">
+<h2><span class="header-section-number">4.2</span> Building a Linear
+Regression Model</h2>
+<p>Before looking at the equation for a linear regression, we are going
+to build one from a very small dataset. This will let us see where each
+part of the model actually comes from.</p>
+<p>Above, we have measured the duration of eight words. For each word,
+we have two pieces of information:</p>
+<ul>
+<li>the number of <strong>syllables</strong> in the word; and</li>
+<li>the <strong>duration</strong> of the word in milliseconds.</li>
+</ul>
+<p>Our question is:</p>
+<p><strong>Can we use the number of syllables in a word to predict how
+long the word will last?</strong></p>
+<p>Our hypothesis is: <em>the greater number of syllables in a word, the
+longer the word’s duration will be.</em><br />
+Our null-hypothesis: <em>The number of syllables in a word has no
+relationship with the word’s duration.</em></p>
+<p>In statistical terminology:</p>
+<ul>
+<li><strong>Duration</strong> is our <strong>dependent
+variable</strong>, or outcome.</li>
+<li><strong>Syllables</strong> is our <strong>independent
+variable</strong>, or <em>predictor</em>.</li>
+</ul>
+<p>We can call these <span class="math inline">\(Y\)</span> and <span
+class="math inline">\(X\)</span>:</p>
+<ul>
+<li><span class="math inline">\(Y\)</span> = Duration</li>
+<li><span class="math inline">\(X\)</span> = Syllables</li>
+</ul>
+<p>These are not numbers invented by the statistical model. They are the
+two variables that we actually measured.</p>
+<pre class="r"><code>duration=c(280,390,510,495,545,260,405,520) #Y
+syllables=c(1,2,3,3,3,1,2,3) #X</code></pre>
+<div id="step-1-look-at-the-data" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Step 1: Look at the
+data</h3>
+<p>We just did this.</p>
+<p><img src="RegStruct_images/WordDur.jpg" alt="Word duration by number of syllables" width="500"/></p>
+<p>There is a fairly obvious pattern: words with more syllables tend to
+have longer durations.</p>
+<p>But we want to describe that relationship more precisely.</p>
+<p>One way to do this is to find a straight line that fits the
+observations as closely as possible.</p>
+<p>Before we can draw that line, however, we need to know two
+things:</p>
+<ol style="list-style-type: decimal">
+<li><strong>How steep should the line be?</strong></li>
+<li><strong>Where should the line cross the Y-axis?</strong></li>
+</ol>
+<p>The first is called the <strong>slope</strong>. The second is called
+the <strong>intercept</strong>.</p>
+<hr />
+</div>
+</div>
+<div id="step-2-find-the-centre-of-the-data" class="section level2"
+number="4.3">
+<h2><span class="header-section-number">4.3</span> Step 2: Find the
+centre of the data</h2>
+<p>We will start by calculating the average value of each variable.</p>
+<p>The mean number of syllables is:</p>
+<pre class="r"><code>mean(duration)  
+mean(syllables) </code></pre>
+<p><span class="math display">\[
+\bar{Y} = 425.625
+\]</span></p>
+<p><span class="math display">\[
+\bar{X} = 2.25
+\]</span></p>
+<p>The bar over the letter (<span
+class="math inline">\(\bar{Y}\)</span>, <span
+class="math inline">\(\bar{X}\)</span>) signifies <strong>the mean of
+the values</strong>.</p>
+<p>So the average word in our dataset has 2.25 syllables.<br />
+And the average word duration in our dataset is 425.624
+milliseconds.</p>
+<p>We therefore have a point representing the centre of our data:</p>
+<p><span class="math display">\[
+(\bar{X},\bar{Y})=(2.25,425.625)
+\]</span></p>
+<p>The regression line will pass through this point.</p>
+<details>
+<summary>
+Click here to reveal the r code for the graph:
+</summary>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(word_data, aes(x = Syllables, y = Duration_ms)) +
+  geom_point(size = 3) +
+  geom_point(
+    aes(
+      x = mean(Syllables),
+      y = mean(Duration_ms)
+    ),
+    size = 6,
+    shape = 4,
+    stroke = 2
+  ) +
+  labs(
+    title = &quot;Word duration by number of syllables&quot;,
+    x = &quot;Number of syllables&quot;,
+    y = &quot;Duration (ms)&quot;
+  )</code></pre>
+</details>
+<p><img src="RegStruct_images/WordDur2.jpg" alt="Regression point" width="500"/></p>
+<p>Notice the general pattern.</p>
+<p>Words with <strong>fewer than average syllables</strong> also tend to
+have <strong>shorter than average durations</strong>.</p>
+<p>Words with <strong>more than average syllables</strong> also tend to
+have <strong>longer than average durations</strong>.</p>
+<p>That is the relationship we want the slope to describe.</p>
+<hr />
+</div>
+<div id="step-3-calculate-the-slope" class="section level2"
+number="4.4">
+<h2><span class="header-section-number">4.4</span> Step 3: Calculate the
+slope</h2>
+<p>The first thing we need to determine is <strong>how much
+<code>duration</code> changes as the <code>number of syllables</code>
+changes</strong>.</p>
+<p>This is the <strong>slope</strong>.</p>
+<p>We use the symbol <span class="math inline">\(b_1\)</span> for the
+slope.</p>
+<p>The formula is:</p>
+<p><span class="math display">\[
+b_1 =
+\frac{
+\sum(X_i-\bar{X})(Y_i-\bar{Y})
+}{
+\sum(X_i-\bar{X})^2
+}
+\]</span></p>
+<p>This looks complicated, but each part is doing something fairly
+simple.</p>
+<div id="first-how-far-is-each-x-value-from-the-average-x"
+class="section level3" number="4.4.1">
+<h3><span class="header-section-number">4.4.1</span> First: how far is
+each X value from the average X?</h3>
+<p><span class="math display">\[Xi−\bar{X}\]</span></p>
+<p>Our average number of syllables is 2.25.</p>
+<p>For <em>cat</em>, which has 1 syllable:</p>
+<p><span class="math display">\[
+1-2.25=-1.25
+\]</span></p>
+<p>For <em>table</em>, which has 2 syllables:</p>
+<p><span class="math display">\[
+2-2.25=-0.25
+\]</span></p>
+<p>For <em>banana</em>, which has 3 syllables:</p>
+<p><span class="math display">\[
+3-2.25=0.75
+\]</span></p>
+<p>For <em>computer</em>, which has 3 syllables:</p>
+<p><span class="math display">\[
+3-2.25=0.75
+\]</span></p>
+<p>For <em>linguistics</em>, which has 3 syllables:</p>
+<p><span class="math display">\[
+3-2.25=0.75
+\]</span></p>
+<p>For <em>dog</em>, which has 1 syllables:</p>
+<p><span class="math display">\[
+1-2.25=-1.25
+\]</span></p>
+<p>For <em>paper</em>, which has 2 syllables:</p>
+<p><span class="math display">\[
+2-2.25=-0.25
+\]</span></p>
+<p>For <em>tomato</em>, which has 3 syllables:</p>
+<p><span class="math display">\[
+3-2.25=0.75
+\]</span></p>
+<p>A negative number simply means <strong>below the average</strong>. A
+positive number means <strong>above the average</strong>.</p>
+<pre class="r"><code>word_data$xi_xavg=word_data$Syllables-mean(word_data$Syllables)
+
+         Word Syllables Duration_ms xi_xavg
+1         cat         1         280   -1.25
+2       table         2         390   -0.25
+3      banana         3         510    0.75
+4    computer         3         495    0.75
+5 linguistics         3         545    0.75
+6         dog         1         260   -1.25
+7       paper         2         405   -0.25
+8      tomato         3         520    0.75
+</code></pre>
+</div>
+<div id="second-how-far-is-each-y-value-from-the-average-y"
+class="section level3" number="4.4.2">
+<h3><span class="header-section-number">4.4.2</span> Second: how far is
+each Y value from the average Y?</h3>
+<p><span class="math display">\[Yi−\bar{Y}\]</span></p>
+<p>Our average duration is 425.625 ms.</p>
+<p>For <em>cat</em>, which lasted 280 ms:</p>
+<p><span class="math display">\[
+280-425.625=-145.625
+\]</span></p>
+<p>For <em>table</em>, which lasted 390 ms:</p>
+<p><span class="math display">\[
+390-425.625=-35.625
+\]</span></p>
+<p>For <em>banana</em>, which lasted 510 ms:</p>
+<p><span class="math display">\[
+510-425.625=84.375
+\]</span></p>
+<p>For <em>computer</em>, which lasted 495 ms:</p>
+<p><span class="math display">\[
+495-425.625=69.375
+\]</span></p>
+<p>For <em>linguistics</em>, which lasted 545 ms:</p>
+<p><span class="math display">\[
+545-425.625=119.375
+\]</span></p>
+<p>For <em>dog</em>, which lasted 260 ms:</p>
+<p><span class="math display">\[
+260-425.625=-165.625
+\]</span></p>
+<p>For <em>paper</em>, which lasted 405 ms:</p>
+<p><span class="math display">\[
+405-425.625=-20.625
+\]</span></p>
+<p>For <em>tomato</em>, which lasted 520 ms:</p>
+<p><span class="math display">\[
+520-425.625=94.375
+\]</span></p>
+<pre class="r"><code>word_data$yi_yavg=word_data$Duration_ms-mean(word_data$Duration_ms)
+
+        Word Syllables Duration_ms xi_xavg  yi_yavg
+1         cat         1         280   -1.25 -145.625
+2       table         2         390   -0.25  -35.625
+3      banana         3         510    0.75   84.375
+4    computer         3         495    0.75   69.375
+5 linguistics         3         545    0.75  119.375
+6         dog         1         260   -1.25 -165.625
+7       paper         2         405   -0.25  -20.625
+8      tomato         3         520    0.75   94.375</code></pre>
+<p>Again:</p>
+<ul>
+<li>negative = below the average;</li>
+<li>positive = above the average.</li>
+</ul>
+<p>We can calculate these values for all eight words:</p>
+<p>The equation now reads: <span class="math display">\[
+b_1 =
+\frac{
+\sum(−1.25)(−145.625)+(−0.25)(−35.625)+(0.75)(84.375)+(0.75)(69.375)
++(0.75)(119.375)+(−1.25)(−165.625)+(−0.25)(−20.625)+(0.75)(94.375)
+}{
+\sum(−1.25)2+(−0.25)2+(0.75)2+(0.75)2+(0.75)2+(−1.25)2+(−0.25)2+(0.75)2
+}
+\]</span></p>
+<p>After multiplication on the rop row and squaring the bottom row:
+<span class="math display">\[
+b_1 =
+\frac{
+\sum(182.03125+8.90625+63.28125+52.03125+89.53125+207.03125+5.15625+70.78125)
+}{
+\sum(1.5625+0.0625+0.5625+0.5625+0.5625+1.5625+0.0625+0.5625)
+}
+\]</span></p>
+<pre class="r"><code>word_data$xi_xavgXyi_yavg=word_data$xi_xavg*word_data$yi_yavg
+word_data$xi_xsqrt=word_data$xi_xavg^2
+
+         Word Syllables Duration_ms xi_xavg  yi_yavg xi_xavgXyi_yavg xi_xsqrt
+1         cat         1         280   -1.25 -145.625       182.03125   1.5625
+2       table         2         390   -0.25  -35.625         8.90625   0.0625
+3      banana         3         510    0.75   84.375        63.28125   0.5625
+4    computer         3         495    0.75   69.375        52.03125   0.5625
+5 linguistics         3         545    0.75  119.375        89.53125   0.5625
+6         dog         1         260   -1.25 -165.625       207.03125   1.5625
+7       paper         2         405   -0.25  -20.625         5.15625   0.0625
+8      tomato         3         520    0.75   94.375        70.78125   0.5625</code></pre>
+<p><span class="math display">\[ \sum = add \]</span></p>
+<p>So we add the values on the top and bottom:</p>
+<p><span class="math display">\[
+b_1 =
+\frac{
+678.75
+}{
+5.5
+}
+\]</span></p>
+<p>And the we divide:</p>
+<p><span class="math display">\[
+b_1 = 123.4090909
+\]</span></p>
+</div>
+<div id="what-does-123.41-mean" class="section level3" number="4.4.3">
+<h3><span class="header-section-number">4.4.3</span> What does 123.41
+mean?</h3>
+<p>This is the important part.</p>
+<p>Our predictor is <strong>number of syllables</strong>, and our
+outcome is <strong>duration in milliseconds</strong>.</p>
+<p>Therefore:</p>
+<blockquote>
+<p><strong>For every additional syllable, the predicted duration
+increases by approximately 123.41 ms.</strong></p>
+</blockquote>
+<p>So <span class="math inline">\(b_1\)</span> tells us about the
+<strong>relationship between X and Y</strong>.</p>
+<p>In our data:</p>
+<p><span class="math display">\[
+b_1=123.41
+\]</span></p>
+<p>means:</p>
+<blockquote>
+<p><strong>+1 syllable <span class="math inline">\(\rightarrow\)</span>
+approximately +123 ms</strong></p>
+</blockquote>
+<p>This is the slope of our regression line. We now know the steepness
+of the line, but we don’t yet know where to place the line vertically.
+Right now we can only say that every increase of 1 syllable corresponds
+to an increase of 123.41 ms.</p>
+<hr />
+</div>
+</div>
+<div id="step-4-calculate-the-intercept" class="section level2"
+number="4.5">
+<h2><span class="header-section-number">4.5</span> Step 4: Calculate the
+intercept</h2>
+<p>We now know how steep our line should be.</p>
+<p>But we still need to know <strong>where the line should be
+positioned</strong>.</p>
+<p>This is the <strong>intercept</strong>, represented by <span
+class="math inline">\(b_0\)</span>.</p>
+<p>We already know three things:</p>
+<ul>
+<li>the mean number of syllables is 2.25;</li>
+<li>the mean duration is 425.625 ms; and</li>
+<li>the slope is 123.41 ms per syllable.</li>
+</ul>
+<p>The regression line has to pass through the mean of X and the mean of
+Y:</p>
+<p><span class="math display">\[
+(2.25,425.625)
+\]</span></p>
+<p>So we can work backwards to determine what the predicted duration
+would be when X is 0.</p>
+<p>The formula is:</p>
+<p><span class="math display">\[
+b_0=\bar{Y}-b_1\bar{X}
+\]</span></p>
+<p>Substituting our values:</p>
+<p><span class="math display">\[
+b_0=425.625-(123.41\times2.25)
+\]</span></p>
+<p><span class="math display">\[
+b_0=425.625-277.67
+\]</span></p>
+<p><span class="math display">\[
+b_0=147.95
+\]</span></p>
+<p>So our intercept is approximately:</p>
+<p><span class="math display">\[
+b_0=148
+\]</span></p>
+<div id="what-does-148-mean" class="section level3" number="4.5.1">
+<h3><span class="header-section-number">4.5.1</span> What does 148
+mean?</h3>
+<p>The intercept is the predicted value of Y when X is 0.</p>
+<p>Here:</p>
+<ul>
+<li>X = number of syllables</li>
+<li>Y = duration</li>
+</ul>
+<p>So the intercept tells us:</p>
+<blockquote>
+<p><strong>The model predicts a duration of approximately 148 ms when
+the number of syllables is 0.</strong></p>
+</blockquote>
+<p>A zero-syllable word is not especially meaningful linguistically.
+That is okay.</p>
+<p>The important point is that <strong>148 is not an observation in our
+dataset</strong>. We did not measure a zero-syllable word lasting 148
+ms.</p>
+<p>It is a value calculated from the relationship among all eight
+observations. It tells us where our regression line crosses the
+Y-axis.</p>
+<details>
+<summary>
+Click here to reveal the r code for the graph:
+</summary>
+<pre class="r"><code>library(ggplot2)
+
+b0 &lt;- 147.95
+b1 &lt;- 123.41
+
+ggplot(word_data, aes(x = Syllables, y = Duration_ms)) +
+    geom_point(size = 3) +
+    
+    # Regression line
+    geom_abline(intercept = b0, slope = b1) +
+    
+    # X at the mean point
+    geom_point(
+        x = 2.25,
+        y = 425.625,
+        size = 6,
+        shape = 4,
+        color = &quot;red&quot;,
+        stroke = 2
+    ) +
+    
+    annotate(
+        &quot;text&quot;,
+        x = 2.25,
+        y = 425.625,
+        label = &quot;Mean (2.25, 425.625)&quot;,
+        hjust = -0.1,
+        vjust = -1
+    ) +
+    
+    # X at the intercept
+    geom_point(
+        x = 0,
+        y = b0,
+        size = 6,
+        shape = 4,
+        color = &quot;blue&quot;,
+        stroke = 2
+    ) +
+    
+    annotate(
+        &quot;text&quot;,
+        x = 0,
+        y = b0,
+        label = &quot;Intercept (0, 147.95)&quot;,
+        hjust = -0.1,
+        vjust = -1
+    ) +
+    
+    # Step showing the slope from x = 0 to x = 1
+    geom_segment(
+        x = 0, xend = 1,
+        y = b0, yend = b0,
+        linewidth = 1
+    ) +
+    
+    geom_segment(
+        x = 1, xend = 1,
+        y = b0, yend = b0 + b1,
+        linewidth = 1
+    ) +
+    
+    annotate(
+        &quot;text&quot;,
+        x = 0.5,
+        y = b0 - 20,
+        label = &quot;+1 syllable&quot;
+    ) +
+    
+    annotate(
+        &quot;text&quot;,
+        x = 1.05,
+        y = b0 + b1/2,
+        label = &quot;+123.41 ms&quot;,
+        hjust = 0
+    ) +
+    
+    # Predicted 4-syllable point
+    geom_point(
+        x = 4,
+        y = b0 + 4 * b1,
+        size = 4,
+        shape = 1,
+        stroke = 1.5
+    ) +
+    
+    annotate(
+        &quot;text&quot;,
+        x = 4,
+        y = b0 + 4 * b1,
+        label = &quot;Predicted: 641.59 ms&quot;,
+        hjust = 1.05,
+        vjust = -1
+    ) +
+    
+    scale_x_continuous(
+        breaks = 0:4,
+        limits = c(-0.2, 4.2)
+    ) +
+    
+    labs(
+        title = &quot;The slope and intercept of the regression line&quot;,
+        subtitle = &quot;Intercept = 147.95; each additional syllable adds 123.41 ms&quot;,
+        x = &quot;Number of syllables&quot;,
+        y = &quot;Duration (ms)&quot;
+    )</code></pre>
+</details>
+<p><img src="RegStruct_images/WordDur3.jpg" alt="trend line" width="900"/></p>
+<hr />
+</div>
+</div>
+<div id="step-5-now-we-can-write-the-regression-equation"
+class="section level2" number="4.6">
+<h2><span class="header-section-number">4.6</span> Step 5: Now we can
+write the regression equation</h2>
+<p>We have now calculated the two numbers that define our line:</p>
+<p><span class="math display">\[
+b_0=147.95
+\]</span></p>
+<p>and:</p>
+<p><span class="math display">\[
+b_1=123.41
+\]</span></p>
+<p>Only now do we need the general equation for a simple linear
+regression:</p>
+<p><span class="math display">\[
+\hat{Y}=b_0+b_1X
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(X\)</span> is the observed value of our
+predictor (number of syllables);</li>
+<li><span class="math inline">\(b_0\)</span> is the intercept (duration
+is millisceonds at 0 length (the intercept));</li>
+<li><span class="math inline">\(b_1\)</span> is the slope (change per
+syllable added (the slope)); and</li>
+<li><span class="math inline">\(\hat{Y}\)</span> (“Y-hat”) is the value
+of Y predicted by the model (prediction of duration in ms).</li>
+</ul>
+<p>For our particular dataset, therefore:</p>
+<p><span class="math display">\[
+\widehat{\text{Duration}}=147.95+123.41(\text{Syllables})
+\]</span></p>
+<p>Therefore, a word with one syllable is predicted to have a duration
+value of: <em>271 ms</em></p>
+<p><span class="math display">\[
+\widehat{271.36}=147.95+123.41(1)
+\]</span> But <em>cat</em> actually lasted <strong>280 ms</strong>. This
+gives us two different values:</p>
+<p><span class="math display">\[
+Y=280
+\]</span></p>
+<p><span class="math display">\[
+\hat{Y}=271.36
+\]</span></p>
+<p><span class="math inline">\(Y\)</span> is what we
+<strong>observed</strong>.<br />
+<span class="math inline">\(\hat{Y}\)</span> is what our model
+<strong>predicted</strong>.<br />
+They do not have to be identical. In fact, they normally will not
+be.</p>
+<p>A word with two syllables is predicted to have a duration value of:
+<em>395 ms</em></p>
+<p><span class="math display">\[
+\widehat{394.778}=147.95+123.41(2)
+\]</span></p>
+<p>A word with three syllables is predicted to have a duration value of:
+<em>518 ms</em></p>
+<p><span class="math display">\[
+\widehat{518.18}=147.95+123.41(3)
+\]</span> A word with four syllables is predicted to have a duration
+value of: <em>642 ms</em>. Note that we do not have any words with four
+syllables in our data. This is an example of the models power for
+predictablity.</p>
+<p><span class="math display">\[
+\widehat{641.59}=147.95+123.41(4)
+\]</span></p>
+<p>The abstract symbols now correspond to actual things:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>In our example</th>
+<th>Value/source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(X\)</span></td>
+<td>Number of syllables</td>
+<td>Measured in the dataset</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Y\)</span></td>
+<td>Actual word duration</td>
+<td>Measured in the dataset</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(b_0\)</span></td>
+<td>Intercept</td>
+<td>147.95 ms</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(b_1\)</span></td>
+<td>Slope</td>
+<td>123.41 ms per syllable</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat{Y}\)</span></td>
+<td>Predicted duration</td>
+<td>Calculated by the model</td>
+</tr>
+</tbody>
+</table>
+<p>A useful distinction is:</p>
+<blockquote>
+<p><strong>X and Y come from our observations. <span
+class="math inline">\(b_0\)</span> and <span
+class="math inline">\(b_1\)</span> are estimated from those
+observations. <span class="math inline">\(\hat{Y}\)</span> is then
+calculated using the resulting model.</strong></p>
+</blockquote>
+<hr />
+</div>
+<div id="step-7-compare-the-observed-and-predicted-values"
+class="section level2" number="4.7">
+<h2><span class="header-section-number">4.7</span> Step 7: Compare the
+observed and predicted values</h2>
+<p>We can use the same equation to generate a predicted duration for
+every word in the dataset.</p>
+<pre class="r"><code>b0 &lt;- 147.9545
+b1 &lt;- 123.4091
+
+word_data$Predicted &lt;- b0 + (b1 * word_data$Syllables)
+
+         Word Syllables Duration_ms xi_xavg  yi_yavg xi_xavgXyi_yavg xi_xsqrt Predicted
+1         cat         1         280   -1.25 -145.625       182.03125   1.5625    271.36
+2       table         2         390   -0.25  -35.625         8.90625   0.0625    394.77
+3      banana         3         510    0.75   84.375        63.28125   0.5625    518.18
+4    computer         3         495    0.75   69.375        52.03125   0.5625    518.18
+5 linguistics         3         545    0.75  119.375        89.53125   0.5625    518.18
+6         dog         1         260   -1.25 -165.625       207.03125   1.5625    271.36
+7       paper         2         405   -0.25  -20.625         5.15625   0.0625    394.77
+8      tomato         3         520    0.75   94.375        70.78125   0.5625    518.18
+
+#A simplified model output
+word_data[, c(&quot;Word&quot;, &quot;Syllables&quot;, &quot;Duration_ms&quot;, &quot;Predicted&quot;)]
+
+         Word Syllables Duration_ms Predicted
+1         cat         1         280    271.36
+2       table         2         390    394.77
+3      banana         3         510    518.18
+4    computer         3         495    518.18
+5 linguistics         3         545    518.18
+6         dog         1         260    271.36
+7       paper         2         405    394.77
+8      tomato         3         520    518.18</code></pre>
+<p>Back to our graph:</p>
+<p><img src="RegStruct_images/WordDur3.jpg" alt="trend line" width="900"/></p>
+<p>The points show what we actually observed.</p>
+<p>The line shows what our regression model predicts.</p>
+<p>The vertical distance between an observed point and the value
+predicted by the line is called a <strong>residual</strong>. We will
+return to residuals shortly.</p>
+<hr />
+</div>
+<div id="let-r-do-the-calculation" class="section level2" number="4.8">
+<h2><span class="header-section-number">4.8</span> Let R do the
+calculation</h2>
+<p>We calculated the slope and intercept manually so that we could see
+where they come from.</p>
+<p>In practice, we would not normally calculate them ourselves. R does
+this for us:</p>
+<pre class="r"><code>model &lt;- lm(Duration_ms ~ Syllables, data = word_data)
+
+summary(model)
+
+Call:
+lm(formula = Duration_ms ~ Syllables, data = word_data)
+
+ Residuals:
+     Min      1Q  Median      3Q     Max 
+ -23.182  -8.977  -1.477   9.034  26.818 
+ 
+ Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+ (Intercept)  147.955     16.997   8.705 0.000127 ***
+ Syllables    123.409      7.088  17.411  2.3e-06 ***
+ ---
+ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+ Residual standard error: 16.62 on 6 degrees of freedom
+ Multiple R-squared:  0.9806,   Adjusted R-squared:  0.9774 
+ F-statistic: 303.1 on 1 and 6 DF,  p-value: 2.302e-06</code></pre>
+<p>The model estimates the same two coefficients we calculated
+above:</p>
+<ul>
+<li><strong>Intercept:</strong> approximately 147.95</li>
+<li><strong>Syllables:</strong> approximately 123.41</li>
+</ul>
+<p>The <code>Syllables</code> coefficient is our slope.</p>
+<p>So R has fitted the model:</p>
+<p><span class="math display">\[
+\widehat{\text{Duration}}=147.95+123.41(\text{Syllables})
+\]</span></p>
+<p>The math we worked through above is what R is doing for us when we
+run <code>lm()</code>.</p>
+</div>
+<div id="residuals" class="section level2" number="4.9">
+<h2><span class="header-section-number">4.9</span> Residuals</h2>
+<p>The regression line will not predict every observation perfectly.</p>
+<p>The difference between an observed value and its predicted value is
+called a <strong>residual</strong>.</p>
+<p><span class="math display">\[
+Residual = Observed - Predicted
+\]</span></p>
+<p>In R:</p>
+<pre class="r"><code>word_data$Residual &lt;- word_data$Duration_ms - word_data$Predicted
+word_data
+
+         Word Syllables Duration_ms xi_xavg  yi_yavg xi_xavgXyi_yavg xi_xsqrt Predicted Residual
+1         cat         1         280   -1.25 -145.625       182.03125   1.5625    271.36     8.64
+2       table         2         390   -0.25  -35.625         8.90625   0.0625    394.77    -4.77
+3      banana         3         510    0.75   84.375        63.28125   0.5625    518.18    -8.18
+4    computer         3         495    0.75   69.375        52.03125   0.5625    518.18   -23.18
+5 linguistics         3         545    0.75  119.375        89.53125   0.5625    518.18    26.82
+6         dog         1         260   -1.25 -165.625       207.03125   1.5625    271.36   -11.36
+7       paper         2         405   -0.25  -20.625         5.15625   0.0625    394.77    10.23
+8      tomato         3         520    0.75   94.375        70.78125   0.5625    518.18     1.82</code></pre>
+<p>Some residuals are positive and some are negative.</p>
+<p>The regression line is chosen to minimize the <strong>sum of the
+squared residuals</strong>.</p>
+<pre class="r"><code>sum(word_data$Residual^2)
+
+#1657.955</code></pre>
+<p>This is the basic idea behind <strong>least-squares
+regression</strong>. This is the basic idea behind ordinary
+least-squares (OLS) linear regression, which is the type of regression
+we are working with right now i.e., fitting with <code>lm()</code>.</p>
+<p><img src="RegStruct_images/WordDur4.jpg" alt="trend line" width="900"/></p>
+</div>
+</div>
+<div id="the-model" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> The model</h1>
+<p>We use <code>lm()</code> for linear regressions:</p>
+<pre class="r"><code>model &lt;- lm(Duration_ms ~ Syllables, data = word_data)</code></pre>
+<p>The formula:</p>
+<pre class="r"><code>Duration_ms ~ Syllables</code></pre>
+<p>means:</p>
+<blockquote>
+<p>Predict <code>Duration_ms</code> using <code>Syllables</code>.</p>
+</blockquote>
+<p>We can inspect the full model output with <code>summary()</code>:</p>
+<pre class="r"><code>summary(model)
+
+Call:
+lm(formula = Duration_ms ~ Syllables, data = word_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-23.182  -8.977  -1.477   9.034  26.818 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  147.955     16.997   8.705 0.000127 ***
+Syllables    123.409      7.088  17.411  2.3e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 16.62 on 6 degrees of freedom
+Multiple R-squared:  0.9806,    Adjusted R-squared:  0.9774 
+F-statistic: 303.1 on 1 and 6 DF,  p-value: 2.302e-06</code></pre>
+<p>The coefficient table contains four important columns:</p>
+<ul>
+<li><code>Estimate</code></li>
+<li><code>Std. Error</code></li>
+<li><code>t value</code></li>
+<li><code>Pr(&gt;|t|)</code></li>
+</ul>
+<div id="estimate" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Estimate</h2>
+<p>The <code>Estimate</code> column contains the regression
+coefficients.</p>
+<p>The <code>(Intercept)</code> corresponds to <span
+class="math inline">\(b_0\)</span>.</p>
+<p>The coefficient for <code>Syllables</code> corresponds to <span
+class="math inline">\(b_1\)</span>.</p>
+<p>The estimate is one of the most important, if not the most important,
+value in your model (we will discuss this later).</p>
+</div>
+<div id="residual-standard-error" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Residual Standard
+Error</h2>
+<p>The standard error describes the <em>uncertainty</em> associated with
+an estimated coefficient.</p>
+<p>An estimate with a <strong>very large</strong> standard error is
+relatively uncertain.</p>
+<p>An estimate with a <strong>small</strong> standard error is more
+precise.</p>
+<p>To calculate it, we first need to know how far our actual
+observations are from the regression line. Those are the residuals:</p>
+<p><span class="math display">\[ e_i=Y_i-\hat{Y}_i \]</span> This is
+easy; simply subtract the actual observations (<code>Duration_ms</code>
+in this case) from the predicted regression line.</p>
+<pre class="r"><code>word_data$Residual &lt;- word_data$Duration_ms - word_data$Predicted
+
+word_data
+
+         Word Syllables Duration_ms xi_xavg  yi_yavg xi_xavgXyi_yavg xi_xsqrt Predicted Residual
+1         cat         1         280   -1.25 -145.625       182.03125   1.5625    271.36     8.64
+2       table         2         390   -0.25  -35.625         8.90625   0.0625    394.77    -4.77
+3      banana         3         510    0.75   84.375        63.28125   0.5625    518.18    -8.18
+4    computer         3         495    0.75   69.375        52.03125   0.5625    518.18   -23.18
+5 linguistics         3         545    0.75  119.375        89.53125   0.5625    518.18    26.82
+6         dog         1         260   -1.25 -165.625       207.03125   1.5625    271.36   -11.36
+7       paper         2         405   -0.25  -20.625         5.15625   0.0625    394.77    10.23
+8      tomato         3         520    0.75   94.375        70.78125   0.5625    518.18     1.82</code></pre>
+<p>We square those residuals and sum them:</p>
+<p><span class="math display">\[ \sum e_i^2 = 1657.95 \]</span> This is
+the sum of squared residuals that we just discussed.</p>
+<pre class="r"><code>word_data$ResidualSqrt &lt;- word_data$Residual^2
+word_data
+
+         Word Syllables Duration_ms xi_xavg  yi_yavg xi_xavgXyi_yavg xi_xsqrt Predicted Residual ResidualSqrt
+1         cat         1         280   -1.25 -145.625       182.03125   1.5625    271.36     8.64      74.6496
+2       table         2         390   -0.25  -35.625         8.90625   0.0625    394.77    -4.77      22.7529
+3      banana         3         510    0.75   84.375        63.28125   0.5625    518.18    -8.18      66.9124
+4    computer         3         495    0.75   69.375        52.03125   0.5625    518.18   -23.18     537.3124
+5 linguistics         3         545    0.75  119.375        89.53125   0.5625    518.18    26.82     719.3124
+6         dog         1         260   -1.25 -165.625       207.03125   1.5625    271.36   -11.36     129.0496
+7       paper         2         405   -0.25  -20.625         5.15625   0.0625    394.77    10.23     104.6529
+8      tomato         3         520    0.75   94.375        70.78125   0.5625    518.18     1.82       3.3124
+
+sum(word_data$ResidualSqrt)
+[1] 1657.955</code></pre>
+<p>Now calculate the residual standard error:</p>
+<p><span class="math display">\[ s= \sqrt{ \frac{\sum e_i^2}{n-2} }
+\]</span></p>
+<p>We have 8 observations, and 2 estimated coefficients
+(<code>intercept</code>, <code>duration</code>) so:</p>
+<p><span class="math display">\[ s= \sqrt{ \frac{1657.95}{8-2} }
+\]</span> <span class="math display">\[ s= \sqrt{276.33} \]</span> <span
+class="math display">\[ s=16.62 \]</span><br />
+It’s worth noting that the result of <span
+class="math inline">\(n\)</span>(observations) - <span
+class="math inline">\(n\)</span>(coefficients) is the <strong>degrees of
+freedom</strong>. Degrees of freedom are the number of values that are
+still free to vary after we have used some information from the data to
+estimate model parameters. Degrees of freedom are closely related to
+sample size: with the same number of predictors, more observations
+produce more degrees of freedom and generally more information for
+estimating uncertainty.</p>
+<p><span class="math inline">\(df = \text{number of observations} −
+\text{number of coefficients estimated}\)</span></p>
+<p>That is the number R reports from the model summary output at the
+bottom:</p>
+<pre class="r"><code>summary(model1)
+
+Call:
+lm(formula = Duration_ms ~ Syllables, data = word_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-23.182  -8.977  -1.477   9.034  26.818 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  147.955     16.997   8.705 0.000127 ***
+Syllables    123.409      7.088  17.411  2.3e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 16.62 on 6 degrees of freedom
+Multiple R-squared:  0.9806,    Adjusted R-squared:  0.9774 
+F-statistic: 303.1 on 1 and 6 DF,  p-value: 2.302e-06</code></pre>
+<p>Note specifically:</p>
+<blockquote>
+<p>Residual standard error: <strong>16.62</strong> on <strong>6</strong>
+degrees of freedom</p>
+</blockquote>
+</div>
+<div id="standard-errors" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Standard Errors</h2>
+<p>The standard error of the intercept is calculated based on the
+residual standard error (<span class="math inline">\(s\)</span>):</p>
+<p><span class="math display">\[ SE(b_0) = s \sqrt{ \frac{1}{n} +
+\frac{\bar X^2}{\sum(X_i-\bar X)^2} } \]</span></p>
+<p>Square the average of <code>Syllable</code> (<span
+class="math inline">\(\bar{X}\)</span>) …<br />
+then…<br />
+square and the sum the result of the observations <span
+class="math inline">\({X_i}\)</span> minus the average number of
+<code>Syllables</code> (<span class="math inline">\(\bar{X}\)</span>)
+…<br />
+then…<br />
+divide the two values…<br />
+then…<br />
+1 divided by the number of observations in the dataset…<br />
+then…<br />
+add this value to the previous…<br />
+then…<br />
+take the square root of this value…<br />
+then…<br />
+multiply it by the residual standard error.</p>
+<p>This is your standard error for the intercept.</p>
+<p><span class="math display">\[ SE(b_0) = 16.62 \sqrt{ \frac{1}{8} +
+\frac{2.25^2}{5.5} } \]</span> <span class="math display">\[
+\boxed{SE(b_0)=16.997} \]</span></p>
+<pre class="r"><code>SE_b0 &lt;- 16.62 * sqrt(
+    (1 / nrow(word_data)) +
+        (
+            mean(word_data$Syllables)^2 /
+                sum((word_data$Syllables - mean(word_data$Syllables))^2)
+        )
+)
+
+SE_b0
+[1] 16.99353</code></pre>
+<p>And the standard error for <code>Syllables</code>:</p>
+<p><span class="math display">\[ SE(b_1) = \frac{s} {\sqrt{\sum(X_i-\bar
+X)^2}} \]</span></p>
+<pre class="r"><code>16.62/sqrt(sum((word_data$Syllables - mean(word_data$Syllables))^2))
+
+7.086792</code></pre>
+<p>I repeat the model below:</p>
+<pre class="r"><code>summary(model1)
+
+Call:
+lm(formula = Duration_ms ~ Syllables, data = word_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-23.182  -8.977  -1.477   9.034  26.818 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  147.955     16.997   8.705 0.000127 ***
+Syllables    123.409      7.088  17.411  2.3e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 16.62 on 6 degrees of freedom
+Multiple R-squared:  0.9806,    Adjusted R-squared:  0.9774 
+F-statistic: 303.1 on 1 and 6 DF,  p-value: 2.302e-06</code></pre>
+<p><strong>Note:</strong> There are very small rounding discrepancies as
+we did not do every calculation with the full range of decimals.</p>
+</div>
+<div id="t-value" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> t-value</h2>
+<p>The t-value tells us how many standard errors the estimated
+coefficient is away from zero. The farther the t-value is from zero, the
+stronger the evidence that the coefficient is different from zero.</p>
+<p>As a rough rule of thumb, a t-value of approximately ±1.96 or greater
+is often associated with statistical significance at the <span
+class="math inline">\(p &lt; .05\)</span> level in a two-tailed test.
+However, the exact critical value depends on the model’s degrees of
+freedom. With smaller samples, the required t-value is larger.</p>
+<p>In our example, we have 6 degrees of freedom, so the critical value
+is approximately:</p>
+<p>±2.447</p>
+<p>I’m not going over the math, because, technically you should not be
+working with a dataset that has only 6 degrees of freedom. Ideally, to
+avoid deviating from the ±1.96 rule of thumb, you want a degrees of
+freedom value of approximately 500.</p>
+<p>If you really want to verify the t-value critical limit, because you,
+for some reason, can not calculate a p-value, you can use:</p>
+<pre class="r"><code>qt(0.975, df =##)
+
+qt(0.975, df =6)
+[1] 2.447
+
+qt(0.975, df = 480)
+[1] 1.964918</code></pre>
+<p>For a regression coefficient, the <em>t</em>-value is
+approximately:</p>
+<p><span class="math display">\[
+t = \frac{Estimate}{Standard\ Error}
+\]</span></p>
+<p>We can verify this manually:</p>
+<pre class="r"><code>coef(summary(model))
+
+            Estimate Std. Error   t value     Pr(&gt;|t|)
+ (Intercept) 147.9545  16.996647  8.704925 1.269865e-04
+ Syllables   123.4091   7.088092 17.410763 2.301692e-06
+
+147.9545/16.996647
+[1] 8.704925
+
+123.4091/7.088092
+[1] 17.410763</code></pre>
+<p>The larger the absolute <em>t</em>-value, the farther the estimated
+coefficient is from zero relative to its uncertainty.</p>
+</div>
+<div id="p-values" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> P-values</h2>
+<p>The <strong>p-value</strong> tells us how surprising our result would
+be if the null hypothesis were true.</p>
+<p>In our regression, the null hypothesis is that the predictor has
+<strong>no real effect</strong>:</p>
+<p><span class="math display">\[
+H_0:b_1=0
+\]</span></p>
+<p>A small p-value means that a result this extreme would be unlikely if
+the true slope were actually zero. The smaller the p-value, the stronger
+the evidence against the null hypothesis.</p>
+<p>For example:</p>
+<p><span class="math display">\[
+p=0.04
+\]</span></p>
+<p>means that, <strong>if the null hypothesis were true</strong>, we
+would obtain a result at least this extreme about 4% of the time.</p>
+<p>Conventionally, results with:</p>
+<p><span class="math display">\[
+p&lt;0.05
+\]</span></p>
+<p>are described as <strong>statistically significant</strong>.</p>
+<p>Importantly, a p-value is <strong>not</strong> the probability that
+the null hypothesis is true. Rather, it is the probability of obtaining
+a result this extreme, assuming that the null hypothesis is true.</p>
+<div id="how-is-the-p-value-calculated" class="section level3"
+number="5.5.1">
+<h3><span class="header-section-number">5.5.1</span> How is the p-value
+calculated?</h3>
+<p>The p-value is calculated from the <strong>t-value</strong> and the
+model’s <strong>degrees of freedom</strong>.</p>
+<p>Underneath this rather complex calculation is the Student’s
+t-distribution. For a two-tailed test, the p-value can be written
+as:</p>
+<p><span class="math display">\[
+p=
+2\int_{|t|}^{\infty}
+\frac{
+\Gamma\left(\frac{\nu+1}{2}\right)
+}{
+\sqrt{\nu\pi}\Gamma\left(\frac{\nu}{2}\right)
+}
+\left(
+1+\frac{x^2}{\nu}
+\right)^{-\frac{\nu+1}{2}}
+dx
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(t\)</span> is our observed t-value;</li>
+<li><span class="math inline">\(\nu\)</span> is the degrees of
+freedom;</li>
+<li><span class="math inline">\(\Gamma\)</span> is the Gamma function;
+and</li>
+<li>the integral calculates the area in the tails of the t-distribution
+beyond our observed t-value.</li>
+</ul>
+<details>
+<summary>
+If you want to see how this could be calculated in R, click here to
+reveal the code:
+</summary>
+<pre class="r"><code>#Step 1: Enter the t-value and degrees of freedom
+t_value &lt;- 17.411
+df &lt;- 6
+
+#Step 2: Calculate the Gamma functions
+gamma((df + 1) / 2)
+gamma(df / 2)
+
+#Step 3: Calculate the constant at the front of the equation
+constant &lt;-
+  gamma((df + 1) / 2) /
+  (sqrt(df * pi) * gamma(df / 2))
+
+constant
+
+#Step 4: Define that t-distribution in R
+t_distribution &lt;- function(x) {
+  
+  constant *
+    (1 + (x^2 / df))^(-(df + 1) / 2)
+  
+}
+
+t_distribution(0)
+
+#Step 5: Calculate the area beyond our t-value
+right_tail &lt;- integrate(
+  t_distribution,
+  lower = abs(t_value),
+  upper = Inf
+)
+
+right_tail
+
+#Step 6: Double it for a two-tailed test
+p_value &lt;- 2 * right_tail$value
+
+p_value
+[1] 2.301476e-06</code></pre>
+</details>
+<p><br> We are <strong>not going to work through this calculation by
+hand</strong>. The important point is that the p-value is a probability
+calculated from the t-distribution using our t-value and degrees of
+freedom.</p>
+<p>R performs this calculation for us.</p>
+<p><strong>Note:</strong> You do not need to know how to do this; this
+is here simply to show that the <span
+class="math inline">\(p-value\)</span> is the result of a real
+probability calculation rather than a magic number produced by R.</p>
+</div>
+</div>
+</div>
+<div id="from-one-predictor-to-multiple-regression"
+class="section level1" number="6">
+<h1><span class="header-section-number">6</span> From one predictor to
+multiple regression</h1>
+<p>Regression models become particularly powerful for linguistic
+analysis because we can include <strong>multiple predictors in the same
+model</strong>, and those predictors can be of different types. For
+example, a regression might contain:</p>
+<ul>
+<li><strong>numeric predictors</strong>, such as <code>age</code>,
+<code>speech rate</code>, or <code>number of syllables</code>;</li>
+<li><strong>categorical predictors</strong>, such as <code>sex</code>,
+<code>dialect</code>, or <code>word class</code>;</li>
+<li><strong>ordinal predictors</strong>, such as
+<code>proficiency level</code> or <code>generation</code>.</li>
+</ul>
+<p>This is important because linguistic variation is rarely determined
+by a single factor. The duration of a word, for example, might depend on
+the number of syllables it contains, characteristics of the speaker, the
+phonological environment, the dialect being spoken, and many other
+factors at the same time.</p>
+<p>So far, our regression contained only one predictor:</p>
+<p><span class="math display">\[
+\hat{Y}=b_0+b_1X
+\]</span></p>
+<p>For our word-duration example:</p>
+<p><span class="math display">\[
+\widehat{\text{Duration}}
+=
+b_0+b_1(\text{Syllables})
+\]</span></p>
+<p>We can extend exactly the same equation by adding another
+predictor:</p>
+<p><span class="math display">\[
+\hat{Y}
+=
+b_0+b_1X_1+b_2X_2
+\]</span></p>
+<p>For our data, let:</p>
+<p><span class="math display">\[
+X_1=\text{Syllables}
+\]</span></p>
+<p>and:</p>
+<p><span class="math display">\[
+X_2=\text{Sex}
+\]</span></p>
+<p>Because <code>Sex</code> is categorical, R needs to represent it
+numerically inside the model. With <code>F</code> as the reference
+category:</p>
+<p><span class="math display">\[
+F=0
+\]</span></p>
+<p><span class="math display">\[
+M=1
+\]</span></p>
+<p>Our model is therefore:</p>
+<p><span class="math display">\[
+\widehat{\text{Duration}}
+=
+b_0+
+b_1(\text{Syllables})+
+b_2(\text{SexM})
+\]</span></p>
+<p>The important idea has not changed. We are still trying to find
+values for the coefficients that produce the best-fitting predictions.
+We now need to estimate <strong>three numbers</strong>:</p>
+<p><span class="math display">\[
+b_0 = \text{intercept}
+\]</span></p>
+<p><span class="math display">\[
+b_1 = \text{effect of Syllables}
+\]</span></p>
+<p><span class="math display">\[
+b_2 = \text{effect of being Male rather than Female}
+\]</span></p>
+<p>Let’s add <code>Sex</code> to our model in the following way:<br />
+<em>Note on <code>Sex</code>: For this teaching example, I use a
+traditional binary <code>Sex</code> variable simply because binary
+predictors make the regression mechanics easy to demonstrate. I am
+deliberately not using <code>Gender</code> here, since gender is a much
+broader and more diverse social category and would require more careful
+coding and interpretation. I am also aware that biological sex itself is
+not strictly binary; the binary coding used here is only a simplified
+statistical example.</em></p>
+<pre class="r"><code>
+word_data=word_data[,-4:-15]
+word_data$Sex=c(&quot;F&quot;, &quot;F&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;F&quot;, &quot;M&quot;, &quot;M&quot;)
+
+         Word Syllables Duration_ms Sex
+1         cat         1         280   F
+2       table         2         390   F
+3      banana         3         510   M
+4    computer         3         495   M
+5 linguistics         3         545   M
+6         dog         1         260   F
+7       paper         2         405   M
+8      tomato         3         520   M</code></pre>
+<p>We could then recode <code>Sex</code> with numerical values. This is
+not necessary for predictors in <code>lm()</code>, however, it is for
+manual calculations, and it is good to know how to do this because the
+dependent variable in <code>glm()</code> often requires conversion.</p>
+<pre class="r"><code>word_data$SexNum = ifelse(word_data$Sex == &quot;M&quot;, 1, 0)
+
+         Word Syllables Duration_ms Sex SexNum
+1         cat         1         280   F      0
+2       table         2         390   F      0
+3      banana         3         510   M      1
+4    computer         3         495   M      1
+5 linguistics         3         545   M      1
+6         dog         1         260   F      0
+7       paper         2         405   M      1
+8      tomato         3         520   M      1</code></pre>
+<div id="calculating-b_1-the-coefficient-for-syllables"
+class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Calculating <span
+class="math inline">\(b_1\)</span>: the coefficient for syllables</h2>
+<p>With one predictor, calculating the slope was fairly simple. With two
+predictors, each coefficient has to account for the relationship between
+both predictors and the dependent variable, as well as the relationship
+between the predictors themselves.</p>
+<p>The equations used to calculate a regression line with a second
+predictor follow. I was originally going to walk through the
+calculations with you, but I am going to save you the torture. If you
+want to see the calculations for yourself, click the reveal arrow at
+each step. They are calculated in both Excel and R.</p>
+<span class="math display">\[ S_{11}=\sum(X_1-\bar X_1)^2 \]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg.jpg" alt="Coeffient of Syllables" width="700"/></p>
+<pre class="r"><code>word_data$xi_xavg=word_data$Syllables-mean(word_data$Syllables)
+word_data$xi_xsqrt=word_data$xi_xavg^2
+
+word_data
+
+         Word Syllables Duration_ms Sex SexNum xi_xavg xi_xsqrt
+1         cat         1         280   F      0   -1.25   1.5625
+2       table         2         390   F      0   -0.25   0.0625
+3      banana         3         510   M      1    0.75   0.5625
+4    computer         3         495   M      1    0.75   0.5625
+5 linguistics         3         545   M      1    0.75   0.5625
+6         dog         1         260   F      0   -1.25   1.5625
+7       paper         2         405   M      1   -0.25   0.0625
+8      tomato         3         520   M      1    0.75   0.5625
+
+sum(word_data$xi_xsqrt)
+[1] 5.5</code></pre>
+</details>
+<span class="math display">\[ S_{22}=\sum(X_2-\bar X_2)^2 \]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg2.jpg" alt="Coeffient of Syllables 2" width="700"/></p>
+<pre class="r"><code>word_data$xii_xavg=word_data$SexNum-mean(word_data$SexNum)
+word_data$xii_xsqrt=word_data$xii_xavg^2
+
+word_data
+
+         Word Syllables Duration_ms Sex SexNum xi_xavg xi_xsqrt xii_xavg xii_xsqrt
+1         cat         1         280   F      0   -1.25   1.5625   -0.625  0.390625
+2       table         2         390   F      0   -0.25   0.0625   -0.625  0.390625
+3      banana         3         510   M      1    0.75   0.5625    0.375  0.140625
+4    computer         3         495   M      1    0.75   0.5625    0.375  0.140625
+5 linguistics         3         545   M      1    0.75   0.5625    0.375  0.140625
+6         dog         1         260   F      0   -1.25   1.5625   -0.625  0.390625
+7       paper         2         405   M      1   -0.25   0.0625    0.375  0.140625
+8      tomato         3         520   M      1    0.75   0.5625    0.375  0.140625
+
+sum(word_data$xii_xsqrt)
+[1] 1.875</code></pre>
+</details>
+<span class="math display">\[ S_{12}=\sum(X_1-\bar X_1)(X_2-\bar X_2)
+\]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg3.jpg" alt="Coeffient of Syllables 3" width="700"/></p>
+<pre class="r"><code>word_data$xi_avgXxii_avg=word_data$xi_xavg*word_data$xii_xavg
+word_data
+
+         Word Syllables Duration_ms Sex SexNum xi_xavg xi_xsqrt xii_xavg xii_xsqrt xi_avgXxii_avg
+1         cat         1         280   F      0   -1.25   1.5625   -0.625  0.390625        0.78125
+2       table         2         390   F      0   -0.25   0.0625   -0.625  0.390625        0.15625
+3      banana         3         510   M      1    0.75   0.5625    0.375  0.140625        0.28125
+4    computer         3         495   M      1    0.75   0.5625    0.375  0.140625        0.28125
+5 linguistics         3         545   M      1    0.75   0.5625    0.375  0.140625        0.28125
+6         dog         1         260   F      0   -1.25   1.5625   -0.625  0.390625        0.78125
+7       paper         2         405   M      1   -0.25   0.0625    0.375  0.140625       -0.09375
+8      tomato         3         520   M      1    0.75   0.5625    0.375  0.140625        0.28125
+
+sum(word_data$xi_avgXxii_avg)
+[1] 2.75</code></pre>
+</details>
+<span class="math display">\[ S_{1Y}=\sum(X_1-\bar X_1)(Y-\bar Y)
+\]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg4.jpg" alt="Coeffient of Syllables 4" width="700"/></p>
+<pre class="r"><code>word_data$yi_yavg=word_data$Duration_ms-mean(word_data$Duration_ms)
+word_data$xi_avgXyi_avg=word_data$xi_xavg*word_data$yi_yavg
+word_data
+
+         Word Syllables Duration_ms Sex SexNum xi_xavg xi_xsqrt xii_xavg xii_xsqrt xi_avgXxii_avg  yi_yavg xi_avgXyi_avg
+1         cat         1         280   F      0   -1.25   1.5625   -0.625  0.390625        0.78125 -145.625     182.03125
+2       table         2         390   F      0   -0.25   0.0625   -0.625  0.390625        0.15625  -35.625       8.90625
+3      banana         3         510   M      1    0.75   0.5625    0.375  0.140625        0.28125   84.375      63.28125
+4    computer         3         495   M      1    0.75   0.5625    0.375  0.140625        0.28125   69.375      52.03125
+5 linguistics         3         545   M      1    0.75   0.5625    0.375  0.140625        0.28125  119.375      89.53125
+6         dog         1         260   F      0   -1.25   1.5625   -0.625  0.390625        0.78125 -165.625     207.03125
+7       paper         2         405   M      1   -0.25   0.0625    0.375  0.140625       -0.09375  -20.625       5.15625
+8      tomato         3         520   M      1    0.75   0.5625    0.375  0.140625        0.28125   94.375      70.78125
+
+sum(word_data$xi_avgXyi_avg)
+[1] 678.75</code></pre>
+</details>
+<span class="math display">\[ S_{2Y}=\sum(X_2-\bar X_2)(Y-\bar Y)
+\]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg5.jpg" alt="Coeffient of Syllables 5" width="700"/></p>
+<pre class="r"><code>word_data$xii_avgXyi_avg=word_data$xii_xavg*word_data$yi_yavg
+word_data
+
+         Word Syllables Duration_ms Sex SexNum xi_xavg xi_xsqrt xii_xavg xii_xsqrt xi_avgXxii_avg  yi_yavg xi_avgXyi_avg xii_avgXyi_avg
+1         cat         1         280   F      0   -1.25   1.5625   -0.625  0.390625        0.78125 -145.625     182.03125      91.015625
+2       table         2         390   F      0   -0.25   0.0625   -0.625  0.390625        0.15625  -35.625       8.90625      22.265625
+3      banana         3         510   M      1    0.75   0.5625    0.375  0.140625        0.28125   84.375      63.28125      31.640625
+4    computer         3         495   M      1    0.75   0.5625    0.375  0.140625        0.28125   69.375      52.03125      26.015625
+5 linguistics         3         545   M      1    0.75   0.5625    0.375  0.140625        0.28125  119.375      89.53125      44.765625
+6         dog         1         260   F      0   -1.25   1.5625   -0.625  0.390625        0.78125 -165.625     207.03125     103.515625
+7       paper         2         405   M      1   -0.25   0.0625    0.375  0.140625       -0.09375  -20.625       5.15625      -7.734375
+8      tomato         3         520   M      1    0.75   0.5625    0.375  0.140625        0.28125   94.375      70.78125      35.390625
+
+sum(word_data$xii_avgXyi_avg)
+[1] 346.875</code></pre>
+</details>
+<p>For our dataset, these are:</p>
+<p><span class="math display">\[ S_{11}=5.5 \]</span> <span
+class="math display">\[ S_{22}=1.875 \]</span> <span
+class="math display">\[ S_{12}=2.75 \]</span> <span
+class="math display">\[ S_{1Y}=678.75 \]</span> <span
+class="math display">\[ S_{2Y}=346.875 \]</span></p>
+<p>The coefficient for Syllables is:</p>
+<p><span class="math display">\[ b_1= \frac {S_{1Y}S_{22}-S_{2Y}S_{12}}
+{S_{11}S_{22}-S_{12}^2} \]</span></p>
+<p>Now substitute our numbers:</p>
+<p><span class="math display">\[ b_1= \frac
+{(678.75)(1.875)-(346.875)(2.75)} {(5.5)(1.875)-(2.75)^2} \]</span></p>
+<p>Calculate the products:</p>
+<p><span class="math display">\[ b_1= \frac {1272.65625-953.90625}
+{10.3125-7.5625} \]</span></p>
+<p>Reduce:</p>
+<p><span class="math display">\[ b_1= \frac{318.75}{2.75} \]</span></p>
+<p>Therefore:</p>
+<span class="math display">\[ \boxed{b_1=115.91} \]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg6.jpg" alt="Coeffient of Syllables 6" width="700"/></p>
+<pre class="r"><code>b1=((sum(word_data$xi_avgXyi_avg)*sum(word_data$xii_xsqrt))-(sum(word_data$xii_avgXyi_avg)*sum(word_data$xi_avgXxii_avg)))/((sum(word_data$xi_xsqrt)*sum(word_data$xii_xsqrt))-(sum(word_data$xi_avgXxii_avg)^2))
+
+b1
+[1] 115.9091
+
+#Easier
+x1 = word_data$Syllables - mean(word_data$Syllables)
+x2 = word_data$SexNum - mean(word_data$SexNum)
+y = word_data$Duration_ms - mean(word_data$Duration_ms)
+
+S11 = sum(x1^2)
+S22 = sum(x2^2)
+S12 = sum(x1 * x2)
+S1Y = sum(x1 * y)
+S2Y = sum(x2 * y)
+
+b1 = ((S1Y * S22) - (S2Y * S12)) /
+     ((S11 * S22) - (S12^2))
+
+b1
+[1] 115.9091</code></pre>
+</details>
+<p>So, after accounting for <code>Sex</code>, each additional
+<code>syllable</code> is associated with an estimated increase of
+approximately 115.91 ms in word duration.</p>
+</div>
+<div id="calculating-b_2-the-coefficient-for-sex" class="section level2"
+number="6.2">
+<h2><span class="header-section-number">6.2</span> Calculating <span
+class="math inline">\(b_2\)</span>: the coefficient for Sex</h2>
+<p>We do essentially the same calculation for our second predictor:</p>
+<p><span class="math display">\[ b_2= \frac {S_{2Y}S_{11}-S_{1Y}S_{12}}
+{S_{11}S_{22}-S_{12}^2} \]</span></p>
+<p>Substitute the values:</p>
+<p><span class="math display">\[ b_2= \frac
+{(346.875)(5.5)-(678.75)(2.75)} {(5.5)(1.875)-(2.75)^2} \]</span></p>
+<p>Calculate the products:</p>
+<p><span class="math display">\[ b_2= \frac {1907.8125-1866.5625}
+{10.3125-7.5625} \]</span></p>
+<p>Reduce:</p>
+<p><span class="math display">\[ b_2= \frac{41.25}{2.75} \]</span></p>
+<p>Therefore:</p>
+<p><span class="math display">\[ \boxed{b_2=15} \]</span></p>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg7.jpg" alt="Coeffient of Syllables 7" width="700"/></p>
+<pre class="r"><code>b2 = ((S2Y * S11) - (S1Y * S12)) /
+     ((S11 * S22) - (S12^2))
+
+b2
+[1] 15</code></pre>
+</details>
+<p>This means that, after accounting for the number of
+<code>syllables</code>, <code>males</code> are predicted to have word
+durations approximately 15 ms longer than <code>females</code>. Probably
+not linguistically relevant whether or not it is significant!</p>
+</div>
+<div id="calculating-b_0-the-intercept" class="section level2"
+number="6.3">
+<h2><span class="header-section-number">6.3</span> Calculating <span
+class="math inline">\(b_0\)</span>: the intercept</h2>
+<p>Once we know both coefficients, calculating the intercept is
+relatively straightforward:</p>
+<p><span class="math display">\[ b_0= \bar Y-b_1\bar X_1-b_2\bar X_2
+\]</span></p>
+<p>Our means are:</p>
+<p><span class="math display">\[ \bar Y=425.625 \]</span> <span
+class="math display">\[ \bar X_1=2.25 \]</span> <span
+class="math display">\[ \bar X_2=0.625 \]</span></p>
+<p>So:</p>
+<p><span class="math display">\[ b_0=
+425.625-(115.9091)(2.25)-(15)(0.625) \]</span></p>
+<p>Multiply:</p>
+<p><span class="math display">\[ b_0= 425.625-260.7955-9.375
+\]</span></p>
+<p>Therefore:</p>
+<span class="math display">\[ \boxed{b_0=155.45} \]</span>
+<details>
+<summary>
+Click here to reveal the calculation using Excel and R:
+</summary>
+<p><img src="RegStruct_images/multipleReg8.jpg" alt="Coeffient of Syllables 8" width="700"/></p>
+<pre class="r"><code>b0 = mean(word_data$Duration_ms) -
+     (b1 * mean(word_data$Syllables)) -
+     (b2 * mean(word_data$SexNum))
+
+b0
+[1] 155.4545</code></pre>
+</details>
+<p>And if we run our regression model now:</p>
+<pre class="r"><code>model5=lm(Duration_ms ~ Syllables + Sex,data = word_data)
+summary(model5)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   155.45      21.86   7.113 0.000852 ***
+Syllables     115.91      14.52   7.984 0.000497 ***
+SexM           15.00      24.86   0.603 0.572629    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.58 on 5 degrees of freedom
+Multiple R-squared:  0.9819,    Adjusted R-squared:  0.9747 
+F-statistic: 135.7 on 2 and 5 DF,  p-value: 4.403e-05</code></pre>
+<p>Write up:</p>
+<blockquote>
+<p>The multiple regression model showed that <code>Syllables</code> was
+a strong predictor of word duration, while <code>Sex</code> was not.
+Holding <code>Sex</code> constant, each additional <code>syllable</code>
+was associated with an estimated 115.91 ms increase in duration (<span
+class="math inline">\(b = 115.91\)</span>, SE = 14.52, <span
+class="math inline">\(t = 7.98\)</span>, <span class="math inline">\(p
+&lt; .001\)</span>). Holding <code>Syllables</code> constant,
+<code>male</code> speakers were estimated to have durations 15 ms longer
+than <code>female</code> speakers, but this difference was not
+statistically significant (<span class="math inline">\(b =
+15.00\)</span>, SE = 24.86, <span class="math inline">\(t =
+0.60\)</span>, <span class="math inline">\(p = .573\)</span>).</p>
+</blockquote>
+<blockquote>
+<p>The model as a whole was statistically significant, <span
+class="math inline">\(F(2,5)=135.7\)</span>, <span
+class="math inline">\(p &lt; .001\)</span>, and explained approximately
+98.2% of the variation in word duration (<span
+class="math inline">\(R^2=.982\)</span>, adjusted <span
+class="math inline">\(R^2=.975\)</span>). The intercept of 155.45 ms
+represents the predicted duration for a <code>female</code> speaker when
+<code>Syllables</code> = 0, although a zero-syllable word is not
+linguistically meaningful in this dataset.</p>
+</blockquote>
+</div>
+</div>
+<div
+id="why-we-will-generally-use-regression-rather-than-separate-significance-tests"
+class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Why we will generally
+use regression rather than separate significance tests</h1>
+<p>You may have encountered statistical tests such as
+<strong>t-tests</strong> and <strong>ANOVAs</strong>. These tests can be
+useful, but in this course we will generally use <strong>regression
+models whenever the research question can be expressed as a
+regression</strong>.</p>
+<p>One reason is that many familiar statistical tests are actually
+special cases of regression.</p>
+<p>For example, suppose we want to know whether word duration differs
+between <code>males</code> and <code>females</code>. We could conduct a
+t-test with equal variance:<br />
+Note: equal variance means assuming that the amount of variability
+within each group is approximately the same. For example, an
+equal-variance t-test assumes that word durations vary by roughly the
+same amount among males and females (<code>lm()</code> does this by
+default).</p>
+<pre class="r"><code>#T-test
+t.test(Duration_ms ~ Sex, data = word_data, var.equal = TRUE)
+
+    Two Sample t-test
+
+data:  Duration_ms by Sex
+t = -4.2567, df = 6, p-value = 0.005341
+alternative hypothesis: true difference in means between group F and group M is not equal to 0
+95 percent confidence interval:
+ -291.34609  -78.65391
+sample estimates:
+mean in group F mean in group M 
+            310             495 </code></pre>
+<p>This tells us that there is a significant difference between
+<code>Females</code> and <code>Males</code>: <strong>P-Value =
+0.005341</strong></p>
+<p>An <strong>Anova</strong> test tells us essentially the same
+information.</p>
+<pre class="r"><code>#Anova test
+aov_mod=aov(Duration_ms ~ Sex, data = word_data)
+summary(aov_mod)
+
+            Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+Sex          1  64172   64172   18.12 0.00534 **
+Residuals    6  21250    3542                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</code></pre>
+<p>And, a linear regression also provides the same information:</p>
+<pre class="r"><code>#Linear regression
+model2=lm(Duration_ms~Sex, data=word_data)
+summary(model2)
+
+Call:
+lm(formula = Duration_ms ~ Sex, data = word_data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-90.00 -35.00   7.50  31.25  80.00 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   310.00      34.36   9.022 0.000104 ***
+SexM          185.00      43.46   4.257 0.005341 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 59.51 on 6 degrees of freedom
+Multiple R-squared:  0.7512,    Adjusted R-squared:  0.7098 
+F-statistic: 18.12 on 1 and 6 DF,  p-value: 0.005341</code></pre>
+<p>The major advantage of the linear regression is that it gives us an
+estimate of the size and direction of the effect. Here,
+<code>SexM = 185</code> tells us that male speakers have word durations
+that are estimated to be 185 ms longer than female speakers, on average.
+The estimated is presented <em>USING THE METRIC OF INTEREST!</em> This
+is much more informative than simply knowing that the difference is
+statistically significant.</p>
+<p>This distinction is especially important in <strong>linguistic
+analysis</strong>. A result can be statistically significant while the
+actual effect is so small that it has little or no linguistic relevance.
+Regression allows us to ask both whether an effect is BOTH
+<strong>statistically reliable</strong> and whether its estimated size
+is <strong>meaningful for the linguistic phenomenon</strong> we are
+studying.</p>
+<div id="multiple-predictors" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Multiple
+predictors</h2>
+<p>One of the major advantages of regression, as we saw in the previous
+section, is that we can include <strong>multiple predictors in the same
+model</strong> and estimate the contribution of each while accounting
+for the others.</p>
+<p>This is especially important in linguistic analysis because
+linguistic variables are rarely influenced by only one factor.
+<code>Word duration</code>, for example, may depend simultaneously on
+the number of <code>syllables</code>, characteristics of the speaker,
+the speaker’s <code>region</code>, <code>speech rate</code>,
+<code>phonological environment</code>, and other linguistic or social
+factors.</p>
+<p>A standard independent-samples t-test cannot accommodate this kind of
+structure because it compares two groups defined by a single predictor.
+Similarly, a standard chi-square test of independence examines the
+association between two categorical variables.</p>
+<p>ANOVA can be extended further. A <strong>factorial ANOVA</strong> can
+contain multiple categorical predictors, while an
+<strong>ANCOVA</strong> (<em>Analysis of Covariance</em>) can combine
+categorical and numeric predictors. In fact, these belong to the same
+general linear-model framework as <code>lm()</code>. However, regression
+output gives us the individual <strong>coefficient estimates</strong>
+that are particularly useful for linguistic interpretation: the size and
+direction of an effect while the other predictors are held constant.</p>
+<pre class="r"><code>model3 = lm(Duration_ms ~ Sex + Syllables, data = word_data)
+summary(model3)</code></pre>
+<p>This produces a separate coefficient estimate for each predictor:</p>
+<pre class="r"><code>Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   155.45      21.86   7.113 0.000852 ***
+SexM           15.00      24.86   0.603 0.572629    
+Syllables     115.91      14.52   7.984 0.000497 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.58 on 5 degrees of freedom
+Multiple R-squared:  0.9819,    Adjusted R-squared:  0.9747 
+F-statistic: 135.7 on 2 and 5 DF,  p-value: 4.403e-05</code></pre>
+<p>In the previous section, we saw that the simple model suggested that
+<code>males</code> had word durations approximately 185 ms longer than
+<code>females</code>. Once <code>Syllables</code> was added to the
+model, however, the estimated effect of <code>Sex</code> fell to only 15
+ms and was no longer statistically significant.</p>
+<p>This illustrates one of the main reasons we use multiple regression:
+an apparent effect of one variable may actually reflect variation
+associated with another predictor. Regression allows us to estimate
+these effects simultaneously rather than examining each variable in
+isolation.</p>
+</div>
+<div id="what-about-ancova" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> What about
+ANCOVA?</h2>
+<p>ANOVA can also be extended to include a mixture of categorical and
+numeric predictors. This is traditionally called <strong>ANCOVA</strong>
+(<em>Analysis of Covariance</em>).</p>
+<p>For example, we could analyse <code>Sex</code> as a categorical
+predictor and <code>Syllables</code> as a numeric predictor:</p>
+<pre class="r"><code>ancova_mod = aov(Duration_ms ~ Sex + Syllables, data = word_data)
+summary(ancova_mod)
+
+            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Sex          1  64172   64172  207.62  2.9e-05 ***
+Syllables    1  19705   19705   63.75 0.000497 ***
+Residuals    5   1545     309                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</code></pre>
+<p>This is modelling essentially the same relationship as:</p>
+<pre class="r"><code>model3 = lm(Duration_ms ~ Sex + Syllables, data = word_data)
+summary(model3)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   155.45      21.86   7.113 0.000852 ***
+SexM           15.00      24.86   0.603 0.572629    
+Syllables     115.91      14.52   7.984 0.000497 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 17.58 on 5 degrees of freedom
+Multiple R-squared:  0.9819,    Adjusted R-squared:  0.9747 
+F-statistic: 135.7 on 2 and 5 DF,  p-value: 4.403e-05</code></pre>
+<p>So ANCOVA <strong>can</strong> accommodate the kind of mixture of
+predictors that we commonly encounter in linguistic data. In fact,
+ANCOVA and multiple linear regression are not fundamentally different
+statistical models. Both belong to the general linear-model
+framework.</p>
+<p>The problem for our purposes is that the standard ANCOVA output
+focuses on <strong>F-tests for each predictor</strong>:</p>
+<details>
+<summary>
+Click to reveal the explanation of the F-test:
+</summary>
+An F-test asks whether a predictor, or a set of predictors, explains
+enough variation in the dependent variable to be unlikely under the null
+hypothesis. A large <span class="math inline">\(F\)</span>-value means
+the model is explaining a lot of variation relative to the amount of
+variation left over in the residuals. That large <span
+class="math inline">\(F\)</span>-value can then produce a small p-value.
+This tells us whether each predictor accounts for significant variation,
+but it does <strong>not</strong> directly give us the <strong>size and
+direction of the effect</strong>.
+</details>
+</div>
+<div id="generalization" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Generalization</h2>
+<p>There’s a second issue with <code>aov()</code>. Let’s add another
+predictor to our data set: <code>Province</code> (abbriviated to
+<code>Prov</code>) to test whether speakers from different provinces
+might speak faster or slower.</p>
+<pre class="r"><code>word_data$Prov=c(&quot;BC&quot;, &quot;ON&quot;, &quot;SK&quot;, &quot;ON&quot;, &quot;SK&quot;, &quot;BC&quot;, &quot;AL&quot;, &quot;AL&quot;)</code></pre>
+<p>When a categorical predictor has more than two levels (such as
+<code>Prov</code>), ANOVA and regression present the effect differently.
+A standard ANOVA treats <code>Prov</code> as a single factor and gives
+one overall test asking whether <code>province</code> explains
+significant variation in word duration. It does not tell us directly
+which provinces differ from one another or by how much (we care about
+this as linguists).</p>
+<pre class="r"><code>aov_model4=aov(Duration_ms ~ Prov, data = word_data)
+summary(aov_model4)
+
+            Df Sum Sq Mean Sq F value Pr(&gt;F)  
+Prov         3  72484   24161    7.47 0.0408 *
+Residuals    4  12938    3234                 </code></pre>
+<p><em>Hey, look! A significant difference!</em></p>
+<p>However, linear regression fits the same underlying model but breaks
+the categorical predictor into coefficient estimates relative to a
+reference category. In our example, <code>AL</code> is the reference
+level, so the coefficients for <code>BC</code>, <code>ON</code>, and
+<code>SK</code> tell us how much each province differs from
+<code>AL</code>, and in which direction.</p>
+<pre class="r"><code>model4=lm(Duration_ms ~ Prov, data = word_data)
+summary(model4)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   462.50      40.21  11.501 0.000326 ***
+ProvBC       -192.50      56.87  -3.385 0.027662 *  
+ProvON        -20.00      56.87  -0.352 0.742830    
+ProvSK         65.00      56.87   1.143 0.316829    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 56.87 on 4 degrees of freedom
+Multiple R-squared:  0.8485,    Adjusted R-squared:  0.735 
+F-statistic:  7.47 on 3 and 4 DF,  p-value: 0.04077</code></pre>
+<p>Here we see that the significant difference is <strong>only</strong>
+between <code>Alberta</code> and <code>British Columbia</code>! This
+type of granular analysis is important to linguistic analysis. With an
+Anova, we would have published our paper stating that
+<code>province</code> influences speech rate, when, in fact, this is not
+the case. Compared to <code>Alberta</code>, only
+<code>British Columbia</code> differed significantly, with speech rates
+among speakers from <code>Alberta</code>, <code>Ontario</code>, and
+<code>Saskatchewan</code> not reaching significance.</p>
+<p>Once again, Anova is simply asking “Does <code>Province</code> as a
+whole explain variation in duration?”</p>
+<p><strong>Note:</strong> You can change the reference level as long as
+the choice is motivated by your research question. For example, you
+might decide <em>in advance</em> that your primary interest is in
+comparing <code>British Columbia</code> with the other provinces rather
+than using <code>Alberta</code> as the reference category. Changing the
+reference level itself is not a problem. However, if you inspect the
+results, notice that <code>British Columbia</code> happens to show the
+strongest differences, and then change the reference level or
+reformulate your hypothesis specifically to test that pattern, you are
+moving into <strong>post-hoc analysis</strong>. However, this is not the
+end of the world. YOur study has now shifted into the realm of an
+‘exploratory’ or ‘data-driven’ analysis rather than producing results
+with strong confirmatory evidence. As far as linguistics is concered, we
+rarely get ‘strong confirmatory evidence’ for most things anyway because
+language is exceedly complex. Likewise, if you systematically examine
+many possible pairwise contrasts looking for significant differences,
+you also need to consider the <strong>multiple-comparisons
+problem</strong> discussed below.</p>
+<p><strong>post hoc</strong> = hypothesis chosen or changed because of
+what the data showed; <strong>multiple comparisons</strong> = many
+related tests/contrasts are examined.</p>
+<p>If you want to see how to change the the reference level (change the
+baseline of the intercept), and see why a <strong>post-hoc</strong>
+analysis may sound appetizing, click below to reveal the code.</p>
+<details>
+<summary>
+Click here to see how to change the reference level in R:
+</summary>
+<pre class="r"><code>#This is what I do (renaming a level).
+word_data$Prov[word_data$Prov==&quot;BC&quot;]=&quot;1_BC&quot;
+
+#This is how most people do it.
+word_data$Prov &lt;- relevel(factor(word_data$Prov),ref = &quot;BC&quot;)
+
+#Then rerun your model
+model4=lm(Duration_ms ~ Prov, data = word_data)
+summary(model4)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)   270.00      40.21   6.714  0.00256 **
+ProvAL        192.50      56.87   3.385  0.02766 * 
+ProvON        172.50      56.87   3.033  0.03866 * 
+ProvSK        257.50      56.87   4.528  0.01060 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 56.87 on 4 degrees of freedom
+Multiple R-squared:  0.8485,    Adjusted R-squared:  0.735 
+F-statistic:  7.47 on 3 and 4 DF,  p-value: 0.04077
+
+#Wow, speakers from BC are different from all other provinces under analysis! I bet you wish you formulated your research question based on BC. If you change your hypothesis based on this model result, you&#39;re technically doing a post-hoc analysis, which is frowned upon. It is not the end of the world though. Your study is now considered &#39;exploratory&#39; or &#39;data-driven&#39; rather than strong confirmatory evidence.
+
+#Reset
+word_data$Prov[word_data$Prov==&quot;1_BC&quot;]=&quot;BC&quot;
+#or
+word_data$Prov &lt;- relevel(factor(word_data$Prov),ref = &quot;AL&quot;)</code></pre>
+</details>
+<details>
+<summary>
+Click if you care about more issues with Anova:
+</summary>
+There is also a third problem with <code>aov()</code> that is worth
+mentioning. Base R’s standard <code>aov()</code> table uses sequential
+(Type I) sums of squares. When predictors overlap in what they
+explain—as <code>Sex</code> and <code>Syllables</code> very clearly do
+in this little dataset—the test assigned to a predictor can depend on
+which predictor is entered first in the formula.
+</details>
+</div>
+<div id="a-note-about-multiple-comparisons" class="section level2"
+number="7.4">
+<h2><span class="header-section-number">7.4</span> A note about multiple
+comparisons</h2>
+<p>Whenever we perform <strong>many related statistical tests</strong>,
+the chance of obtaining at least one statistically significant result
+simply by chance increases (a Type 1 error). This is called the
+<strong>multiple-comparisons problem</strong>.</p>
+<p>For example, if we compare several groups using multiple t-tests,
+chi-square tests, or pairwise contrasts from a regression model, each
+test carries some chance of producing a false positive. If we keep
+testing enough comparisons at the usual <span class="math inline">\(p
+&lt; 0.05\)</span> threshold, the overall probability of finding at
+least one apparently significant result becomes larger than 5%.</p>
+<p>One way to control this problem is the <strong>Bonferroni
+correction</strong>. The usual significance threshold is divided by the
+number of comparisons:</p>
+<p><span class="math display">\[
+\alpha_{\text{adjusted}} =
+\frac{\alpha}{\text{number of comparisons}}
+\]</span></p>
+<p>For example, if we perform six related comparisons:</p>
+<p><span class="math display">\[
+\frac{0.05}{6} = 0.0083
+\]</span></p>
+<p>We would therefore require approximately <strong><span
+class="math inline">\(p &lt; 0.0083\)</span></strong> rather than <span
+class="math inline">\(p &lt; 0.05\)</span> for an individual comparison
+to be considered statistically significant.</p>
+<p>Bonferroni is conservative, meaning that it reduces the chance of
+false positives but can also make genuine effects harder to detect. The
+important point is that <strong>multiple-comparison corrections are
+relevant whenever we conduct a family of related hypothesis
+tests</strong>, regardless of whether those tests come from t-tests,
+chi-square tests, ANOVA follow-ups, or regression contrasts.</p>
+<p>For example, suppose we wanted to compare word duration between all
+four provinces in our dataset: <code>AL</code>, <code>BC</code>,
+<code>ON</code>, and <code>SK</code>.</p>
+<p>With four groups, there are six possible pairwise comparisons:</p>
+<ul>
+<li>AL vs. BC</li>
+<li>AL vs. ON</li>
+<li>AL vs. SK</li>
+<li>BC vs. ON</li>
+<li>BC vs. SK</li>
+<li>ON vs. SK</li>
+</ul>
+<p>We could run all six comparisons separately. However, if we treated
+every comparison as significant whenever <span class="math inline">\(p
+&lt; 0.05\)</span>, we would increase our chance of making at least one
+<strong>Type I error</strong>.</p>
+<p>In R, we could run the pairwise tests without any correction:</p>
+<pre class="r"><code>pairwise.t.test(
+  word_data$Duration_ms,
+  word_data$Prov,
+  p.adjust.method = &quot;none&quot;
+)
+
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  word_data$Duration_ms and word_data$Prov 
+
+   AL    BC    ON   
+BC 0.028 -     -    
+ON 0.743 0.039 -    
+SK 0.317 0.011 0.209
+
+P value adjustment method: none </code></pre>
+<p>We also see that there’s a significant difference between
+<code>ON</code> vs. <code>BC</code>, and <code>SK</code>
+vs. <code>BC</code> when <span
+class="math inline">\(p&lt;0.5\)</span>.<br />
+However, because there are multiple comparisons taking place, we would
+need to use Bonferroni correct.</p>
+<p>To apply a Bonferroni correction, we instead use:</p>
+<pre class="r"><code>pairwise.t.test(
+  word_data$Duration_ms,
+  word_data$Prov,
+  p.adjust.method = &quot;bonferroni&quot;
+)
+
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  word_data$Duration_ms and word_data$Prov 
+
+   AL    BC    ON   
+BC 0.166 -     -    
+ON 1.000 0.232 -    
+SK 1.000 0.064 1.000
+
+P value adjustment method: bonferroni 
+</code></pre>
+<p>After correction, we now see that none of the comparisons are
+significant at <span class="math inline">\(p&lt;0.5\)</span>.</p>
+<p>Because there are six comparisons, the Bonferroni-adjusted
+significance threshold is:</p>
+<p><span class="math display">\[ \frac{0.05}{6}=0.0083 \]</span></p>
+<p>R usually handles this by adjusting the p-values rather than
+displaying a new significance threshold. With Bonferroni, an uncorrected
+p-value is multiplied by the number of comparisons:</p>
+<p><span class="math display">\[ p_{\text{adjusted}}=p\times6
+\]</span></p>
+<p>For example, the <code>BC</code> vs. <code>AC</code> comparison
+produced:</p>
+<p><span class="math display">\[ p=0.028 \]</span></p>
+<p>Without correcting for multiple comparisons, we would call this
+significant because <span class="math inline">\(p&lt;.05\)</span>. After
+the Bonferroni correction:</p>
+<p><span class="math display">\[ 0.028\times6=0.168 \]</span> Note:
+there is a minor descripency between this result and the pairwise t-test
+output as we did not calculate the full range of decimals.</p>
+<p>The adjusted result is therefore <span
+class="math inline">\(p=0.168\)</span>, which is not statistically
+significant.</p>
+<p>By contrast, if the original result were <span
+class="math inline">\(p=.004\)</span>:</p>
+<p><span class="math display">\[ .004\times6=.024 \]</span></p>
+<p>it would remain statistically significant even after the
+correction.</p>
+<details>
+<summary>
+But aren’t there already multiple comparisons in the regression output?
+</summary>
+<p>Yes. If Province has four levels and <code>AL</code> is the reference
+level, the regression output contains three coefficient tests:
+<code>BC</code> vs. <code>AL</code>, <code>ON</code>
+vs. <code>AL</code>, and <code>SK</code> vs. <code>AL</code>. These are
+three contrasts, although they are not all possible pairwise comparisons
+among the four provinces (there are six of those). Regression therefore
+does not automatically solve the multiple-comparisons problem. The
+important question is why those contrasts are being tested. If they were
+specified in advance because they correspond to particular research
+hypotheses, we do not necessarily apply a Bonferroni correction simply
+because several coefficients appear in the model. However, if we inspect
+many coefficients or rotate the reference level repeatedly in order to
+search for significant comparisons, we are conducting a family of
+exploratory tests and should consider a multiple-comparisons
+correction.</p>
+<p>In other words: putting comparisons inside a regression model does
+not exempt them from multiple-comparison concerns; what matters is the
+family of hypotheses you are testing and whether those tests were
+planned or explored after seeing the data.</p>
+<p>With four provinces and <code>AL</code> as the intercept, this:</p>
+<pre class="r"><code>model4=lm(Duration_ms ~ Prov, data = word_data)
+summary(model4)
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   462.50      40.21  11.501 0.000326 ***
+ProvBC       -192.50      56.87  -3.385 0.027662 *  
+ProvON        -20.00      56.87  -0.352 0.742830    
+ProvSK         65.00      56.87   1.143 0.316829    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 56.87 on 4 degrees of freedom
+Multiple R-squared:  0.8485,    Adjusted R-squared:  0.735 
+F-statistic:  7.47 on 3 and 4 DF,  p-value: 0.04077</code></pre>
+<p>That gives:</p>
+<p><code>BC</code> vs. <code>AL</code><br />
+<code>ON</code> vs. <code>AL</code><br />
+<code>SK</code> vs. <code>AL</code></p>
+<p>That’s 3 contrasts.</p>
+<p>If you then rotate reference levels until you’ve examined:</p>
+<p><code>AL</code> vs. <code>BC</code><br />
+<code>AL</code> vs. <code>ON</code><br />
+<code>AL</code> vs. <code>SK</code><br />
+<code>BC</code> vs. <code>ON</code><br />
+<code>BC</code> vs. <code>SK</code><br />
+<code>ON</code> vs. <code>SK</code></p>
+You’ve now effectively examined all 6 pairwise contrasts, and that is
+precisely where your multiple-comparisons section becomes relevant.
+</details>
+<div id="manova" class="section level3" number="7.4.1">
+<h3><span class="header-section-number">7.4.1</span> MANOVA</h3>
+<p>You might also encounter <strong>MANOVA (Multivariate Analysis of
+Variance)</strong>. MANOVA is used when a study has more than one
+dependent variable and the researcher wants to test them jointly. For
+example, suppose we wanted to know whether <code>Province</code> affects
+several acoustic measures at the same time, such as
+<code>word duration</code>, <code>pitch</code>, and
+<code>intensity</code>. A MANOVA could test the hypothesis that
+<code>Province</code> has an overall effect on the combined pattern of
+these dependent variables.</p>
+<pre class="r"><code>word_data$Pitch_Hz=c(350, 375, 220, 264, 175, 347, 225, 288)
+word_data$Intensity_dB=c(75, 69, 62, 67, 73, 68, 66, 58)
+
+manova_mod = manova(
+  cbind(Duration_ms, Pitch_Hz, Intensity_dB) ~ Prov,
+  data = word_data
+)
+
+summary(manova_mod)
+
+         Df Pillai approx F num Df den Df Pr(&gt;F)
+Prov       3 1.1931  0.88046      9     12 0.5669
+Residuals  4                                     </code></pre>
+<p>The important difference is that MANOVA is designed for a
+multivariate outcome rather than a single dependent variable. It can be
+useful when the dependent variables are related and the research
+question genuinely concerns their combined behaviour. We will not use
+MANOVA in this course, because our focus will be on regression models
+where we model one dependent variable at a time and interpret the
+individual coefficient estimates directly.</p>
+</div>
+</div>
+</div>
+<div id="why-linguists-use-mixed-effects-models" class="section level1"
+number="8">
+<h1><span class="header-section-number">8</span> Why Linguists Use
+Mixed-Effects Models</h1>
+<p>An ordinary regression might look like this:</p>
+<pre class="r"><code>lm(Duration_ms ~ Syllables + Sex,data = word_data)</code></pre>
+<p>To illurate a mixed effects model, we need repeated speakers and
+repeated words. In the following dataset, we have 2 males and 2 females
+who all repeated the same words.</p>
+<pre class="r"><code>word_data_mix1 &lt;- data.frame(
+  Word = c(&quot;cat&quot;, &quot;table&quot;, &quot;banana&quot;, &quot;computer&quot;, &quot;linguistics&quot;,
+           &quot;dog&quot;, &quot;paper&quot;, &quot;tomato&quot;),
+  Syllables = c(1, 2, 3, 3, 3, 1, 2, 3),
+  Duration_ms = c(280, 390, 510, 495, 545, 260, 405, 520),
+  Speaker=c(&quot;DJT&quot;),
+  Sex=c(&quot;M&quot;)
+)
+
+word_data_mix2 &lt;- data.frame(
+  Word = c(&quot;cat&quot;, &quot;table&quot;, &quot;banana&quot;, &quot;computer&quot;, &quot;linguistics&quot;,
+           &quot;dog&quot;, &quot;paper&quot;, &quot;tomato&quot;),
+  Syllables = c(1, 2, 3, 3, 3, 1, 2, 3),
+  Duration_ms = c(273, 376, 501, 483, 532, 240, 385, 511),
+  Speaker=c(&quot;BHO&quot;),
+  Sex=c(&quot;M&quot;)
+)
+
+word_data_mix3 &lt;- data.frame(
+  Word = c(&quot;cat&quot;, &quot;table&quot;, &quot;banana&quot;, &quot;computer&quot;, &quot;linguistics&quot;,
+           &quot;dog&quot;, &quot;paper&quot;, &quot;tomato&quot;),
+  Syllables = c(1, 2, 3, 3, 3, 1, 2, 3),
+  Duration_ms = c(263, 370, 499, 476, 521, 232, 376, 502),
+  Speaker=c(&quot;HRC&quot;),
+  Sex=c(&quot;F&quot;)
+)
+
+word_data_mix4 &lt;- data.frame(
+  Word = c(&quot;cat&quot;, &quot;table&quot;, &quot;banana&quot;, &quot;computer&quot;, &quot;linguistics&quot;,
+           &quot;dog&quot;, &quot;paper&quot;, &quot;tomato&quot;),
+  Syllables = c(1, 2, 3, 3, 3, 1, 2, 3),
+  Duration_ms = c(260, 349, 483, 460, 536, 221, 367, 500),
+  Speaker=c(&quot;AOC&quot;),
+  Sex=c(&quot;F&quot;)
+)
+
+word_data_mixed=rbind(word_data_mix1,word_data_mix2,word_data_mix3,word_data_mix4)
+
+word_data_mixed
+
+          Word Syllables Duration_ms Speaker Sex
+1          cat         1         280     DJT   M
+2        table         2         390     DJT   M
+3       banana         3         510     DJT   M
+4     computer         3         495     DJT   M
+5  linguistics         3         545     DJT   M
+6          dog         1         260     DJT   M
+7        paper         2         405     DJT   M
+8       tomato         3         520     DJT   M
+9          cat         1         273     BHO   M
+10       table         2         376     BHO   M
+11      banana         3         501     BHO   M
+12    computer         3         483     BHO   M
+13 linguistics         3         532     BHO   M
+14         dog         1         240     BHO   M
+15       paper         2         385     BHO   M
+16      tomato         3         511     BHO   M
+17         cat         1         263     HRC   F
+18       table         2         370     HRC   F
+19      banana         3         499     HRC   F
+20    computer         3         476     HRC   F
+21 linguistics         3         521     HRC   F
+22         dog         1         232     HRC   F
+23       paper         2         376     HRC   F
+24      tomato         3         502     HRC   F
+25         cat         1         260     AOC   F
+26       table         2         349     AOC   F
+27      banana         3         483     AOC   F
+28    computer         3         460     AOC   F
+29 linguistics         3         536     AOC   F
+30         dog         1         221     AOC   F
+31       paper         2         367     AOC   F
+32      tomato         3         500     AOC   F</code></pre>
+<p>A mixed-effects model can additionally account for repeated
+observations from the same speakers and items:</p>
+<pre class="r"><code>lmer(Duration_ms ~ Syllables + Sex + (1 | Speaker) + (1 | Word),data = word_data_mixed)</code></pre>
+<p>We still use the summary function to observe the model output:</p>
+<pre class="r"><code>model5=lmer(Duration_ms ~ Syllables + Sex + (1 | Speaker) + (1 | Word),data = word_data_mixed)
+summary(model5)
+
+Linear mixed model fit by REML [&#39;lmerMod&#39;]
+Formula: Duration_ms ~ Syllables + Sex + (1 | Speaker) + (1 | Word)
+   Data: word_data_mixed
+
+REML criterion at convergence: 221.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.6452 -0.5588 -0.1002  0.4420  2.7069 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 344.67   18.565  
+ Speaker  (Intercept)  53.41    7.308  
+ Residual              34.73    5.893  
+Number of obs: 32, groups:  Word, 8; Speaker, 4
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  118.179     19.930   5.930
+Syllables    125.670      8.015  15.679
+SexM          18.187      7.600   2.393
+
+Correlation of Fixed Effects:
+          (Intr) Syllbl
+Syllables -0.905       
+SexM      -0.191  0.000</code></pre>
+<ul>
+<li>This output looks similar to our ordinary model. We have an
+intercept value (a <code>0</code> syllable with a value of
+<code>8 ms</code>).<br />
+</li>
+<li>A <code>Syllables</code> value of 126 ms (we can say that for every
+syllable added to a word, there is an average increase of 126 ms in
+duration.)<br />
+</li>
+<li><code>Males</code> speak slightly slower than <code>females</code>
+by on average <code>18 ms</code>.</li>
+</ul>
+<p>Therefore, based on this model, we can predict that a
+<code>male</code> producing a word with 4 <code>syllables</code> will
+take, on average, 638.68 ms.</p>
+<pre class="r"><code>118+(125.67*4)+18
+[1] 638.68</code></pre>
+<p>The difference is that these fixed-effect estimates are calculated
+after accounting for systematic variation among <code>speakers</code>
+and among <code>words</code>, rather than treating all observations as
+completely independent.</p>
+<p>Therefore, mixed-effects models can produce more precise estimates
+and predictions when observations are grouped within
+<code>speakers</code>, <code>words</code>, or other repeated units,
+because they explicitly account for that systematic variation.</p>
+<p>If you call <code>ranef()</code> on this model, you obtain the
+estimated random-intercept adjustment for every <code>Speaker</code> and
+every <code>Word</code>.</p>
+<pre class="r"><code>ranef(model5)
+$Word
+            (Intercept)
+banana        -5.885810
+cat           15.662240
+computer     -25.150476
+dog          -14.332113
+linguistics   28.497961
+paper          4.522430
+table         -7.182683
+tomato         3.868451
+
+$Speaker
+    (Intercept)
+AOC   -3.641504
+BHO   -6.011372
+DJT    6.011372
+HRC    3.641504</code></pre>
+<p>Say you want predict the duration of a specific person e.g.,
+<code>AOC</code> when she produces the word <code>banana</code>.</p>
+<p><span class="math display">\[ \hat{Y} = 118.179 + 125.670(3) +
+18.187(0) -3.641504 -5.885810 \]</span> <span class="math display">\[ =
+118.179+377.010-3.641504-5.885810 \]</span> <span
+class="math display">\[ \boxed{\hat{Y}=485.66\text{ ms}} \]</span></p>
+<p>Intercept = 118.179<br />
+Syllables = 125.670(3) <code>banana</code> has three syllables<br />
+Sex = 18.187(0) <code>sexF</code> has a value of <code>0</code><br />
+AOC = -3.641504<br />
+Banana = -5.885810</p>
+<pre class="r"><code>(118.179)+(125.670*3)+(18.187*0)+(-3.641504)+(-5.885810)
+[1] 485.6617</code></pre>
+<blockquote>
+<p>Therefore, AOC is predicted to say the word <code>banana</code> with
+an average duration of 485.66 ms.</p>
+</blockquote>
+<p>Even if you don’t care about a specific speaker or word,
+mixed-effects models account for systematic variation among
+<code>speakers</code> and among <code>words</code>, producing more
+precise estimates and predictions within the fixed-effects.</p>
+<p><img src="RegStruct_images/lmem.jpg" alt="linear mixed effects" width="1100"/></p>
+<p>At this point, the important idea is simply:</p>
+<blockquote>
+<p>Ordinary regression assumes that every observation is independent.
+Mixed-effects regression allows us to account for observations that are
+grouped within speakers, words, items, or other repeated units.</p>
+</blockquote>
+<p>We will examine how mixed-effects models do this in the next
+module.</p>
+<p>Also, note. We are <strong>done</strong> with formal math equations,
+but this is what a mixed effects model would look like with
+<code>2</code> random effects and <code>4</code> fixed effects (a pretty
+common model structure):</p>
+<p><span class="math display">\[ Y_{ijk} = \beta_0 +\beta_1X_{1ijk}
++\beta_2X_{2ijk} +\beta_3X_{3ijk} +\beta_4X_{4ijk} +u_j +v_k
++\epsilon_{ijk} \]</span></p>
+<p>where:</p>
+<p><span class="math inline">\(\beta_0\)</span> = overall
+intercept<br />
+<span class="math inline">\(\beta_1 \ldots \beta_4\)</span> =
+coefficients for the four fixed effects<br />
+<span class="math inline">\(i\)</span> = the individual
+observation/token<br />
+<span class="math inline">\(j\)</span> = the speaker<br />
+<span class="math inline">\(k\)</span> = the word<br />
+<span class="math inline">\(u_j\)</span> = random intercept for grouping
+factor 1, e.g. Speaker<br />
+<span class="math inline">\(v_k\)</span> = random intercept for grouping
+factor 2, e.g. Word<br />
+<span class="math inline">\(\epsilon_{ijk}\)</span> = residual error</p>
+<p>The random effects are assumed to vary around zero:</p>
+<p><span class="math display">\[ u_j \sim N(0,\sigma^2_{\text{Speaker}})
+\]</span> <span class="math display">\[ v_k \sim
+N(0,\sigma^2_{\text{Word}}) \]</span></p>
+</div>
+<div id="putting-the-pieces-together" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Putting the Pieces
+Together</h1>
+<p>The progression from descriptive statistics to regression can be
+summarized as:</p>
+<pre class="text"><code>Describe the data
+        ↓
+Identify a relationship of interest
+        ↓
+Ask how much uncertainty surrounds the observed pattern
+        ↓
+Fit a regression model
+        ↓
+Estimate coefficients
+        ↓
+Compare estimates with their uncertainty
+        ↓
+Interpret the relationship in linguistic terms</code></pre>
+<p>For simple data, an ordinary regression may be sufficient.</p>
+<p>For repeated linguistic observations, we will usually need to extend
+this structure using mixed effects.</p>
+</div>
+<div id="key-terms" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Key Terms</h1>
+<p><strong>Dependent variable (DV):</strong> The outcome the model
+attempts to explain.</p>
+<p><strong>Predictor / independent variable (IV):</strong> A variable
+used to explain variation in the dependent variable.</p>
+<p><strong>Intercept:</strong> The predicted value of the dependent
+variable when the predictor is zero, or when categorical predictors are
+at their reference level.</p>
+<p><strong>Slope / coefficient:</strong> The estimated change in the
+dependent variable associated with a one-unit change in a predictor.</p>
+<p><strong>Predicted value:</strong> The value estimated by the
+regression equation.</p>
+<p><strong>Residual:</strong> The difference between the observed value
+and the value predicted by the model.</p>
+<p><strong>Standard error:</strong> A measure of uncertainty around a
+coefficient estimate.</p>
+<p><strong><em>t</em>-value:</strong> The coefficient estimate divided
+by its standard error.</p>
+<p><strong><em>p</em>-value:</strong> The probability of obtaining the
+observed result, or something more extreme, under the null model.</p>
+<p><strong>Reference level:</strong> The categorical level against which
+other levels are compared.</p>
+<p><strong>Fixed effect:</strong> A predictor whose relationship with
+the dependent variable is directly estimated.</p>
+<p><strong>Random effect / grouping variable:</strong> A term that
+accounts for repeated or non-independent observations arising from
+speakers, words, items, or similar groups.</p>
+</div>
+<div id="summary" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Summary</h1>
+<p>Regression is a way of describing how a dependent variable changes in
+relation to one or more predictors.</p>
+<p>A simple regression fits a line:</p>
+<p><span class="math display">\[
+\hat{Y} = b_0 + b_1X
+\]</span></p>
+<p>The intercept gives the baseline prediction, the slope gives the
+estimated effect of the predictor, and residuals measure the difference
+between observed and predicted values.</p>
+<p>The same framework can represent familiar tests such as a two-group
+<em>t</em>-test, and it can be expanded to include multiple
+predictors.</p>
+<p>The remaining problem is that linguistic datasets often contain
+repeated measurements from the same speakers and words. In the next
+module, we will extend the regression structure to account for this
+non-independence using <strong>linear mixed-effects models</strong>.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
