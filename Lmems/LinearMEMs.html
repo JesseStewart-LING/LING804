@@ -1,0 +1,3180 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Dr. Jesse Stewart" />
+
+<meta name="date" content="2026-08-25" />
+
+<title>Linear Mixed Effects Modeling</title>
+
+<script src="LinearMEMs_files/header-attrs-2.28/header-attrs.js"></script>
+<script src="LinearMEMs_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="LinearMEMs_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="LinearMEMs_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="LinearMEMs_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="LinearMEMs_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="LinearMEMs_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="LinearMEMs_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="LinearMEMs_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="LinearMEMs_files/navigation-1.1/tabsets.js"></script>
+<link href="LinearMEMs_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="LinearMEMs_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Linear Mixed Effects Modeling</h1>
+<h4 class="author">Dr. Jesse Stewart</h4>
+<h4 class="date">2026-08-25</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>Mixed-effects models are powerful tools for analysing linguistic data
+because they allow us to examine systematic patterns while still
+accounting for the messy variability that naturally comes from speakers
+and words. Unlike the simpler statistical tests you may have encountered
+before, mixed-effects models do not assume that every data point is
+fully independent. Instead, they let us model both the fixed effects—the
+predictors we are directly interested in testing—and the random
+effects—sources of variation such as speakers or lexical items that we
+want to control for rather than treat as “noise”. By combining these two
+dimensions, mixed-effects models give us a way to look for generalizable
+trends in language behaviour while still respecting the structure of our
+data.<br />
+<br> These models have become the standard in linguistic publications,
+often replacing traditional ANOVAs or t-tests. Reviewers and editors now
+frequently expect results to be framed through mixed-effects modelling.
+Learning how these models work will therefore not only help us
+understand how patterns in language emerge but also prepare you to read,
+evaluate, and eventually produce research that meets the expectations of
+the field.<br />
+<br></p>
+</div>
+<div id="data-exploration" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Data exploration</h1>
+<p>We’ll be working with the following libraries:</p>
+<pre class="r"><code>library(readr)
+library(readxl)
+library(ggplot2)
+library(gridExtra)
+library(lme4)
+library(dplyr)
+library(tidyverse)</code></pre>
+<p>Download <a
+href="/datasets/VOT_Spanish/Spanish_VOT.xlsx">Spanish_VOT.xlsx</a></p>
+<p>Load the dataset:</p>
+<pre class="r"><code>library(readxl)
+vot &lt;- read_excel(&quot;C:/Users/mikey/Dropbox/website/GitHub/LING804/Lmems/Spanish_VOT.xlsx&quot;)
+View(vot)</code></pre>
+<p><img src="VOT_images/VOT_dataset1.jpg" alt="VOT dataset" width="1000"/></p>
+<div id="understand-the-dataset" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Understand the
+dataset</h2>
+<p>Before fitting a statistical model, we first need to understand the
+structure of our dataset. This means identifying what each row
+represents, what variables are available, how those variables are coded,
+and whether the data contain any obvious problems such as missing
+values. We also need to identify which observations are related to one
+another. This is especially important for mixed-effects models because
+repeated observations from the same speakers or words are not
+statistically independent.</p>
+<p>For this example, we will use a dataset containing <strong>voice
+onset time (VOT)</strong> measurements from speakers of two varieties of
+Spanish: <strong>Madrid Spanish</strong> and <strong>Mexico City
+Spanish</strong>. Each speaker produced a series of word-initial voiced
+and voiceless stops. Our dependent variable is <code>VOT_ms</code>,
+measured in milliseconds. Positive values indicate that voicing begins
+after the release of the stop, while negative values indicate that
+voicing begins before the release.</p>
+<div id="look-at-the-first-few-rows" class="section level3"
+number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Look at the first
+few rows</h3>
+<p>A good first step with any new dataset is simply to look at it.</p>
+<pre class="r"><code>head(vot)</code></pre>
+<p><img src="VOT_images/VOT_head.jpg" alt="headings" width="750"/></p>
+<p>Each <strong>row</strong> represents one VOT measurement: one word
+produced by one speaker.</p>
+<p>We can also look at the names of all of the variables in the
+dataset.</p>
+<pre class="r"><code>names(vot)</code></pre>
+<p><img src="VOT_images/VOT_names.jpg" alt="names of columns" width="750"/></p>
+<p>The dataset contains the following variables:</p>
+<ul>
+<li><code>Token</code>: a unique identifier for each observation</li>
+<li><code>Speaker</code>: the speaker who produced the word</li>
+<li><code>Dialect</code>: Madrid or Mexico City Spanish</li>
+<li><code>Sex</code>: sex of the speaker</li>
+<li><code>Word_ID</code>: a unique identifier for the lexical item</li>
+<li><code>Pair_ID</code>: identifies matched voiced–voiceless word
+pairs</li>
+<li><code>Word</code>: the word that was produced</li>
+<li><code>Consonant</code>: the initial consonant (/p, t, k, b, d,
+g/)</li>
+<li><code>Voicing</code>: voiced or voiceless</li>
+<li><code>Place</code>: bilabial, dental, or velar</li>
+<li><code>Following_Vowel</code>: the vowel following the stop</li>
+<li><code>VOT_ms</code>: voice onset time in milliseconds</li>
+</ul>
+</div>
+<div id="examine-the-structure-of-the-dataset" class="section level3"
+number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Examine the
+structure of the dataset</h3>
+<p>The <code>str()</code> function gives us information about both the
+observations and the way R has interpreted each variable.</p>
+<pre class="r"><code>str(vot)</code></pre>
+<p><img src="VOT_images/VOT_str.jpg" alt="structure" width="500"/></p>
+<p>Pay particular attention to whether variables have been read as
+<strong>numeric</strong> or <strong>categorical</strong> variables.
+<code>VOT_ms</code> should be numeric, whereas variables such as
+<code>Speaker</code>, <code>Dialect</code>, <code>Voicing</code>, and
+<code>Place</code> represent categories.</p>
+<p>We can also ask R how large the dataset is.</p>
+<pre class="r"><code>dim(vot)</code></pre>
+<p><img src="VOT_images/VOT_dim.jpg" alt="dimensions" width="200"/></p>
+<p>Or examine the number of rows and columns separately.</p>
+<pre class="r"><code>nrow(vot)
+ncol(vot)</code></pre>
+<p><img src="VOT_images/VOT_n.jpg" alt="number of rows and number of columns" width="100"/></p>
+<p>There are 2,000 observations in the dataset.</p>
+</div>
+<div id="summarize-the-variables" class="section level3" number="2.1.3">
+<h3><span class="header-section-number">2.1.3</span> Summarize the
+variables</h3>
+<p>The <code>summary()</code> function provides a quick overview of
+every variable.</p>
+<pre class="r"><code>summary(vot)</code></pre>
+<p><img src="VOT_images/VOT_summary.jpg" alt="Summarize the dataset" width="750"/></p>
+<p>For numeric variables such as <code>VOT_ms</code>, R reports values
+such as the minimum, maximum, median, and mean. For categorical
+variables, the usefulness of <code>summary()</code> depends on how those
+variables have been coded.</p>
+<p>We can examine the VOT measurements separately.</p>
+<pre class="r"><code>summary(vot$VOT_ms)</code></pre>
+<p><img src="VOT_images/VOT_summaryVOT.jpg" alt="Summarize the VOT column" width="500"/></p>
+<p>Notice that the dataset contains both <strong>negative and positive
+VOT values</strong>. This is expected. The Spanish voiced stops /b, d,
+g/ are frequently prevoiced in word-initial position and therefore have
+negative VOT, while the voiceless stops /p, t, k/ generally have
+positive short-lag VOT.</p>
+<p>If <code>VOT_ms</code> is not numeric, run the following:</p>
+<pre class="r"><code>vot$VOT_ms=as.numeric(vot$VOT_ms)</code></pre>
+</div>
+<div id="examine-categorical-variables" class="section level3"
+number="2.1.4">
+<h3><span class="header-section-number">2.1.4</span> Examine categorical
+variables</h3>
+<p>The <code>table()</code> function is useful for seeing how many
+observations belong to each category.</p>
+<pre class="r"><code>table(vot$Dialect)</code></pre>
+<p><img src="VOT_images/VOT_tables.jpg" alt="table function with dialect" width="200"/></p>
+<pre class="r"><code>table(vot$Sex)</code></pre>
+<p><img src="VOT_images/VOT_tablessex.jpg" alt="table function with sex" width="200"/></p>
+<p>We can also examine combinations of variables.</p>
+<p>For example, how are the individual consonants distributed across
+dialects?</p>
+<pre class="r"><code>table(vot$Dialect, vot$Consonant)</code></pre>
+<p><img src="VOT_images/VOT_tablesdialectCon.jpg" alt="table function with dialect and consonant" width="300"/></p>
+<p>Or how are place of articulation and voicing related?</p>
+<pre class="r"><code>table(vot$Place, vot$Voicing)</code></pre>
+<p><img src="VOT_images/VOT_tablesPlaceVoice.jpg" alt="table function with place and voicing" width="250"/></p>
+<p>This second table is particularly important. <code>Place</code> and
+<code>Voicing</code> are not simply different names for the same
+information. Each place of articulation occurs with both a voiced and a
+voiceless consonant:</p>
+<ul>
+<li>Bilabial: /p/ and /b/</li>
+<li>Dental: /t/ and /d/</li>
+<li>Velar: /k/ and /g/</li>
+</ul>
+<p>This means that we can examine the effects of
+<strong>Voicing</strong> and <strong>Place</strong> separately, as well
+as ask whether the effect of place differs between voiced and voiceless
+stops.</p>
+</div>
+<div id="how-many-speakers-are-there" class="section level3"
+number="2.1.5">
+<h3><span class="header-section-number">2.1.5</span> How many speakers
+are there?</h3>
+<p>Because we will eventually use <code>Speaker</code> as a random
+effect, we need to understand its structure.</p>
+<pre class="r"><code>length(unique(vot$Speaker))</code></pre>
+<p><img src="VOT_images/VOT_lengthSpeaker.jpg" alt="number of speakers" width="250"/></p>
+<p>We can also see which speakers occur in the dataset.</p>
+<pre class="r"><code>unique(vot$Speaker)</code></pre>
+<p><img src="VOT_images/VOT_UniqueSpeaker.jpg" alt="Unique speakers" width="750"/></p>
+<p>And determine how many observations each speaker contributes.</p>
+<pre class="r"><code>table(vot$Speaker)</code></pre>
+<p><img src="VOT_images/VOT_SpeakerToken.jpg" alt="Number of tokens per speaker" width="750"/></p>
+<p>Each speaker contributes many observations. This is important because
+measurements from the same speaker are unlikely to be completely
+independent. Some speakers may systematically produce longer or shorter
+VOT values than others. Also, although each speaker has exactly 200,
+this is almost never the case with a real linguistics dataset.</p>
+<p>We can also see how speakers are distributed across
+<code>dialect</code> and <code>sex</code>.</p>
+<pre class="r"><code>table(vot$Dialect, vot$Sex)</code></pre>
+<p><img src="VOT_images/VOT_DialectSex.jpg" alt="Tabling dialect and sex" width="250"/></p>
+</div>
+<div id="how-many-words-are-there" class="section level3"
+number="2.1.6">
+<h3><span class="header-section-number">2.1.6</span> How many words are
+there?</h3>
+<p>Words are also repeated across speakers.</p>
+<pre class="r"><code>length(unique(vot$Word_ID))</code></pre>
+<p><img src="VOT_images/VOT_Words.jpg" alt="Number of words" width="250"/></p>
+<pre class="r"><code>table(vot$Word_ID)</code></pre>
+<p><img src="VOT_images/VOT_UniqueWords.jpg" alt="Unique words" width="750"/></p>
+<p>Each lexical item was produced by multiple speakers. This gives us
+another source of non-independence: some words may systematically
+produce slightly longer or shorter VOT values than others. Also, rarely
+will you have a perfect dataset where each <code>word</code> is repeated
+the same number of times every time.</p>
+<p>Our dataset therefore has a <strong>crossed structure</strong>:</p>
+<ul>
+<li>each speaker produces many words</li>
+<li>each word is produced by many speakers</li>
+</ul>
+<p>This will eventually motivate including both <code>Speaker</code> and
+<code>Word</code> as random effects in our model.</p>
+</div>
+<div id="check-for-missing-data" class="section level3" number="2.1.7">
+<h3><span class="header-section-number">2.1.7</span> Check for missing
+data</h3>
+<p>Before doing any analysis, we should also determine whether any
+observations are missing.</p>
+<pre class="r"><code>sum(is.na(vot))</code></pre>
+<p>To examine missing values separately for every variable:</p>
+<pre class="r"><code>colSums(is.na(vot))</code></pre>
+<p>If these values are all zero, the dataset contains no missing
+observations.</p>
+</div>
+<div id="summarize-the-dependent-variable-by-major-factors"
+class="section level3" number="2.1.8">
+<h3><span class="header-section-number">2.1.8</span> Summarize the
+dependent variable by major factors</h3>
+<p>Finally, we can start getting a very basic idea of how VOT differs
+across some of our major variables.</p>
+<pre class="r"><code>vot %&gt;%
+  group_by(Voicing) %&gt;% #group the unique instances in the Voicing category
+  summarise(            #use `summarize` to create a summary table 
+    Mean_VOT = mean(VOT_ms), #This uses the `mean` function to get the mean averages of the VOT durations in ms
+    SD_VOT = sd(VOT_ms), #This uses the `standard deviation` function to get the SDs of the VOT durations in ms
+    N = n() #the number of instances of each observation
+  )</code></pre>
+<p><img src="VOT_images/VOT_groupingVoiceMeanSD.jpg" alt="Grouping by voice to show mean and SD" width="250"/></p>
+<p>We can do the same thing for consonant.</p>
+<pre class="r"><code>vot %&gt;%
+  group_by(Consonant) %&gt;%
+  summarise(
+    Mean_VOT = mean(VOT_ms),
+    SD_VOT = sd(VOT_ms),
+    N = n()
+  )</code></pre>
+<p><img src="VOT_images/VOT_groupingConsonantMeanSD.jpg" alt="Grouping by consonants to show mean and SD" width="250"/></p>
+<p>And for dialect and consonant together.</p>
+<pre class="r"><code>vot %&gt;%
+  group_by(Dialect, Consonant) %&gt;%
+  summarise(
+    Mean_VOT = mean(VOT_ms),
+    SD_VOT = sd(VOT_ms),
+    N = n()
+  )</code></pre>
+<p><img src="VOT_images/VOT_groupingConsonantDialectMeanSD.jpg" alt="Grouping by consonants and dialects to show mean and SD" width="750"/></p>
+<p>At this stage, we are <strong>not testing hypotheses</strong>. We are
+simply becoming familiar with the dataset. Before building a model, we
+want to know what observations we have, how they are grouped, how our
+variables are coded, and whether any obvious patterns or problems are
+present.</p>
+<p>In the next section, we will explore these relationships
+visually.</p>
+</div>
+<div id="graph-the-dependent-variable-before-modelling"
+class="section level3" number="2.1.9">
+<h3><span class="header-section-number">2.1.9</span> Graph the dependent
+variable before modelling</h3>
+<p>We have now looked at the structure of the dataset and produced some
+basic numerical summaries. The next step is to <strong>visualize the
+dependent variable</strong>.</p>
+<p>This is an important step before fitting a statistical model. A model
+will eventually give us coefficient estimates, standard errors, and
+p-values, but we should first have some idea of what the raw data
+actually look like visually.</p>
+<p>Remember, however, that a graph is <strong>descriptive</strong>.
+Ideally, our hypotheses are motivated by our research questions,
+previous research, and what we know about the linguistic phenomenon.
+That does not mean that we cannot discover unexpected patterns while
+exploring the data. <strong>Exploratory</strong> or
+<strong>data-driven</strong> analysis is a legitimate and often valuable
+part of linguistic research, particularly when we are working with
+complex or poorly understood phenomena. The important distinction is
+that a hypothesis generated after inspecting the data should be
+described as <strong>exploratory</strong> rather than presented as
+though it had been predicted in advance. Ideally, an exploratory finding
+can later be tested using new data or an independent sample.</p>
+</div>
+</div>
+<div id="vot-by-voicing" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> VOT by voicing</h2>
+<p>Let’s begin with <code>Voicing</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Voicing, y = VOT_ms, color=Voicing)) +
+  geom_boxplot() +
+  labs(
+    title = &quot;VOT by voicing&quot;,
+    x = &quot;Voicing&quot;,
+    y = &quot;VOT (ms)&quot;
+  )</code></pre>
+<p><img src="LinearMEMs_images/box.jpg" alt="VOT by voicing" width="600"/></p>
+<p>The boxplots show the distribution of VOT values for
+<code>voiced</code> and <code>voiceless</code> stops.</p>
+<p>We already know from the descriptive summaries that
+<code>voiced</code> stops tend to have negative VOT values because they
+are frequently prevoiced, while <code>voiceless</code> stops tend to
+have positive VOT values. The graph lets us see the size of that
+difference as well as the amount of variability within each
+category.</p>
+</div>
+<div id="vot-by-place-of-articulation" class="section level2"
+number="2.3">
+<h2><span class="header-section-number">2.3</span> VOT by place of
+articulation</h2>
+<p>Next, examine <code>Place</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Place, y = VOT_ms, fill=Voicing)) +
+  geom_boxplot() +
+  labs(
+    title = &quot;VOT by place of articulation&quot;,
+    x = &quot;Place of articulation&quot;,
+    y = &quot;VOT (ms)&quot;
+  )</code></pre>
+<p><img src="LinearMEMs_images/box2.jpg" alt="VOT by voicing & Place" width="600"/></p>
+<p><code>Place</code> is a categorical predictor with three levels:</p>
+<p><code>Bilabial</code><br />
+<code>Dental</code><br />
+<code>Velar</code></p>
+<p>Later in this module, we will ask whether keeping all three levels is
+necessary or whether the place categories can be collapsed in
+theoretically meaningful ways.</p>
+</div>
+<div id="vot-by-dialect" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> VOT by dialect</h2>
+<p>Next, examine <code>Dialect</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Dialect, y = VOT_ms, fill=Voicing)) +
+  geom_boxplot() +
+  labs(
+    title = &quot;VOT by dialect&quot;,
+    x = &quot;Dialect&quot;,
+    y = &quot;VOT (ms)&quot;
+  )
+  
+ggplot(vot, aes(x = Dialect, y = VOT_ms, fill=Voicing, by=Place)) +
+     geom_boxplot() +
+     labs(
+         title = &quot;VOT by dialect&quot;,
+         x = &quot;Dialect&quot;,
+         y = &quot;VOT (ms)&quot;
+     )</code></pre>
+<p><img src="LinearMEMs_images/box3.jpg" alt="VOT by voicing & Place" width="900"/></p>
+<p>This allows us to inspect whether the two dialect groups appear to
+differ in their VOT distributions.</p>
+<p>Remember that <code>Dialect</code> is a speaker-level predictor. Each
+speaker belongs to only one dialect. Although the dataset contains 2,000
+rows, we do not have 2,000 independent <code>dialect</code>
+observations: we have measurements from 10 speakers. The repeated
+measurements are one of the reasons we need a mixed-effects model.</p>
+</div>
+<div id="vot-by-sex" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> VOT by Sex</h2>
+<p>Next, examine <code>Sex</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Sex, y = VOT_ms, by=Voicing, color=Voicing)) +
+     geom_boxplot() +
+     labs(
+         title = &quot;VOT by sex&quot;,
+         x = &quot;Sex&quot;,
+         y = &quot;VOT (ms)&quot;
+     )</code></pre>
+<p><img src="LinearMEMs_images/box4.jpg" alt="VOT by Sex, Voicing & Place" width="900"/></p>
+<p><code>Sex</code> is also a speaker-level predictor. Each speaker
+contributes many observations, but each speaker has only one value for
+<code>Sex</code>.</p>
+<p>A weak-looking raw pattern does <strong>not</strong> automatically
+mean that a variable is irrelevant. Likewise, a strong-looking raw
+pattern does <strong>not</strong> prove that the variable has an
+independent effect. Other predictors may overlap with it.</p>
+</div>
+<div id="vot-by-following-vowel" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> VOT by following
+Vowel</h2>
+<p>Next, examine <code>Following_Vowel</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Following_Vowel, y = VOT_ms, by=Voicing, color=Voicing)) +
+    geom_boxplot() +
+    labs(
+        title = &quot;VOT by following vowel&quot;,
+        x = &quot;Following vowel&quot;,
+        y = &quot;VOT (ms)&quot;
+    )</code></pre>
+<p><img src="LinearMEMs_images/box5.jpg" alt="VOT by Following vowel, Voicing & Place" width="700"/></p>
+<p>The following vowel is also a plausible predictor of VOT even if the
+effect looks small in this graph. Previous phonetic research has shown
+that VOT can vary according to vowel context, including vowel height and
+quality, and vowel context has also been reported to interact with other
+factors such as place of articulation (e.g., Nearey &amp; Rochet, 1994;
+Rosner et al., 2000). We will therefore consider Following_Vowel as a
+potential predictor in our model.</p>
+<p>Nearey, T. M., &amp; Rochet, B. L. (1994). Effects of place of
+articulation and vowel context on VOT production and perception for
+French and English stops. Journal of the International Phonetic
+Association, 24(1), 1–18.</p>
+<p>Rosner, B. S., López-Bascuas, L. E., García-Albea, J. E., &amp;
+Fahey, R. P. (2000). Voice-onset times for Castilian Spanish initial
+stops. Journal of Phonetics, 28(2), 217–224.</p>
+</div>
+<div id="look-at-several-factors-together" class="section level2"
+number="2.7">
+<h2><span class="header-section-number">2.7</span> Look at several
+factors together</h2>
+<p>The most useful graph may be one that combines <code>Place</code>,
+<code>Voicing</code>, and <code>Dialect</code>.</p>
+<pre class="r"><code>ggplot(vot, aes(x = Place, y = VOT_ms, fill = Voicing)) +
+  geom_boxplot() +
+  facet_wrap(~Dialect) +
+  labs(
+    title = &quot;VOT by place, voicing, and dialect&quot;,
+    x = &quot;Place of articulation&quot;,
+    y = &quot;VOT (ms)&quot;,
+    fill = &quot;Voicing&quot;
+  )</code></pre>
+<p><img src="LinearMEMs_images/box6.jpg" alt="VOT by multiple variables" width="700"/></p>
+<p>This graph is useful because it lets us ask several questions at
+once:</p>
+<ul>
+<li>Are <code>voiced</code> and <code>voiceless</code> stops
+different?<br />
+</li>
+<li>Does VOT differ across <code>places of articulation</code>?<br />
+</li>
+<li>Do the two <code>dialects</code> show the same overall
+pattern?<br />
+</li>
+<li>Does the effect of one predictor appear to depend on another
+predictor?
+<ul>
+<li>For example, does the effect of <code>place</code> differ between
+voiced and voiceless stops?</li>
+</ul></li>
+</ul>
+<p>That last question will become important when we introduce
+interactions later in this module.</p>
+<p>For now, however, these graphs remain descriptive. We have not yet
+conducted any inferential tests.</p>
+</div>
+</div>
+<div id="research-questions-hypotheses-and-null-hypotheses"
+class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Research questions,
+hypotheses, and null hypotheses</h1>
+<p>Before fitting a model, we should be explicit about what we are
+trying to test.</p>
+<p>A broad research question for this dataset might be:</p>
+<blockquote>
+<p>Which linguistic and social factors predict VOT in Spanish?</p>
+</blockquote>
+<p>We can then formulate more specific hypotheses.</p>
+<div id="voicing" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Voicing</h2>
+<p>A clear hypothesis is that <code>Voicing</code> will predict VOT.</p>
+<blockquote>
+<p>Research hypothesis: Voiceless stops will have higher VOT values than
+voiced stops.</p>
+</blockquote>
+<p>The corresponding null hypothesis is:</p>
+<blockquote>
+<p>Null hypothesis: There is no difference in VOT between voiced and
+voiceless stops.</p>
+</blockquote>
+<p>Obviously, this question has been answered time and time again in
+English (and Spanish), but if we switch the question to ’English-origin
+voiced stops vs. English-origin voiceless stops` in Gurindji Kriol, the
+question remains unanswered.</p>
+<p>And, I have only “recently” answered this question in Media Lengua:
+<a
+href="https://www.cambridge.org/core/journals/journal-of-the-international-phonetic-association/article/abs/voice-onset-time-production-in-ecuadorian-spanish-quichua-and-media-lengua/5566238ABF5BE99A879D215AFD81A196">Voice
+onset time production in Ecuadorian Spanish, Quichua, and Media
+Lengua</a>. So these types of research questions still abound,
+especially with underdocumented languages or contact languages.</p>
+</div>
+<div id="place-of-articulation" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Place of
+articulation</h2>
+<p>We can also ask whether <code>Place</code> predicts VOT.</p>
+<blockquote>
+<p>Research hypothesis: VOT differs according to place of
+articulation.</p>
+</blockquote>
+<p>The corresponding null hypothesis is:</p>
+<blockquote>
+<p>Null hypothesis: Place of articulation does not explain variation in
+VOT.</p>
+</blockquote>
+<p>At this stage we are deliberately leaving this hypothesis broad. We
+will later compare several possible ways of representing place of
+articulation. It should also be noted that there is a wealth of evidence
+that voiceless stops become longer as PoA becomes more retracted (see
+e.g., Cho &amp; Ladefoged, 1999 &amp; Lisker &amp; Abramson, 1964).</p>
+<ul>
+<li>Lisker, L., &amp; Abramson, A. S. (1964). A cross-language study of
+voicing in initial stops: Acoustical measurements. Word, 20,
+384–422.</li>
+<li>Cho, T., &amp; Ladefoged, P. (1999). Variation and universals in
+VOT: Evidence from 18 languages. Journal of Phonetics, 27, 207–229.</li>
+</ul>
+</div>
+<div id="dialect" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Dialect</h2>
+<p>We may also hypothesize that speakers of the two
+<code>dialects</code> differ.</p>
+<blockquote>
+<p>Research hypothesis: VOT differs between Madrid Spanish and Mexico
+City Spanish.</p>
+</blockquote>
+<blockquote>
+<p>Null hypothesis: The two dialects do not differ in VOT.</p>
+</blockquote>
+<p>There is strong evidence to support this (Lisker &amp; Abramson 1964,
+Williams, 1977, Stewart 2018). <strong><em>yes, shamelessly plugging my
+name in the mix</em></strong></p>
+<ul>
+<li>Lisker, L., &amp; Abramson, A. S. (1964). A cross-language study of
+voicing in initial stops: Acoustical measurements. Word, 20,
+384–422.<br />
+</li>
+<li>Williams, Lee. 1977. The voicing contrast in Spanish. Journal of
+Phonetics 5, 169–184.</li>
+<li>Stewart, Jesse. 2018. Voice onset time production in Spanish,
+Quichua, and Media Lengua. Journal of the International Phonetic
+Association 48(2). 173–197. <a
+href="https://doi.org/doi.org/10.1017/S002510031700024X"
+class="uri">https://doi.org/doi.org/10.1017/S002510031700024X</a>.</li>
+</ul>
+</div>
+<div id="what-about-sex-and-following_vowel" class="section level2"
+number="3.4">
+<h2><span class="header-section-number">3.4</span> What about
+<code>Sex</code> and <code>Following_Vowel</code>?</h2>
+<p>Not every variable in a model needs to have a dramatic directional
+hypothesis.</p>
+<p><code>Sex</code> and <code>Following_Vowel</code> are plausible
+predictors of phonetic variation, so we may include them because there
+is a reasonable linguistic reason to control for them. We can still
+estimate and interpret their effects without inventing a directional
+prediction simply because the variables happen to be available.</p>
+<p>The important principle is:</p>
+<blockquote>
+<p>Predictors should be included because they are relevant to the
+research question, the design, or the linguistic phenomenon—not because
+we searched through the data and discovered that they happened to
+produce a small p-value.</p>
+</blockquote>
+</div>
+</div>
+<div id="decide-what-belongs-in-the-model" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> Decide what belongs in
+the model</h1>
+<p>Our dataset contains 12 variables, but not all of them should be
+entered into the regression as fixed effects. That would result in a
+massive model that would likely result in <strong>convergence</strong>
+issues. A convergence issue occurs when the model-fitting algorithm
+cannot find a stable solution for the parameter estimates. This often
+happens when the model is too complex for the available data, such as
+when too many predictors, interactions, or random effects are included.
+A convergence warning does not automatically mean that the model is
+unusable, but it is a sign that the estimates may be unstable and that
+the model structure should be investigated.</p>
+<table>
+<colgroup>
+<col width="10%" />
+<col width="24%" />
+<col width="65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Role in this analysis</th>
+<th>Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Token</code></td>
+<td>Do not include</td>
+<td>Unique identifier for each observation</td>
+</tr>
+<tr class="even">
+<td><code>Speaker</code></td>
+<td>Random effect</td>
+<td>Many observations come from the same speaker</td>
+</tr>
+<tr class="odd">
+<td><code>Dialect</code></td>
+<td>Fixed effect</td>
+<td>Linguistically meaningful speaker-level predictor</td>
+</tr>
+<tr class="even">
+<td><code>Sex</code></td>
+<td>Fixed effect</td>
+<td>Linguistically/socially meaningful speaker-level predictor</td>
+</tr>
+<tr class="odd">
+<td><code>Word</code></td>
+<td>Random effect</td>
+<td>The same lexical items are repeated across speakers</td>
+</tr>
+<tr class="even">
+<td><code>Consonant</code></td>
+<td>Do not include with <code>Voicing</code> + <code>Place</code></td>
+<td>It largely encodes the combination of voicing and place</td>
+</tr>
+<tr class="odd">
+<td><code>Voicing</code></td>
+<td>Fixed effect</td>
+<td>Central phonetic predictor</td>
+</tr>
+<tr class="even">
+<td><code>Place</code></td>
+<td>Fixed effect</td>
+<td>Central phonetic predictor</td>
+</tr>
+<tr class="odd">
+<td><code>Following_Vowel</code></td>
+<td>Fixed effect</td>
+<td>Plausible phonetic predictor</td>
+</tr>
+<tr class="even">
+<td><code>VOT_ms</code></td>
+<td>Dependent variable</td>
+<td>The outcome being predicted</td>
+</tr>
+<tr class="odd">
+<td><code>Word_ID</code></td>
+<td>Same as <code>Word</code></td>
+<td>Do not include; computer-readable lexical label; <code>Word</code>
+will account for repeated words</td>
+</tr>
+<tr class="even">
+<td><code>Pair_ID</code></td>
+<td>Not included</td>
+<td>Identifies matched word pairs; useful design information, but we
+will keep the random structure simpler here</td>
+</tr>
+</tbody>
+</table>
+<div id="why-not-include-consonant-as-well" class="section level2"
+number="4.1">
+<h2><span class="header-section-number">4.1</span> Why not include
+<code>Consonant</code> as well?</h2>
+<p>The six consonants are largely determined by the combination of
+Voicing and Place:</p>
+<ul>
+<li>/p/ = <code>voiceless</code> + <code>bilabial</code><br />
+</li>
+<li>/b/ = <code>voiced</code> + <code>bilabial</code><br />
+</li>
+<li>/t/ = <code>voiceless</code> + <code>dental</code><br />
+</li>
+<li>/d/ = <code>voiced</code> + <code>dental</code><br />
+</li>
+<li>/k/ = <code>voiceless</code> + <code>velar</code><br />
+</li>
+<li>/g/ = <code>voiced</code> + <code>velar</code></li>
+</ul>
+<p>If we include <code>Consonant</code>, <code>Voicing</code>, and
+<code>Place</code> together as ordinary fixed effects, we are trying to
+represent the same information in redundant ways.</p>
+<p>This is an early example of an important modelling principle:</p>
+<p>More predictors are not automatically better. Predictors should
+contribute distinct information that is relevant to the research
+question.</p>
+</div>
+<div id="fixed-and-random-effects" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Fixed and random
+effects</h2>
+<p>Our proposed fixed effects are:</p>
+<ul>
+<li><code>Dialect</code><br />
+</li>
+<li><code>Sex</code><br />
+</li>
+<li><code>Voicing</code><br />
+</li>
+<li><code>Place</code><br />
+</li>
+<li><code>Following_Vowel</code></li>
+</ul>
+<p>Our random effects are:</p>
+<ul>
+<li><code>Speaker</code><br />
+</li>
+<li><code>Word</code></li>
+</ul>
+<p>The random effects are crossed:</p>
+<ul>
+<li>each speaker produces many words;<br />
+</li>
+<li>each word is produced by many speakers.</li>
+</ul>
+<p>We therefore want the model to account for systematic baseline
+differences among both speakers and words.</p>
+</div>
+</div>
+<div id="set-the-reference-levels" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Set the reference
+levels</h1>
+<p>Before fitting the model, it is useful to set the reference levels
+explicitly.</p>
+<pre class="r"><code>vot$Dialect = relevel(factor(vot$Dialect), ref = &quot;Madrid&quot;)
+vot$Sex = relevel(factor(vot$Sex), ref = &quot;Female&quot;)
+vot$Voicing = relevel(factor(vot$Voicing), ref = &quot;Voiced&quot;)
+vot$Place = relevel(factor(vot$Place), ref = &quot;Bilabial&quot;)
+vot$Following_Vowel = relevel(factor(vot$Following_Vowel), ref = &quot;a&quot;)</code></pre>
+<p><strong><em>Recall that I usually just rename them, but this is how
+it is formally done</em></strong></p>
+<p>This does not change the underlying data or overall model fit. It
+changes how the categorical coefficients are expressed.</p>
+<p>With these reference levels, the intercept will represent the model’s
+predicted VOT for:</p>
+<ul>
+<li>a Madrid speaker;<br />
+</li>
+<li>who is female;<br />
+</li>
+<li>producing a voiced;<br />
+</li>
+<li>bilabial stop;<br />
+</li>
+<li>before /a/;</li>
+</ul>
+<p>Therefore, the <code>intercept</code> result automatically tells us
+the VOT duration prediction of /b/ produced before /a/ by an average
+female speaker from Madrid saying an average word.</p>
+<p>This also means the random intercept adjustments are set to zero.</p>
+<p>This makes the other coefficients relatively easy to interpret.</p>
+<p>For example:</p>
+<p>If you want to know the average VOT from a speaker from Mexico city,
+you add the coefficient estimate of
+<code>DialectMexico City</code>;<br />
+If you want that speaker to be male, you add the coefficient estimate
+from <code>SexMale</code>;<br />
+If you wanto that male speaker from Mexico City to produce a voiceless
+segment, you add the coefficient estimate from
+<code>VoicingVoiceless</code>;<br />
+And if you want that segment to be /t/, you add the coefficient estimate
+from <code>PlaceDental</code>.</p>
+<p>Precise predictive power!</p>
+</div>
+<div id="build-the-initial-linear-mixed-effects-model"
+class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Build the initial
+linear mixed-effects model</h1>
+<p>We can now build our first model.</p>
+<pre class="r"><code>model6 = lmer(VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot)
+summary(model6)
+
+Linear mixed model fit by maximum likelihood  [&#39;lmerMod&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  14275.1   14347.9   -7124.5   14249.1      1987 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.9932 -0.6841 -0.0011  0.6430  3.3280 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 15.310   3.913   
+ Speaker  (Intercept)  7.595   2.756   
+ Residual             63.322   7.958   
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                   Estimate Std. Error t value
+(Intercept)        -87.0102     1.7122 -50.816
+DialectMexico City   9.7605     1.8156   5.376
+SexMale             -1.6745     1.8156  -0.922
+VoicingVoiceless   103.5754     0.6579 157.430
+PlaceDental         -3.4415     0.8047  -4.277
+PlaceVelar          15.1242     0.8047  18.795
+Following_Vowele     0.2342     1.0403   0.225
+Following_Voweli     1.6582     1.0410   1.593
+Following_Vowelo    -0.9535     1.0410  -0.916
+Following_Vowelu     0.3700     1.0410   0.355
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo
+DilctMxcCty      -0.424                                                                                      
+SexMale          -0.424 -0.200                                                                               
+VoicngVclss      -0.192  0.000  0.000                                                                        
+PlaceDental      -0.234  0.000  0.000  0.000                                                                 
+PlaceVelar       -0.222  0.000  0.000  0.000  0.492                                                          
+Following_Vowele -0.304  0.000  0.000  0.000  0.000  0.000                                                   
+Following_Voweli -0.304  0.000  0.000  0.000  0.020 -0.020  0.500                                            
+Following_Vowelo -0.304  0.000  0.000  0.000  0.020 -0.020  0.500            0.501                           
+Following_Vowelu -0.295  0.000  0.000  0.000 -0.019 -0.039  0.500            0.500            0.500          </code></pre>
+<div id="whats-missing-from-the-model-output" class="section level2"
+number="6.1">
+<h2><span class="header-section-number">6.1</span> What’s missing from
+the model output?</h2>
+<p>There is a glaring omission from the model output. The <span
+class="math inline">\(p-value\)</span>!</p>
+<p>Unlike <code>lm()</code>, models fitted with <code>lmer()</code> do
+not have a simple formula for the denominator degrees of freedom because
+the data are grouped within random effects such as <code>Speaker</code>
+and <code>Word</code>. As a result, <code>lme4</code> does not provide
+<code>p-values</code> for fixed effects by default.</p>
+<p>The lmerTest package adds approximate degrees of freedom and p-values
+to the <code>lmer()</code> output:</p>
+<pre class="r"><code>library(lmerTest)
+
+model6 = lmer(VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot)
+summary(model6)
+
+Linear mixed model fit by REML. t-tests use Satterthwaites method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+REML criterion at convergence: 14230.7
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.0055 -0.6794 -0.0030  0.6399  3.3245 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 16.11    4.014   
+ Speaker  (Intercept) 10.88    3.299   
+ Residual             63.32    7.957   
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                   Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)        -87.0102     1.9598  11.5369 -44.397 2.95e-14 ***
+DialectMexico City   9.7605     2.1604   7.0000   4.518  0.00274 ** 
+SexMale             -1.6745     2.1604   7.0000  -0.775  0.46366    
+VoicingVoiceless   103.5754     0.6700 191.9995 154.584  &lt; 2e-16 ***
+PlaceDental         -3.4415     0.8195 191.9995  -4.199 4.09e-05 ***
+PlaceVelar          15.1242     0.8195 191.9995  18.455  &lt; 2e-16 ***
+Following_Vowele     0.2342     1.0594 191.9995   0.221  0.82524    
+Following_Voweli     1.6582     1.0602 191.9995   1.564  0.11945    
+Following_Vowelo    -0.9535     1.0602 191.9995  -0.899  0.36957    
+Following_Vowelu     0.3700     1.0602 191.9995   0.349  0.72745    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo
+DilctMxcCty      -0.441                                                                                      
+SexMale          -0.441 -0.200                                                                               
+VoicngVclss      -0.171  0.000  0.000                                                                        
+PlaceDental      -0.208  0.000  0.000  0.000                                                                 
+PlaceVelar       -0.197  0.000  0.000  0.000  0.492                                                          
+Following_Vowele -0.270  0.000  0.000  0.000  0.000  0.000                                                   
+Following_Voweli -0.270  0.000  0.000  0.000  0.020 -0.020  0.500                                            
+Following_Vowelo -0.270  0.000  0.000  0.000  0.020 -0.020  0.500            0.501                           
+Following_Vowelu -0.262  0.000  0.000  0.000 -0.019 -0.039  0.500            0.500            0.500      </code></pre>
+<details>
+<summary>
+Click here if you want more details about p-value calculations for mixed
+effects regressions:
+</summary>
+<p><strong>How are these p-values calculated?</strong></p>
+<p>By default, lmerTest uses the <strong>Satterthwaite
+approximation</strong> to estimate the denominator degrees of freedom
+for each fixed-effect test.</p>
+<p>Instead of pretending that every one of our 2,000 observations
+contributes completely independent information, the approximation takes
+the mixed structure of the model into account when determining how much
+information is available for testing each coefficient.</p>
+<p>This means that different coefficients can have different estimated
+degrees of freedom.</p>
+<p>For example, a <strong>speaker-level predictor</strong> such as
+<code>Dialect</code> may have much less independent information
+available than a <strong>within-speaker predictor</strong> such as
+<code>Voicing</code>, because <code>Dialect</code> varies among speakers
+rather than independently across all 2,000 rows. <code>Voicing</code> is
+a <strong>within-speaker predictor</strong> because it can vary from one
+observation to the next for the <strong>same</strong> speaker. In other
+words, a single speaker produces <strong>both</strong> voiced and
+voiceless stops. Whereas <code>Dialect</code> does not vary across
+speaker. In this dataset, a single speaker is not found producing stops
+with both a Mexico city and Madrid accent.</p>
+<p>The resulting <span class="math inline">\(p\)</span>-value is then
+calculated using the estimated <span
+class="math inline">\(t\)</span>-value together with these approximate
+degrees of freedom.</p>
+<p>Important: The p-values produced by lmerTest are therefore
+approximations, not exact p-values obtained from a simple closed-form
+degrees-of-freedom calculation.</p>
+<p>This is normal practice in linear mixed-effects modelling. The
+Satterthwaite approximation is widely used because it provides a
+practical way to conduct significance tests while respecting the grouped
+structure of the data.</p>
+<p><strong>Why does this matter?</strong></p>
+<p>The important point is that a mixed-effects model cannot simply
+treat:</p>
+<p>2,000 rows = 2,000 independent observations</p>
+<p>because many of those observations come from the same speakers and
+the same words.</p>
+lmerTest estimates the uncertainty associated with each fixed effect
+while taking that dependency structure into account, giving us more
+defensible tests of our hypotheses than we would obtain by treating
+every token as completely independent.
+</details>
+</div>
+</div>
+<div id="comparing-models" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Comparing models</h1>
+<p>Sometimes we have more than one reasonable way to represent a
+predictor. For example, <code>Place</code> currently has three
+levels:</p>
+<ul>
+<li><code>Bilabial</code></li>
+<li><code>Dental</code></li>
+<li><code>Velar</code></li>
+</ul>
+<p>However, we might hypothesize that <code>bilabial</code> and
+<code>dental</code> stops pattern together as relatively
+<strong>front</strong> places of articulation, while <code>velar</code>
+stops form a <strong>back</strong> category.</p>
+<p>We can create a binary version of <code>Place</code>:</p>
+<pre class="r"><code>vot$Front_Back = ifelse(
+  vot$Place == &quot;Velar&quot;,
+  &quot;Back&quot;,
+  &quot;Front&quot;
+)
+
+vot$Front_Back = factor(
+  vot$Front_Back,
+  levels = c(&quot;Front&quot;, &quot;Back&quot;)
+)
+
+table(vot$Place, vot$Front_Back)</code></pre>
+<p>The question is now whether the original <strong>three-level</strong>
+variable explains the data better than the simpler <strong>front
+vs. back</strong> distinction.</p>
+<div id="fit-models-with-reml-false" class="section level2"
+number="7.1">
+<h2><span class="header-section-number">7.1</span> Fit models with
+<code>REML = FALSE</code></h2>
+<p>If we want to compare models that contain different <strong>fixed
+effects</strong>, they should be fitted with:</p>
+<pre class="r"><code>REML = FALSE</code></pre>
+<p><em>Restricted Maximum Likelihood or Residual Maximum
+Likelihood</em></p>
+<p>This fits the models using <strong>maximum likelihood (ML)</strong>
+and allows their likelihoods to be compared directly.</p>
+<pre class="r"><code>model_place = lmer(VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot, REML = FALSE)
+summary(model_place)
+
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaites method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  14275.1   14347.9   -7124.5   14249.1      1987 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.9932 -0.6841 -0.0011  0.6430  3.3280 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 15.310   3.913   
+ Speaker  (Intercept)  7.595   2.756   
+ Residual             63.322   7.958   
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                   Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)        -87.0102     1.7122  19.1301 -50.816  &lt; 2e-16 ***
+DialectMexico City   9.7605     1.8156   9.9914   5.376 0.000313 ***
+SexMale             -1.6745     1.8156   9.9914  -0.922 0.378109    
+VoicingVoiceless   103.5754     0.6579 199.2423 157.430  &lt; 2e-16 ***
+PlaceDental         -3.4415     0.8047 199.2423  -4.277 2.94e-05 ***
+PlaceVelar          15.1242     0.8047 199.2423  18.795  &lt; 2e-16 ***
+Following_Vowele     0.2342     1.0403 199.2423   0.225 0.822066    
+Following_Voweli     1.6582     1.0410 199.2423   1.593 0.112783    
+Following_Vowelo    -0.9535     1.0410 199.2423  -0.916 0.360805    
+Following_Vowelu     0.3700     1.0410 199.2423   0.355 0.722627    
+---
+
+model_frontback = lmer(VOT_ms ~ Dialect + Sex + Voicing + Front_Back + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot, REML = FALSE)
+
+summary(model_frontback)
+
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaites method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing + Front_Back + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  14290.6   14357.8   -7133.3   14266.6      1988 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.9502 -0.6887 -0.0234  0.6391  3.3709 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 17.298   4.159   
+ Speaker  (Intercept)  7.603   2.757   
+ Residual             63.322   7.957   
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                   Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)        -88.7228     1.6844  17.9090 -52.672  &lt; 2e-16 ***
+DialectMexico City   9.7605     1.8165   9.9897   5.373 0.000314 ***
+SexMale             -1.6745     1.8165   9.9897  -0.922 0.378346    
+VoicingVoiceless   103.5754     0.6875 199.2476 150.663  &lt; 2e-16 ***
+Front_BackBack      16.8177     0.7320 199.2476  22.975  &lt; 2e-16 ***
+Following_Vowele     0.2342     1.0870 199.2476   0.216 0.829594    
+Following_Voweli     1.7456     1.0876 199.2476   1.605 0.110072    
+Following_Vowelo    -0.8661     1.0876 199.2476  -0.796 0.426762    
+Following_Vowelu     0.2854     1.0876 199.2476   0.262 0.793297    </code></pre>
+<p>Everything in these models is identical except for the way we
+represent <code>Place</code>.</p>
+</div>
+<div id="aic-and-bic" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> AIC and BIC</h2>
+<p>Two common ways of comparing models are <strong>AIC</strong> and
+<strong>BIC</strong>:</p>
+<pre class="r"><code>AIC(model_place, model_frontback)
+
+                df      AIC
+model_place     13 14275.07
+model_frontback 12 14290.57
+
+BIC(model_place, model_frontback)
+
+                df      BIC
+model_place     13 14347.88
+model_frontback 12 14357.78</code></pre>
+<p>Both statistics reward a model for fitting the data well but penalize
+it for unnecessary complexity.</p>
+<blockquote>
+<p><strong>Lower AIC and BIC values indicate a better balance between
+model fit and complexity.</strong></p>
+</blockquote>
+<p>BIC penalizes additional parameters more strongly than AIC,
+particularly with larger datasets, so it tends to favour simpler models
+more readily.</p>
+<p>The actual AIC or BIC number is not important by itself. We are
+interested in the <strong>difference between competing models</strong>.
+If both AIC and BIC are lower for the same model, that gives us
+particularly clear evidence in favour of that model.</p>
+</div>
+<div id="compare-the-models-with-anova" class="section level2"
+number="7.3">
+<h2><span class="header-section-number">7.3</span> Compare the models
+with <code>anova()</code></h2>
+<p>Because the binary model simply forces <code>Bilabial</code> and
+<code>Dental</code> to behave as one category, it is a simpler version
+of the three-level model. The models are therefore
+<strong>nested</strong>, and we can compare them with a likelihood-ratio
+test:</p>
+<pre class="r"><code>anova(model_frontback, model_place)
+
+Data: vot
+Models:
+model_frontback: VOT_ms ~ Dialect + Sex + Voicing + Front_Back + Following_Vowel + (1 | Speaker) + (1 | Word)
+model_place: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word)
+                npar   AIC   BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)    
+model_frontback   12 14291 14358 -7133.3     14267                         
+model_place       13 14275 14348 -7124.5     14249 17.498  1  2.876e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</code></pre>
+<p>This asks whether allowing all three places to differ significantly
+improves the model.</p>
+<ul>
+<li>If <span class="math inline">\(p &lt; .05\)</span>, the more complex
+three-level <code>Place</code> model provides a significantly better
+fit.</li>
+<li>If <span class="math inline">\(p &gt; .05\)</span>, there is not
+sufficient evidence that the extra distinction improves the model, so
+the simpler binary model may be preferable.</li>
+</ul>
+<p>AIC, BIC, and the likelihood-ratio test therefore give us
+complementary information when choosing between models.</p>
+<p>The same approach can be used when doing <strong>backward model
+comparison</strong>. For example, we could fit a model without
+<code>Following_Vowel</code> and ask whether removing that predictor
+significantly worsens the model.</p>
+<blockquote>
+<p><strong>Important:</strong> Model comparison should be motivated by
+the research question rather than by repeatedly changing the model
+simply to produce significant results.</p>
+</blockquote>
+<p>Also note that <strong>backward model comparison</strong> is actually
+my preference for building the most succinct and parsimonious model
+where only significant predictors are analyzed in the final model. In
+fact, most of my publications involving mixed effects models involve
+some sort of backward elimination. However, over the last few years,
+almost every reviewer I have dealt with finds this to be abhorrent. So,
+to make my life and your life easier, I now only recommend full-model
+output with minor adjustments like testing binary and trinary variables
+like we are doing here.</p>
+<p>Once all comparisons of the fixed-effect structure are complete, the
+final model can be refitted using the default:</p>
+<p>Anyway, both AIC and BIC values and the Anova in our example suggest
+that the model is better fit with the trinary variable of
+<code>place</code>.</p>
+<pre class="r"><code>REML = TRUE</code></pre>
+<p>For example:</p>
+<pre class="r"><code>final_model = update(model_place, REML = TRUE)
+
+#or
+
+final_model = lmer(VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot, REML = TRUE)
+
+summary(final_model)
+
+Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+REML criterion at convergence: 14230.7
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.0055 -0.6794 -0.0030  0.6399  3.3245 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept) 16.11    4.014   
+ Speaker  (Intercept) 10.88    3.299   
+ Residual             63.32    7.957   
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                   Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)        -87.0102     1.9598  11.5369 -44.397 2.95e-14 ***
+DialectMexico City   9.7605     2.1604   7.0000   4.518  0.00274 ** 
+SexMale             -1.6745     2.1604   7.0000  -0.775  0.46366    
+VoicingVoiceless   103.5754     0.6700 191.9995 154.584  &lt; 2e-16 ***
+PlaceDental         -3.4415     0.8195 191.9995  -4.199 4.09e-05 ***
+PlaceVelar          15.1242     0.8195 191.9995  18.455  &lt; 2e-16 ***
+Following_Vowele     0.2342     1.0594 191.9995   0.221  0.82524    
+Following_Voweli     1.6582     1.0602 191.9995   1.564  0.11945    
+Following_Vowelo    -0.9535     1.0602 191.9995  -0.899  0.36957    
+Following_Vowelu     0.3700     1.0602 191.9995   0.349  0.72745    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo
+DilctMxcCty      -0.441                                                                                      
+SexMale          -0.441 -0.200                                                                               
+VoicngVclss      -0.171  0.000  0.000                                                                        
+PlaceDental      -0.208  0.000  0.000  0.000                                                                 
+PlaceVelar       -0.197  0.000  0.000  0.000  0.492                                                          
+Following_Vowele -0.270  0.000  0.000  0.000  0.000  0.000                                                   
+Following_Voweli -0.270  0.000  0.000  0.000  0.020 -0.020  0.500                                            
+Following_Vowelo -0.270  0.000  0.000  0.000  0.020 -0.020  0.500            0.501                           
+Following_Vowelu -0.262  0.000  0.000  0.000 -0.019 -0.039  0.500            0.500            0.500                   </code></pre>
+<p>or, if the binary model is preferred (which is not in this case):</p>
+<pre class="r"><code>final_model = update(model_frontback, REML = TRUE)</code></pre>
+<p>We use <strong>ML (<code>REML = FALSE</code>) to compare fixed-effect
+structures</strong> and then <strong>REML to obtain the final model
+estimates</strong>.</p>
+</div>
+<div id="a-quick-model-check" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> A quick model
+check</h2>
+<p>Before interpreting the final model, make sure R has not produced a
+<strong>convergence warning</strong>. A convergence warning indicates
+that the model-fitting algorithm had difficulty finding a stable
+solution, so the estimates should be investigated before being
+trusted.</p>
+<p>We can also check for a <strong>singular fit</strong>:</p>
+<pre class="r"><code>isSingular(final_model)</code></pre>
+<p>Ideally, this returns:</p>
+<pre class="text"><code>FALSE</code></pre>
+<p>A basic residual check can also be produced with:</p>
+<pre class="r"><code>plot(final_model)</code></pre>
+<p>The residuals are centred around zero, but there is some visible
+structure rather than a completely random cloud. This suggests that the
+model may not capture all of the structure in the data.</p>
+<p><img src="LinearMEMs_images/final_plot.jpg" alt="residual and fitted results" width="600"/></p>
+<p>We can examine this structure more closely by graphing a smoothed
+residual trend (aka LOESS (<em>locally estimated scatterplot
+smoothing</em>)).<br />
+I emphasize <em>explore</em> here because if this pattern had not been
+anticipated in our original hypotheses, investigating its source would
+be an exploratory follow-up analysis rather than a confirmatory test.
+Again, not necessarily wrong, but your analysis is now data-driven not
+confirmatory.</p>
+<pre class="r"><code>vot$Fitted = fitted(final_model)
+vot$Residual = resid(final_model)
+
+ggplot(vot, aes(x = Fitted, y = Residual)) +
+    geom_point(alpha = 0.35) +
+    geom_smooth(
+        method = &quot;loess&quot;,
+        se = FALSE
+    ) +
+    geom_hline(
+        yintercept = 0,
+        linetype = &quot;dashed&quot;
+    ) +
+    facet_wrap(~Voicing) +
+    labs(
+        x = &quot;Fitted VOT (ms)&quot;,
+        y = &quot;Residual&quot;,
+        title = &quot;Residuals by voicing&quot;
+    ) +
+    theme_minimal()</code></pre>
+<p><img src="LinearMEMs_images/final_plot2.jpg" alt="residual and fitted results with LOESS" width="600"/></p>
+<p>What these graphs <em>should</em> show in a perfect world are
+residuals completely randomly distributed around zero.</p>
+<p>Another check we can perform is the Q-Q plot.<br />
+A Q-Q plot checks whether the model residuals are approximately normally
+distributed. It compares:</p>
+<ul>
+<li>the theoretical quantiles we would expect from a normal distribution
+on the x-axis;<br />
+</li>
+<li>the observed residual quantiles on the y-axis.</li>
+</ul>
+<p>If the residuals are approximately normal, the points should follow
+the diagonal reference line.</p>
+<pre class="r"><code>qqnorm(resid(final_model))
+qqline(resid(final_model))</code></pre>
+<p><img src="LinearMEMs_images/final_plot3.jpg" alt="Q-Q plot" width="600"/></p>
+<p>For our data, the Q-Q plot points follow the line very closely, with
+only minor deviations at the extreme tails. We therefore have no major
+concern about the normality of the residuals.</p>
+<p>In conclusion, the residual diagnostics suggest that the additive
+model may not capture all of the structure in the data. Given the
+well-established relationship between place of articulation and VOT,
+particularly among voiceless stops, a <code>Voicing * Place</code>
+interaction is theoretically motivated and will be evaluated below.</p>
+</div>
+</div>
+<div id="confidence-intervals" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Confidence
+intervals</h1>
+<p>The coefficient estimate gives us the model’s best estimate of an
+effect, but it does not tell us how much uncertainty surrounds that
+estimate.</p>
+<p>A <strong>95% confidence interval</strong> gives us a range of
+plausible values for the population coefficient.</p>
+<p>For example, suppose a coefficient is:</p>
+<pre class="text"><code>Estimate = 9.76
+95% CI = 5.1 to 14.4</code></pre>
+<p>The model estimates an effect of approximately 9.76 ms, but the
+confidence interval also tells us about the uncertainty surrounding that
+estimate.</p>
+<div id="calculating-confidence-intervals" class="section level2"
+number="8.1">
+<h2><span class="header-section-number">8.1</span> Calculating
+confidence intervals</h2>
+<div id="wald" class="section level3" number="8.1.1">
+<h3><span class="header-section-number">8.1.1</span> Wald</h3>
+<p>A quick method is the Wald confidence interval. This is fast and is
+based on the estimated coefficient and standard error. They are useful
+for quick analyses, but they rely on a relatively simple
+approximation.</p>
+<p>For classroom work, the Wald intervals are often sufficient. For a
+final research analysis, profile-likelihood intervals are worth
+considering when computationally practical.</p>
+<pre class="r"><code>confint(
+  final_model,
+  parm = &quot;beta_&quot;,
+  method = &quot;Wald&quot;
+)
+
+                         2.5 %     97.5 %
+(Intercept)        -90.3661387 -83.654244
+DialectMexico City   6.2020217  13.318978
+SexMale             -5.2329783   1.883978
+VoicingVoiceless   102.2859082 104.864892
+PlaceDental         -5.0187076  -1.864314
+PlaceVelar          13.5470370  16.701431
+Following_Vowele    -1.8046155   2.273116
+Following_Voweli    -0.3822015   3.698627
+Following_Vowelo    -2.9939515   1.086877
+Following_Vowelu    -1.6703517   2.410428</code></pre>
+</div>
+<div id="profile-likelihood-confidence-intervals" class="section level3"
+number="8.1.2">
+<h3><span class="header-section-number">8.1.2</span> Profile-likelihood
+confidence intervals</h3>
+<p>Profile-likelihood intervals repeatedly refit the model while moving
+each parameter away from its estimated value. They therefore allow the
+uncertainty around a coefficient to be asymmetrical and are generally
+more robust than simple Wald intervals.</p>
+<p>They can take considerably longer to calculate because the model must
+be refitted many times. For a large or complicated mixed-effects model,
+R may need to fit or partially refit the model many times for every
+coefficient. As a result, calculating profile confidence intervals can
+take anywhere from several minutes to <strong>hours</strong>.</p>
+<pre class="r"><code>confint(
+  final_model,
+  parm = &quot;beta_&quot;,
+  method = &quot;profile&quot;
+)
+
+2.5 %     97.5 %
+(Intercept)        -90.5609193 -83.459465
+DialectMexico City   5.8311739  13.689823
+SexMale             -5.6038261   2.254823
+VoicingVoiceless   102.2796429 104.871157
+PlaceDental         -5.0263708  -1.856651
+PlaceVelar          13.5393739  16.709094
+Following_Vowele    -1.8145218   2.283022
+Following_Voweli    -0.3921153   3.708541
+Following_Vowelo    -3.0038653   1.096791
+Following_Vowelu    -1.6802654   2.420342</code></pre>
+</div>
+<div id="bootstrap-confidence-intervals" class="section level3"
+number="8.1.3">
+<h3><span class="header-section-number">8.1.3</span> Bootstrap
+confidence intervals</h3>
+<p>I was recently asked by a reviewer to bootstrap my confidence
+intervals.</p>
+<pre class="r"><code>confint(
+  final_model,
+  method = &quot;boot&quot;,
+  nsim = 500
+)
+
+                         2.5 %     97.5 %
+.sig01               3.2129708   4.332567
+.sig02               1.0509309   3.666312
+.sigma               7.7035380   8.228622
+(Intercept)        -90.3205460 -83.542582
+DialectMexico City   5.8294078  13.505425
+SexMale             -5.0579923   1.617117
+VoicingVoiceless   102.1807250 104.785652
+PlaceDental         -5.0451852  -1.840595
+PlaceVelar          13.4897414  16.675195
+Following_Vowele    -1.7342606   2.243067
+Following_Voweli    -0.4177917   3.695794
+Following_Vowelo    -2.9533940   1.421385
+Following_Vowelu    -1.7899339   2.489252</code></pre>
+<p>Bootstrap confidence intervals estimate uncertainty by repeatedly
+simulating new datasets from the fitted model, refitting the model to
+each simulated dataset, and examining the resulting distribution of
+coefficient estimates. Note that this run contains 500 simulations.</p>
+<p>Because hundreds or thousands of models may need to be fitted, this
+method can be very computationally expensive. Complex mixed-effects
+models may take hours to process. When I ran this method on my data, it
+took 12 hours!</p>
+<p>Bootstrap intervals can be particularly useful when we do not want to
+rely heavily on the assumptions underlying simpler approximations. In
+published research, bootstrap confidence intervals are sometimes
+preferred as a more robust estimate of uncertainty.</p>
+<p>*Note: the .sig01 is the SD of one of the random intercepts, .sig02
+is the other, and sigma is the residual SD. These are not reported in
+the model output.</p>
+</div>
+<div id="reporting-model-output-in-a-table" class="section level3"
+number="8.1.4">
+<h3><span class="header-section-number">8.1.4</span> Reporting model
+output in a table</h3>
+<p>The following is the table format I often use when reporting model
+results in my papers.</p>
+<p>I generally round values to two decimal places. With measurements
+such as milliseconds, even reporting to the nearest tenth of a
+millisecond is often more precise than is linguistically meaningful, so
+additional decimal places usually add little. For very small <span
+class="math inline">\(p\)</span>-values, however, I prefer to report
+enough digits to show at least one non-zero value. For example, I would
+report <span class="math inline">\(p = 0.00003\)</span> rather than
+<span class="math inline">\(p = 0.00\)</span>. Reporting values as <span
+class="math inline">\(p &lt; 0.01\)</span> or <span
+class="math inline">\(p &lt; 0.001\)</span> is also perfectly
+acceptable; I simply prefer showing the actual value when it is
+practical to do so.</p>
+<p>I usually place the 95% confidence interval immediately after the
+standard error, although the exact column order is largely a matter of
+presentation. Significance codes are also optional and are often omitted
+when space is limited. I generally like to include them because they
+make statistically significant effects easy to identify at a glance.</p>
+<p>Finally, predictor names should be made human-readable. The table is
+intended for the reader, not for R, so labels such as
+<code>DialectMexico City</code> or <code>Following_Vowel:voweli</code>
+should be rewritten as clear forms such as
+<code>Dialect: Mexico City</code> and
+<code>Following vowel: i</code>.</p>
+<p><img src="LinearMEMs_images/output.jpg" alt="model output in a table" width="800"/></p>
+</div>
+</div>
+<div id="random-effect-estimates" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> Random-effect
+estimates</h2>
+<p>As mentioned in the previous unit, we can also examine the estimated
+adjustments for individual speakers and words using:</p>
+<pre class="r"><code>ranef(final_model)</code></pre>
+<details>
+<summary>
+Click here to see the output:
+</summary>
+<pre class="r"><code>$Word
+     (Intercept)
+bado  5.58330599
+bala  0.83793577
+bama  2.32400481
+bana  2.51066083
+bano  4.21928127
+bara  2.32400481
+basa  4.57105607
+bedo  2.75887743
+bela  3.44088979
+bema  2.57940049
+bena -0.24915604
+beno  8.13600647
+bera  6.95863776
+besa  4.83363083
+bido  3.73238707
+bila  4.14159449
+bima  4.65130899
+bina  5.09641179
+bino  3.58162644
+bira  2.72731622
+bisa  5.41947028
+bodo  4.81050503
+bola -0.55226586
+boma  7.43086832
+bona  6.00941097
+bono  3.05163105
+bora  0.76150533
+bosa  5.61456171
+budo  1.86451635
+bula  3.41519709
+buma  2.65421488
+buna  1.49838340
+bura  2.09424683
+busa  4.29822362
+dado -1.88902911
+dala -1.19983767
+dama  0.02060550
+dana -2.32695284
+dano  1.13336252
+dara -0.03682712
+dasa -4.40888531
+dedo -1.09520262
+dela  4.14552395
+dema -1.21724693
+dena -1.50441003
+deno -3.23456771
+dera  3.54966052
+desa -0.52805549
+dido -2.87845873
+dila -2.51232578
+dima  2.11817920
+dina -1.01189859
+dira -1.88774604
+disa  0.10803750
+dodo -2.04442941
+dola -2.10186203
+doma -0.37170435
+dona -0.61579299
+dora  0.99232037
+dosa  2.27019617
+dudo -4.45198727
+dula  1.06872332
+duma  1.51382612
+duna -3.15257425
+duno -1.96802646
+dura  0.96821624
+dusa -1.57317720
+gado -8.08151806
+gala  2.62966556
+gama -5.54730370
+gana -2.89104503
+gara  0.51183770
+gasa  0.52619585
+gedo -5.06217754
+gela -2.98024507
+gema -4.07864393
+gena -1.84595083
+gera -4.53810489
+gesa -8.21379256
+gido  0.27621121
+gila -1.24575322
+gima -7.42693894
+gina -1.54009539
+gino -1.37497661
+gira -2.68156872
+gisa -5.00758982
+godo -3.87921832
+gola -2.17777695
+goma  2.03634154
+gona -4.00844171
+gono -3.13259426
+gora -1.76139046
+gosa -3.68538323
+gudo -6.60265559
+gula -1.85010629
+guma -3.40078703
+guna  0.12414002
+guno -3.26438456
+gura -4.31252987
+gusa -4.52072312
+kado  1.27612229
+kala  2.82680303
+kama  6.27276022
+kana  2.80526580
+kara  5.54049432
+kasa  0.67307978
+kedo  3.47704797
+kela  3.09655687
+kema  1.65356229
+kena  2.63709591
+kera  5.33642904
+kesa  1.38075734
+kido  3.81879879
+kila  4.42184130
+kima -0.15123106
+kina  0.47334868
+kino  1.27740536
+kira  3.75418709
+kisa  4.35722960
+kodo  3.38931048
+kola  1.92477867
+koma  1.04175214
+kona  6.06710639
+kono  1.94631590
+kora  1.04893122
+kosa  0.90534967
+kudo  1.78580929
+kula  2.93446169
+kuma  4.24823287
+kuna  4.60000767
+kuno  2.22373302
+kura  5.13125941
+kusa  6.83270077
+pado -4.68665152
+pala -1.96578115
+pama -6.05067625
+pana -2.42524211
+pano -2.66215167
+para -2.36780949
+pasa -5.40455927
+pedo -3.06723112
+pela -3.00261942
+pema -3.16055913
+pena -4.02204842
+peno -2.20574182
+pera -4.43125584
+pesa -4.90507496
+pido -2.40242181
+pila -3.77362561
+pima -3.22083665
+pina -5.62582761
+pino -3.09161325
+pira -4.74280107
+pisa -3.32852281
+podo -4.77026105
+pola -2.91805905
+poma -3.24829662
+pona -3.54981787
+pono -2.25040485
+pora -4.42566533
+posa -5.36612448
+pudo -3.62417555
+pula -3.53084754
+puma -1.70018278
+puna -2.52577670
+pura -5.22510983
+pusa -3.45187769
+tado  0.61259223
+tala -1.13192360
+tama  0.82796456
+tana  1.16538120
+tano  1.48843969
+tara -0.50016478
+tasa  2.89553888
+tedo  1.14797194
+tela -0.89088607
+tema  0.53057127
+tena  0.53775035
+teno  2.74890622
+tera -0.76884175
+tesa  2.05253570
+tido  2.37274929
+tila  0.66412885
+tima -0.08967429
+tina  0.86514302
+tira  0.86514302
+tisa -0.72861219
+todo -0.28943212
+tola -0.74171400
+toma  1.83557482
+tona  0.11977529
+tora  0.65102703
+tosa -0.01662718
+tudo  1.63917282
+tula  1.76121713
+tuma  0.24643178
+tuna  2.97448123
+tuno  1.00741400
+tura -1.26835357
+tusa  1.53866573
+
+$Speaker
+      (Intercept)
+MAD01 -0.53455180
+MAD02 -1.21573852
+MAD03  2.41660949
+MAD04  4.81533904
+MAD05 -5.48165820
+MEX01 -1.83473416
+MEX02  1.58091679
+MEX03  0.04022986
+MEX04  2.01868372
+MEX05 -1.80509622</code></pre>
+</details>
+<p>Or separately:</p>
+<pre class="r"><code>ranef(final_model)$Speaker
+
+ranef(final_model)$Word</code></pre>
+<p>These values are <strong>random-intercept adjustments</strong>, not
+complete intercepts.</p>
+<p>For example:</p>
+<pre class="text"><code>Speaker MAD03  +2.42
+Speaker MEX05  -1.81</code></pre>
+<p>This means that <code>MAD03</code> is estimated to have a baseline
+VOT approximately 2.42 ms above the overall model intercept, while
+Speaker <code>MEX05</code> is approximately 1.81 ms below it. The same
+logic can be applied to <code>word</code>. For example,
+<code>tasa</code> is 2.89 ms above the overall model intercept and
+<code>todo</code> is 0.28 below it.</p>
+<p>These speaker- and word-specific adjustments are one of the ways
+mixed-effects models account for systematic variation among repeated
+observations.</p>
+</div>
+</div>
+<div id="interactions" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Interactions</h1>
+<p>So far, our model has assumed that each predictor has an independent,
+<strong>additive</strong> effect.</p>
+<p>For example:</p>
+<pre class="r"><code>Voicing + Place</code></pre>
+<p>This assumes that the effect of <code>Voicing</code> is the same in
+all three <code>places of articulation</code>.</p>
+<p>But what if the difference between <code>voiced</code> and
+<code>voiceless</code> stops is different across <code>PoA</code>?</p>
+<p>That is an <strong>interaction</strong>.</p>
+<blockquote>
+<p>An interaction occurs when the effect of one predictor depends on the
+value of another predictor.</p>
+</blockquote>
+<p>For example:</p>
+<pre class="r"><code>vot %&gt;%
+    group_by(Voicing, Place) %&gt;%
+    summarise(
+        Mean_VOT = mean(VOT_ms),
+        SD_VOT = sd(VOT_ms),
+        N = n(),
+        .groups = &quot;drop&quot;
+    )
+
+# A tibble: 6 x 5
+  Voicing   Place    Mean_VOT SD_VOT     N
+  &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+1 Voiced    Bilabial    -77.7  15.8    340
+2 Voiced    Dental      -87.2   8.13   330
+3 Voiced    Velar       -71.8   8.19   330
+4 Voiceless Bilabial     15.8   4.62   340
+5 Voiceless Dental       18.4   5.39   330
+6 Voiceless Velar        40.2  11.6    330</code></pre>
+<p>Here we can see that VOT varies by <code>place of articulation</code>
+for both voiced and voiceless stops. Among voiced stops, dental stops
+show approximately 9.5 ms more prevoicing than bilabial stops, while
+velar stops show approximately 5.9 ms less prevoicing. Among voiceless
+stops, dental VOT is approximately 2.6 ms longer than bilabial VOT,
+while velar VOT is approximately 24.4 ms longer.</p>
+<p>In R, we can test this interaction by changing the <code>+</code> to
+<code>*</code>:</p>
+<pre class="r"><code>Voicing * Place</code></pre>
+<p>The model output will then show a combined output, in addition to the
+normal singular predictors:</p>
+<pre class="r"><code>Voicing
+Place
+Voicing:PlaceA
+Voicing:PlaceB</code></pre>
+<p>The first two terms are the <strong>main effects</strong> and the
+final two terms are the <strong>interaction coefficients</strong>.</p>
+<p>For example:</p>
+<pre class="r"><code>model_interaction = lmer(VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot, REML = FALSE)
+summary(model_interaction)
+
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  14049.2   14133.2   -7009.6   14019.2      1985 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.2779 -0.6781  0.0058  0.6755  3.3182 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept)  0.4916  0.7011  
+ Speaker  (Intercept)  7.5286  2.7438  
+ Residual             63.3219  7.9575  
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                             Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)                  -81.9657     1.5478  13.0927 -52.955  &lt; 2e-16 ***
+DialectMexico City             9.7605     1.8080   9.9967   5.399 0.000302 ***
+SexMale                       -1.6745     1.8080   9.9967  -0.926 0.376177    
+VoicingVoiceless              93.4865     0.6336 199.0562 147.557  &lt; 2e-16 ***
+PlaceDental                   -9.5042     0.6387 199.0562 -14.881  &lt; 2e-16 ***
+PlaceVelar                     5.9007     0.6387 199.0562   9.239  &lt; 2e-16 ***
+Following_Vowele               0.2342     0.5841 199.0562   0.401 0.688825    
+Following_Voweli               1.6582     0.5846 199.0562   2.837 0.005030 ** 
+Following_Vowelo              -0.9535     0.5846 199.0562  -1.631 0.104427    
+Following_Vowelu               0.3700     0.5846 199.0562   0.633 0.527440    
+VoicingVoiceless:PlaceDental  12.1253     0.9028 199.0562  13.432  &lt; 2e-16 ***
+VoicingVoiceless:PlaceVelar   18.4472     0.9028 199.0562  20.434  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo Following_Vowelu VcV:PD
+DilctMxcCty      -0.467                                                                                                              
+SexMale          -0.467 -0.200                                                                                                       
+VoicngVclss      -0.205  0.000  0.000                                                                                                
+PlaceDental      -0.204  0.000  0.000  0.496                                                                                         
+PlaceVelar       -0.199  0.000  0.000  0.496  0.492                                                                                  
+Following_Vowele -0.189  0.000  0.000  0.000  0.000  0.000                                                                           
+Following_Voweli -0.189  0.000  0.000  0.000  0.014 -0.014  0.500                                                                    
+Following_Vowelo -0.189  0.000  0.000  0.000  0.014 -0.014  0.500            0.501                                                   
+Following_Vowelu -0.183  0.000  0.000  0.000 -0.013 -0.027  0.500            0.500            0.500                                  
+VcngVcls:PD       0.144  0.000  0.000 -0.702 -0.707 -0.348  0.000            0.000            0.000            0.000                 
+VcngVcls:PV       0.144  0.000  0.000 -0.702 -0.348 -0.707  0.000            0.000            0.000            0.000            0.493</code></pre>
+<p>The interaction asks:</p>
+<blockquote>
+<p><strong>Does the effect of <code>Voicing</code> differ across
+<code>place of articulation</code>?</strong></p>
+</blockquote>
+<p>Because this model differs from the additive model in its fixed
+effects, we again use <code>REML = FALSE</code> while comparing
+them.</p>
+<pre class="r"><code>anova(model_place, model_interaction)
+
+Data: vot
+Models:
+model_place: VOT_ms ~ Dialect + Sex + Voicing + Place + Following_Vowel + (1 | Speaker) + (1 | Word)
+model_interaction: VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel + (1 | Speaker) + (1 | Word)
+                  npar   AIC   BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)    
+model_place         13 14275 14348 -7124.5     14249                         
+model_interaction   15 14049 14133 -7009.6     14019 229.87  2  &lt; 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</code></pre>
+<pre class="r"><code>AIC(model_place, model_interaction)
+
+                  df      AIC
+model_place       13 14275.07
+model_interaction 15 14049.20
+
+BIC(model_place, model_interaction)
+
+                  df      BIC
+model_place       13 14347.88
+model_interaction 15 14133.21</code></pre>
+<p>In this case, the interaction model is clearly better. Both AIC and
+BIC are substantially lower for the interaction model, and the
+likelihood-ratio test produced by <code>anova()</code> is significant,
+<span class="math inline">\(\chi^2(2)=229.87\)</span>, <span
+class="math inline">\(p&lt;.001\)</span>. This means that allowing the
+effect of <code>Place</code> to differ according to <code>Voicing</code>
+significantly improves the model and more than justifies the two
+additional interaction terms. We would therefore retain the
+<code>Voicing * Place</code> interaction model.</p>
+<p>We now need to set <code>REML</code> to <code>TRUE</code> and re-run
+our final model with the interaction.</p>
+<pre class="r"><code>model_final2 = lmer(VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel + (1 | Speaker) + (1 | Word), data = vot, REML = TRUE)
+summary(model_final2)
+
+Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+REML criterion at convergence: 14005.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.2788 -0.6795  0.0061  0.6731  3.2877 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept)  0.8167  0.9037  
+ Speaker  (Intercept) 10.8853  3.2993  
+ Residual             63.3204  7.9574  
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                             Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)                  -81.9657     1.8185   8.5739 -45.074 1.72e-11 ***
+DialectMexico City             9.7605     2.1604   6.9996   4.518  0.00274 ** 
+SexMale                       -1.6745     2.1604   6.9996  -0.775  0.46367    
+VoicingVoiceless              93.4865     0.6485 189.9964 144.165  &lt; 2e-16 ***
+PlaceDental                   -9.5042     0.6537 189.9964 -14.539  &lt; 2e-16 ***
+PlaceVelar                     5.9007     0.6537 189.9964   9.026  &lt; 2e-16 ***
+Following_Vowele               0.2342     0.5979 189.9964   0.392  0.69563    
+Following_Voweli               1.6582     0.5983 189.9964   2.771  0.00614 ** 
+Following_Vowelo              -0.9535     0.5983 189.9964  -1.594  0.11266    
+Following_Vowelu               0.3700     0.5983 189.9964   0.618  0.53700    
+VoicingVoiceless:PlaceDental  12.1253     0.9240 189.9964  13.123  &lt; 2e-16 ***
+VoicingVoiceless:PlaceVelar   18.4472     0.9240 189.9964  19.965  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo Following_Vowelu VcV:PD
+DilctMxcCty      -0.475                                                                                                              
+SexMale          -0.475 -0.200                                                                                                       
+VoicngVclss      -0.178  0.000  0.000                                                                                                
+PlaceDental      -0.178  0.000  0.000  0.496                                                                                         
+PlaceVelar       -0.173  0.000  0.000  0.496  0.492                                                                                  
+Following_Vowele -0.164  0.000  0.000  0.000  0.000  0.000                                                                           
+Following_Voweli -0.165  0.000  0.000  0.000  0.014 -0.014  0.500                                                                    
+Following_Vowelo -0.165  0.000  0.000  0.000  0.014 -0.014  0.500            0.501                                                   
+Following_Vowelu -0.160  0.000  0.000  0.000 -0.013 -0.027  0.500            0.500            0.500                                  
+VcngVcls:PD       0.125  0.000  0.000 -0.702 -0.707 -0.348  0.000            0.000            0.000            0.000                 
+VcngVcls:PV       0.125  0.000  0.000 -0.702 -0.348 -0.707  0.000            0.000            0.000            0.000            0.493</code></pre>
+<div id="interpreting-interaction-coefficients" class="section level2"
+number="9.1">
+<h2><span class="header-section-number">9.1</span> Interpreting
+interaction coefficients</h2>
+<p>Interactions change the interpretation of the main effects.</p>
+<p>With <code>Voiced</code> as the reference level of
+<code>Voicing</code> and <code>Bilabial</code> as the reference level of
+<code>Place</code>:</p>
+<ul>
+<li><code>Voicing: Voiceless</code> describes the voiceless-voiced
+difference <strong>for bilabial stops</strong>;<br />
+</li>
+<li><code>Place: Dental</code> describes the dental-bilabial difference
+<strong>for voiced stops</strong>;<br />
+</li>
+<li><code>Place: Velar</code> describes the velar-bilabial difference
+<strong>for voiced stops</strong>;<br />
+</li>
+<li><code>Voicing:Voiceless * Place:Dental</code> tells us how much the
+dental-bilabial difference changes for voiceless stops;<br />
+</li>
+<li><code>Voicing:Voiceless * Place:Velar</code> tells us how much the
+velar-bilabial difference changes for voiceless stops.</li>
+</ul>
+<p>Notice that <code>Dialect</code> is not involved in the interaction
+in this model. The <code>Dialect: Mexico City</code> coefficient
+therefore represents the Mexico City-Madrid difference across the other
+conditions in the model.</p>
+<p>Our interaction model gives approximately the following
+coefficients:</p>
+<pre class="text"><code>(Intercept)                           -81.97
+Dialect: Mexico City                    9.76
+Sex: Male                              -1.67
+Voicing: Voiceless                     93.49
+Place: Dental                          -9.50
+Place: Velar                            5.90
+Voiceless * Dental                     12.13
+Voiceless * Velar                      18.45</code></pre>
+<p>This becomes clearer if we calculate some predictions.</p>
+<p>Suppose we want to predict the VOT of a <strong>voiced dental stop
+before /a/</strong> produced by an average <strong>male speaker from
+Mexico City</strong> saying an average word.</p>
+<p>Because <code>/a/</code> is the reference level of
+<code>Following_Vowel</code>, it contributes 0. <code>Voiced</code> is
+also the reference level of <code>Voicing</code>, so the
+<code>Voicing: Voiceless</code> coefficient and both interaction
+coefficients contribute 0.</p>
+<p>We therefore include:</p>
+<ul>
+<li>the intercept;<br />
+</li>
+<li>the Mexico City coefficient;<br />
+</li>
+<li>the male coefficient;<br />
+</li>
+<li>the dental coefficient.</li>
+</ul>
+<p>The model predicts a VOT of approximately <strong>-83.38
+ms</strong>:</p>
+<pre class="r"><code>(-81.97) + (9.76) + (-1.67) + (-9.50)
+[1] -83.38</code></pre>
+<p><strong>What happens if the same stop is voiceless?</strong></p>
+<p>Now imagine exactly the same combination:</p>
+<ul>
+<li>Mexico City</li>
+<li>male</li>
+<li>dental</li>
+<li>before /a/</li>
+</ul>
+<p>but the stop is <strong>voiceless</strong>.</p>
+<p>We now add the <code>Voicing: Voiceless</code> coefficient:</p>
+<p><span class="math display">\[
++93.49
+\]</span></p>
+<p>However, because the stop is <strong>both voiceless and
+dental</strong>, we must also add the <code>Voiceless * Dental</code>
+interaction coefficient:</p>
+<p><span class="math display">\[
++12.13
+\]</span></p>
+<p>The predicted VOT is therefore approximately <strong>22.24
+ms</strong>:</p>
+<pre class="r"><code>(-81.97) + (9.76) + (-1.67) + (-9.50) + (93.49) + (12.13)
+[1] 22.24</code></pre>
+<p>The interaction is more interesting if we use it to examine
+<strong>place of articulation among voiceless stops</strong>. For
+voiceless dental stops, the dental-bilabial difference is:</p>
+<p><span class="math display">\[
+-9.50+12.13=2.63\text{ ms}
+\]</span></p>
+<p>So the model predicts that voiceless dental stops have VOTs
+approximately <strong>2.63 ms longer than voiceless bilabial
+stops</strong>.</p>
+<p>For voiceless velar stops, the velar-bilabial difference is:</p>
+<p><span class="math display">\[
+5.90+18.45=24.35\text{ ms}
+\]</span></p>
+<p>So the model predicts that voiceless velar stops have VOTs
+approximately <strong>24.35 ms longer than voiceless bilabial
+stops</strong>.</p>
+<p>The predicted ordering among voiceless stops is therefore:</p>
+<p><span class="math display">\[
+Bilabial &lt; Dental &lt; Velar
+\]</span></p>
+<p>This is the phonetic pattern we are interested in. Voiceless bilabial
+stops have the shortest VOTs, dental stops are slightly longer, and
+velar stops are substantially longer.</p>
+<div
+id="when-does-an-interaction-coefficient-contribute-to-a-prediction"
+class="section level3" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> When does an
+interaction coefficient contribute to a prediction?</h3>
+<p>An interaction coefficient contributes to a prediction only when
+<strong>all of the non-reference conditions represented by that
+interaction term are present</strong>.</p>
+<p>Consider:</p>
+<p><span class="math display">\[
+\text{VoicingVoiceless} \times \text{PlaceDental}
+\]</span></p>
+<p>With dummy coding:</p>
+<p><code>VoicingVoiceless</code> = 1 for voiceless stops and 0 for
+voiced stops<br />
+<code>PlaceDental</code> = 1 for dental stops and 0 otherwise</p>
+<p>The interaction term is their product.</p>
+<p>For a <strong>voiceless dental</strong> stop:</p>
+<p><span class="math display">\[
+1 \times 1 = 1
+\]</span></p>
+<p>so the <code>Voiceless x Dental</code> interaction coefficient is
+included.</p>
+<p>For the other relevant combinations:</p>
+<p><code>Voiced</code> + <code>Bilabial</code> → <span
+class="math inline">\(0 * 0 = 0\)</span><br />
+<code>Voiced</code> + <code>Dental</code> → <span
+class="math inline">\(0 * 1 = 0\)</span><br />
+<code>Voiceless</code> + <code>Bilabial</code> → <span
+class="math inline">\(1 * 0 = 0\)</span><br />
+<code>Voiceless</code> + <code>Dental</code> → <span
+class="math inline">\(1 * 1 = 1\)</span></p>
+<p>The <code>Voiceless * Velar</code> coefficient works in exactly the
+same way. It contributes only when the stop is <strong>both voiceless
+and velar</strong>.</p>
+<p>Because <code>Place</code> has three levels, the model requires
+<strong>two interaction coefficients</strong>. <code>Bilabial</code> is
+the reference level, so there is no separate
+<code>Voiceless * Bilabial</code> coefficient. Its value is already
+represented by the main <code>Voicing: Voiceless</code> coefficient.</p>
+<p>#Final model with interactions and CI95</p>
+<pre class="r"><code>Linear mixed model fit by REML. t-tests use Satterthwaites method [&#39;lmerModLmerTest&#39;]
+Formula: VOT_ms ~ Dialect + Sex + Voicing * Place + Following_Vowel +      (1 | Speaker) + (1 | Word)
+   Data: vot
+
+REML criterion at convergence: 14005.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.2788 -0.6795  0.0061  0.6731  3.2877 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Word     (Intercept)  0.8167  0.9037  
+ Speaker  (Intercept) 10.8853  3.2993  
+ Residual             63.3204  7.9574  
+Number of obs: 2000, groups:  Word, 200; Speaker, 10
+
+Fixed effects:
+                             Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)                  -81.9657     1.8185   8.5739 -45.074 1.72e-11 ***
+DialectMexico City             9.7605     2.1604   6.9996   4.518  0.00274 ** 
+SexMale                       -1.6745     2.1604   6.9996  -0.775  0.46367    
+VoicingVoiceless              93.4865     0.6485 189.9964 144.165  &lt; 2e-16 ***
+PlaceDental                   -9.5042     0.6537 189.9964 -14.539  &lt; 2e-16 ***
+PlaceVelar                     5.9007     0.6537 189.9964   9.026  &lt; 2e-16 ***
+Following_Vowele               0.2342     0.5979 189.9964   0.392  0.69563    
+Following_Voweli               1.6582     0.5983 189.9964   2.771  0.00614 ** 
+Following_Vowelo              -0.9535     0.5983 189.9964  -1.594  0.11266    
+Following_Vowelu               0.3700     0.5983 189.9964   0.618  0.53700    
+VoicingVoiceless:PlaceDental  12.1253     0.9240 189.9964  13.123  &lt; 2e-16 ***
+VoicingVoiceless:PlaceVelar   18.4472     0.9240 189.9964  19.965  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+                 (Intr) DlctMC SexMal VcngVc PlcDnt PlcVlr Following_Vowele Following_Voweli Following_Vowelo Following_Vowelu VcV:PD
+DilctMxcCty      -0.475                                                                                                              
+SexMale          -0.475 -0.200                                                                                                       
+VoicngVclss      -0.178  0.000  0.000                                                                                                
+PlaceDental      -0.178  0.000  0.000  0.496                                                                                         
+PlaceVelar       -0.173  0.000  0.000  0.496  0.492                                                                                  
+Following_Vowele -0.164  0.000  0.000  0.000  0.000  0.000                                                                           
+Following_Voweli -0.165  0.000  0.000  0.000  0.014 -0.014  0.500                                                                    
+Following_Vowelo -0.165  0.000  0.000  0.000  0.014 -0.014  0.500            0.501                                                   
+Following_Vowelu -0.160  0.000  0.000  0.000 -0.013 -0.027  0.500            0.500            0.500                                  
+VcngVcls:PD       0.125  0.000  0.000 -0.702 -0.707 -0.348  0.000            0.000            0.000            0.000                 
+VcngVcls:PV       0.125  0.000  0.000 -0.702 -0.348 -0.707  0.000            0.000            0.000            0.000            0.493
+
+#Confidence intervals
+confint(model_final2, method = &quot;profile&quot;)
+
+                                   2.5 %      97.5 %
+.sig01                         0.0000000   1.4408471
+.sig02                         1.8255619   4.6427832
+.sigma                         7.7038456   8.2253837
+(Intercept)                  -85.2491273 -78.6823263
+DialectMexico City             5.8481479  13.6728492
+SexMale                       -5.5868521   2.2378492
+VoicingVoiceless              92.2386827  94.7342585
+PlaceDental                  -10.7620509  -8.2463181
+PlaceVelar                     4.6427847   7.1585174
+Following_Vowele              -0.9161536   1.3846536
+Following_Voweli               0.5069353   2.8094902
+Following_Vowelo              -2.1048147   0.1977402
+Following_Vowelu              -0.7812255   1.5213021
+VoicingVoiceless:PlaceDental  10.3473908  13.9033044
+VoicingVoiceless:PlaceVelar   16.6692090  20.2251226</code></pre>
+<details>
+<summary>
+Click here to see the <code>ranef()</code> output:
+</summary>
+<pre class="r"><code>$Word
+       (Intercept)
+bado  0.3121892937
+bala -0.4429433784
+bama -0.2064646142
+bana -0.1767619675
+bano  0.0951314908
+bara -0.2064646142
+basa  0.1511095558
+bedo -0.1372631594
+bela -0.0287342580
+bema -0.1658233966
+bena -0.6159327352
+beno  0.7184015477
+bera  0.5310463915
+besa  0.1928931828
+bido  0.0176518209
+bila  0.0827691618
+bima  0.1638802355
+bina  0.2347096238
+bino -0.0063387783
+bira -0.1422855075
+bisa  0.2861180508
+bodo  0.1892131659
+bola -0.6641667222
+boma  0.6061926293
+bona  0.3799955505
+bono -0.0906771588
+bora -0.4551057858
+bosa  0.3171630286
+budo -0.2795831972
+bula -0.0328227476
+buma -0.1539181534
+buna -0.3378460811
+bura -0.2430260936
+busa  0.1076936195
+dado -0.1842807892
+dala -0.0746094783
+dama  0.1196001348
+dana -0.2539677680
+dano  0.2966736056
+dara  0.1104608589
+dasa -0.5852665198
+dedo -0.0579588600
+dela  0.7760000668
+dema -0.0773798213
+dena -0.1230762009
+deno -0.3983968876
+dera  0.6811800792
+desa  0.0322914896
+dido -0.3417291234
+dila -0.2834662394
+dima  0.4533878808
+dina -0.0447026563
+dira -0.1840766139
+disa  0.1335132240
+dodo -0.2090097010
+dola -0.2181489769
+doma  0.0571717099
+dona  0.0183297873
+dora  0.2742295128
+dosa  0.4775784018
+dudo -0.5921253524
+dula  0.2863875444
+duma  0.3572169327
+duna -0.3853492350
+duno -0.1968516693
+dura  0.2703938116
+dusa -0.1340191474
+gado -0.8085887925
+gala  0.8958861648
+gama -0.4053182429
+gana  0.0173732679
+gara  0.5588753656
+gasa  0.5611601846
+gedo -0.3281199217
+gela  0.0031788300
+gema -0.1716098218
+gena  0.1836795292
+gera -0.2447240290
+gesa -0.8296376873
+gido  0.5213800278
+gila  0.2791892162
+gima -0.7044253537
+gina  0.2323504271
+gino  0.2586258454
+gira  0.0507073184
+gisa -0.3194333560
+godo -0.1398751446
+gola  0.1308759043
+goma  0.8014702742
+gona -0.1604385154
+gono -0.0210645577
+gora  0.1971356546
+gosa -0.1090300884
+gudo -0.5732568135
+gula  0.1830182681
+guma -0.0637421815
+guna  0.4971808775
+guno -0.0420364012
+gura -0.2088281866
+gusa -0.2419580618
+kado -0.2743565734
+kala -0.0275961238
+kama  0.5207604308
+kana -0.0310233522
+kara  0.4042346630
+kasa -0.3703189704
+kedo  0.0758776157
+kela  0.0153299128
+kema -0.2142943945
+kena -0.0577842945
+kera  0.3717616733
+kesa -0.2577059551
+kido  0.1302605610
+kila  0.2262229580
+kima -0.5014918863
+kina -0.4021022608
+kino -0.2741523980
+kira  0.1199788756
+kisa  0.2159412726
+kodo  0.0619159133
+kola -0.1711356224
+koma -0.3116519895
+kona  0.4880346526
+kono -0.1677083939
+kora -0.3105095800
+kosa -0.3333577698
+kudo -0.1932498754
+kula -0.0104643572
+kuma  0.1985965793
+kuna  0.2545746442
+kuno -0.1235628966
+kura  0.3391129464
+kusa  0.6098639952
+pado -0.1695043072
+pala  0.2634688890
+pama -0.3865621101
+pana  0.1903546818
+pano  0.1526551686
+para  0.1994939577
+pasa -0.2837452561
+pedo  0.0881947132
+pela  0.0984763986
+pema  0.0733433899
+pena -0.0637457488
+peno  0.2252838519
+pera -0.1288630896
+pesa -0.2042621159
+pido  0.1939860855
+pila -0.0242141268
+pima  0.0637514038
+pina -0.3189557749
+pino  0.0843147746
+pira -0.1784394078
+pisa  0.0466152615
+podo -0.1828091241
+pola  0.1119325240
+poma  0.0593816875
+pona  0.0114004890
+pono  0.2181766065
+pora -0.1279734686
+posa -0.2776291117
+pudo -0.0004320786
+pula  0.0144192448
+puma  0.3057336644
+puna  0.1743565732
+pura -0.2551893946
+pusa  0.0269857491
+tado -0.0188391242
+tala -0.2964446299
+tama  0.0154331605
+tana  0.0691264065
+tano  0.1205348335
+tara -0.1959125949
+tasa  0.3444470933
+tedo  0.0663560635
+tela -0.2580882313
+tema -0.0318911526
+tena -0.0307487431
+teno  0.3211133795
+tera -0.2386672700
+tesa  0.2102996590
+tido  0.2612553759
+tila -0.0106380824
+tima -0.1305910787
+tina  0.0213493833
+tira  0.0213493833
+tisa -0.2322655232
+todo -0.1623786228
+tola -0.2343504206
+toma  0.1757745859
+tona -0.0972612819
+tora -0.0127229797
+tosa -0.1189670622
+tudo  0.1445210570
+tula  0.1639420183
+tuma -0.0771063838
+tuna  0.3570092219
+tuno  0.0439890220
+tura -0.3181547859
+tusa  0.1285273242
+
+$Speaker
+      (Intercept)
+MAD01  -0.5345523
+MAD02  -1.2157397
+MAD03   2.4166118
+MAD04   4.8153437
+MAD05  -5.4816635
+MEX01  -1.8347359
+MEX02   1.5809183
+MEX03   0.0402299
+MEX04   2.0186857
+MEX05  -1.8050980</code></pre>
+</details>
+</div>
+</div>
+</div>
+<div id="writing-up-the-statistical-analysis-in-the-methods-section"
+class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Writing up the
+statistical analysis in the methods section</h1>
+<p>Before reporting the results of a mixed-effects model, the
+<strong>Methods</strong> section should explain how the statistical
+analysis was conducted.</p>
+<p>The Methods section tells the reader:</p>
+<ul>
+<li>what type of model was fitted;</li>
+<li>what the dependent variable was;</li>
+<li>which predictors were included as fixed effects;</li>
+<li>which interactions were tested;</li>
+<li>which variables were included as random effects;</li>
+<li>how categorical predictors were coded;</li>
+<li>how models were compared or selected;</li>
+<li>how statistical significance was determined.</li>
+</ul>
+<p>The Methods section should describe the <strong>analysis</strong>,
+not the <strong>results</strong>. We do not report which predictors were
+significant until the Results section.</p>
+<div id="a-basic-model-description" class="section level2"
+number="10.1">
+<h2><span class="header-section-number">10.1</span> A basic model
+description</h2>
+<p>For our VOT analysis, we might write:</p>
+<blockquote>
+<p>VOT was analysed using linear mixed-effects regression in R (R
+Development Core Team, 2024) using the <code>lme4</code> (Bates et
+al. 2015) and <code>lmerTest</code> (Kuznetsova et al., 2026) packages.
+<em>Dialect</em>, <em>Sex</em>, <em>Voicing</em>, <em>Place</em>, and
+<em>Following_Vowel</em> were included as fixed effects, together with a
+<em>Voicing x Place</em> interaction. Random intercepts were included
+for <em>Speaker</em> and <em>Word</em> to account for repeated
+observations from the same speakers and lexical items.</p>
+</blockquote>
+<ul>
+<li>Bates, D. M., Maechler, M., Bolker, B., &amp; Walker, S. (2015).
+Fitting Linear Mixed-Effects Models Using lme4. Journal of Statistical
+Software, 67(1), 1–48. <a href="https://doi.org/10.18637/jss.v067.i01"
+class="uri">https://doi.org/10.18637/jss.v067.i01</a></li>
+<li>Kuznetsova, A., Brockhoff, P. B., &amp; Bojesen, R. (2026). lmerTest
+(Version 3.2-1) [Computer software]. Cran.r Project. <a
+href="https://CRAN.R-project.org/package=lmerTest"
+class="uri">https://CRAN.R-project.org/package=lmerTest</a></li>
+<li>R Development Core Team. (2024). <em>R: A Language and Environment
+for Statistical Computing</em> (Version 4.4.1) [Windows 11]. R
+Foundation for Statistical Computing. <a
+href="https://www.R-project.org/"
+class="uri">https://www.R-project.org/</a></li>
+</ul>
+<p>This tells the reader what was modelled without reporting any
+results.</p>
+</div>
+<div id="reference-levels" class="section level2" number="10.2">
+<h2><span class="header-section-number">10.2</span> Reference
+levels</h2>
+<p>Because categorical coefficients are interpreted relative to
+reference levels, these can also be specified when they are important to
+understanding the analysis:</p>
+<blockquote>
+<p><code>Madrid</code>, <code>Female</code>, <code>Voiced</code>,
+<code>Bilabial</code>, and <code>/a/</code> were used as the reference
+levels for <code>Dialect</code>, <code>Sex</code>, <code>Voicing</code>,
+<code>Place</code>, and <code>Following_Vowel</code>, respectively.</p>
+</blockquote>
+<p>You do not necessarily need to list every reference level in every
+publication, but doing so can make a complicated model much easier to
+interpret. You can simply list the predictors as follows:</p>
+<ul>
+<li>Dependent variable:
+<ul>
+<li>Voice onset time (ms)<br />
+</li>
+</ul></li>
+<li>Fixed effects:
+<ul>
+<li>Dialect (levels: Madrid, Mexico City)<br />
+</li>
+<li>Sex (levels: Female, Male)<br />
+</li>
+<li>Voicing (levels: Voiced, Voiceless)<br />
+</li>
+<li>Place of articulation: binary (Levels: front, back) &amp; trinary
+(levels: bilabial, dental, velar)<br />
+</li>
+<li>Following vowel (levels: /i/, /e/, /a/, /o/, /u/)<br />
+</li>
+</ul></li>
+<li>Interactions
+<ul>
+<li>Voicing x Place of articulation<br />
+</li>
+</ul></li>
+<li>Random effects
+<ul>
+<li>Speaker<br />
+</li>
+<li>Word</li>
+</ul></li>
+</ul>
+</div>
+<div id="model-comparison" class="section level2" number="10.3">
+<h2><span class="header-section-number">10.3</span> Model
+comparison</h2>
+<p>If competing fixed-effect structures were formally compared, the
+Methods section should also explain how this was done.</p>
+<p>For our analysis:</p>
+<blockquote>
+<p>Models differing in their fixed-effect structure were fitted using
+maximum likelihood (<code>REML = FALSE</code>) and compared using AIC,
+BIC, and likelihood-ratio tests. Once the final fixed-effect structure
+had been selected, the model was refitted using restricted maximum
+likelihood (<code>REML = TRUE</code>) for estimation and reporting.</p>
+</blockquote>
+<p>Notice that this tells the reader <strong>how</strong> the model was
+selected. The actual AIC, BIC, and likelihood-ratio test results belong
+in the Results section.</p>
+</div>
+<div id="significance-testing" class="section level2" number="10.4">
+<h2><span class="header-section-number">10.4</span> Significance
+testing</h2>
+<p>Because we are using <code>lmerTest</code>, we should also describe
+how the <span class="math inline">\(p\)</span>-values were obtained:</p>
+<blockquote>
+<p>Degrees of freedom and <span class="math inline">\(p\)</span>-values
+for fixed effects were estimated using the Satterthwaite approximation
+implemented in <code>lmerTest</code> (Kuznetsova et al., 2026).</p>
+</blockquote>
+<p>If confidence intervals are reported, the method used to calculate
+them should also be stated.</p>
+<p>For example:</p>
+<blockquote>
+<p>Ninety-five percent confidence intervals were calculated using
+parametric bootstrapping with 500 simulations.</p>
+</blockquote>
+</div>
+<div id="put-everything-together" class="section level2" number="10.5">
+<h2><span class="header-section-number">10.5</span> Put everything
+together</h2>
+<p>A complete Methods-style statistical analysis section might therefore
+read:</p>
+<blockquote>
+<p>4.4 Statistical Analysis<br />
+VOT was analysed using linear mixed-effects regression in R (R
+Development Core Team, 2024) using the <code>lme4</code> (Bates et al.,
+2015) and <code>lmerTest</code> (Kuznetsova et al., 2026) packages.
+<em>Dialect</em>, <em>Sex</em>, <em>Voicing</em>, <em>Place</em>, and
+<em>Following_Vowel</em> were included as fixed effects, together with a
+<em>Voicing x Place</em> interaction. Random intercepts were included
+for <em>Speaker</em> and <em>Word</em> to account for repeated
+observations from the same speakers and lexical items. <em>Madrid</em>,
+<em>Female</em>, <em>Voiced</em>, <em>Bilabial</em>, and <em>/a/</em>
+were used as the reference levels for <em>Dialect</em>, <em>Sex</em>,
+<em>Voicing</em>, <em>Place</em>, and <em>Following_Vowel</em>,
+respectively. Models differing in their fixed-effect structure were
+fitted using maximum likelihood and compared using AIC, BIC, and
+likelihood-ratio tests. The final model was refitted using restricted
+maximum likelihood. Degrees of freedom and <span
+class="math inline">\(p\)</span>-values for fixed effects were estimated
+using the Satterthwaite approximation implemented in
+<code>lmerTest</code> (Kuznetsova et al., 2026).</p>
+<ul>
+<li>Dependent variable:<br />
+</li>
+<li>Voice onset time (ms)<br />
+</li>
+<li>Fixed effects:</li>
+<li>Dialect (levels: Madrid, Mexico City)<br />
+</li>
+<li>Sex (levels: Female, Male)<br />
+</li>
+<li>Voicing (levels: Voiced, Voiceless)<br />
+</li>
+<li>Place of articulation: binary (Levels: front, back) &amp; trinary
+(levels: bilabial, dental, velar)<br />
+</li>
+<li>Following vowel (levels: /i/, /e/, /a/, /o/, /u/)<br />
+</li>
+<li>Interactions<br />
+</li>
+<li>Voicing x Place of articulation<br />
+</li>
+<li>Random effects<br />
+</li>
+<li>Speaker<br />
+</li>
+<li>Word</li>
+</ul>
+<p>The first predictor, <em>Dialect</em>, coded speakers as belonging to
+either the <em>Madrid</em> or <em>Mexico City</em> Spanish group.
+<em>Dialect</em> was included to test whether VOT differed between the
+two regional varieties. Previous research (Lisker &amp; Abramson 1964,
+Williams, 1977, Stewart 2018) has shown regional variation in Spanish
+VOT, providing a basis for including dialect as a speaker-level
+predictor.</p>
+<p>The second predictor, <em>Sex</em>, coded speakers as <em>female</em>
+or <em>male</em>. <em>Sex</em> was included as a speaker-level
+sociophonetic predictor to account for potential differences in VOT
+associated with speaker <em>sex</em>.</p>
+<p>The third predictor, <em>Voicing</em>, coded the target stop as
+<em>voiced</em> (/b, d, g/) or <em>voiceless</em> (/p, t, k/).
+<em>Voicing</em> was included because Spanish voiced stops are
+frequently prevoiced, resulting in negative VOT, whereas voiceless stops
+generally have positive short-lag VOT.</p>
+<p>The fourth predictor, <em>Place of articulation</em>, coded target
+stops as <em>bilabial</em> (/p, b/), <em>dental</em> (/t, d/), or
+<em>velar</em> (/k, g/). <em>Place</em> was included because VOT is
+known to vary according to <em>place of articulation</em>, with
+voiceless velar stops generally showing longer VOTs than stops produced
+at more anterior places of articulation (Lisker &amp; Abramson, 1964;
+Cho &amp; Ladefoged, 1999). We also evaluated a theoretically motivated
+binary contrast in which <em>bilabial</em> and <em>dental</em> stops
+were grouped as <em>front</em> and <em>velar</em> stops as
+<em>back</em>. The three-level and binary codings were compared using
+AIC, BIC, and a likelihood-ratio test.</p>
+<p>The fifth predictor, <em>Following vowel</em>, coded the vowel
+immediately following the target stop as <em>/i, e, a, o/</em>, or
+<em>/u/</em>. Following vowel was included because previous phonetic
+research has shown that VOT can vary according to vowel context,
+including vowel height and quality (Nearey &amp; Rochet, 1994; Rosner et
+al., 2000).</p>
+<p>The <em>Voicing x Place</em> interaction tested whether the effect of
+place of articulation differed between voiced and voiceless stops. This
+interaction was included because place-related differences in VOT need
+not be equivalent across the two voicing categories. In particular, the
+well-established place effect for voiceless stops provides a theoretical
+reason to test whether the relationship between place and VOT differs
+according to voicing.</p>
+<p>Finally, random intercepts for <em>Speaker</em> and <em>Word</em>
+accounted for repeated observations and unobserved between-speaker and
+between-word differences in overall VOT. Each <em>speaker</em>
+contributed multiple observations and each <em>word</em> was produced by
+multiple speakers, resulting in a crossed random-effects structure.</p>
+</blockquote>
+<p>The Methods section therefore describes <strong>what model was fitted
+and how the analysis was conducted</strong>. The coefficient estimates,
+significance levels, effect sizes, and linguistic interpretation are
+then reserved for the Results section.</p>
+</div>
+</div>
+<div id="writing-up-the-results" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Writing up the
+results</h1>
+<p>Once the final model has been selected and checked, the statistical
+output needs to be translated back into the linguistic questions.</p>
+<p>The goal is <strong>not</strong> to describe every line of the R
+output. A typical Results section should:</p>
+<ol style="list-style-type: decimal">
+<li>briefly identify the model and its structure;</li>
+<li>summarize which predictors were significant;</li>
+<li>describe the direction and size of the important effects;</li>
+<li>interpret any interaction;</li>
+<li>mention predictors that did not significantly affect the
+outcome;</li>
+<li>briefly report the random effects if they are relevant.</li>
+</ol>
+<div id="describe-the-model" class="section level2" number="11.1">
+<h2><span class="header-section-number">11.1</span> Describe the
+model</h2>
+<p>Begin by identifying the dependent variable, fixed effects,
+interaction, and random effects.</p>
+<p>For example:</p>
+<blockquote>
+<p>A linear mixed-effects regression was fitted with VOT as the
+dependent variable. <em>Dialect</em>, <em>Sex</em>, <em>Voicing</em>,
+<em>Place</em>, and <em>Following Vowel</em> were included as fixed
+effects, together with a <em>Voicing x Place</em> interaction. Random
+intercepts were included for <em>Speaker</em> and <em>Word</em>.</p>
+</blockquote>
+<p>If model comparison was part of the analysis, it can also be
+mentioned briefly:</p>
+<blockquote>
+<p>The interaction model provided a substantially better fit than the
+additive model, with lower AIC and BIC values and a significant
+likelihood-ratio test, <span
+class="math inline">\(\chi^2(2)=229.87\)</span>, <span
+class="math inline">\(p&lt;.001\)</span>.</p>
+</blockquote>
+<p>There is generally no need to reproduce all of the model-selection
+output in the prose.</p>
+</div>
+<div id="report-the-significant-predictors" class="section level2"
+number="11.2">
+<h2><span class="header-section-number">11.2</span> Report the
+significant predictors</h2>
+<p>The final model identified significant effects involving:</p>
+<ul>
+<li><code>Dialect</code></li>
+<li><code>Voicing</code></li>
+<li><code>Place</code></li>
+<li><code>Following_Vowel</code></li>
+<li><code>Voicing * Place</code></li>
+</ul>
+<p>Because <code>Voicing</code> and <code>Place</code> interact, their
+main effects must be interpreted in relation to the reference
+levels.</p>
+<div id="dialect-1" class="section level3" number="11.2.1">
+<h3><span class="header-section-number">11.2.1</span> Dialect</h3>
+<p><code>Madrid</code> is the reference level of
+<code>Dialect</code>.</p>
+<pre class="text"><code>Dialect: Mexico City
+β = 9.76
+SE = 2.16
+p = .00274</code></pre>
+<p>Because <code>Dialect</code> is not involved in an interaction, this
+coefficient can be interpreted directly:</p>
+<blockquote>
+<p>After the other predictors were held constant, Mexico City speakers
+had significantly longer VOTs than Madrid speakers, by approximately
+9.76 ms (<span class="math inline">\(\beta=9.76\)</span>, SE = 2.16,
+<span class="math inline">\(p=.003\)</span>).</p>
+</blockquote>
+</div>
+<div id="voicing-1" class="section level3" number="11.2.2">
+<h3><span class="header-section-number">11.2.2</span> Voicing</h3>
+<p><code>Voiced</code> is the reference level of <code>Voicing</code>,
+while <code>Bilabial</code> is the reference level of
+<code>Place</code>.</p>
+<p>The coefficient for <code>Voicing: Voiceless</code> is therefore the
+voiceless-voiced difference specifically for <strong>bilabial
+stops</strong>.</p>
+<pre class="text"><code>Voicing: Voiceless
+β = 93.49
+SE = 0.65
+p &lt; .001</code></pre>
+<p>The large voicing difference is entirely expected, so it does not
+require much discussion:</p>
+<blockquote>
+<p>As expected, voiceless bilabial stops had substantially longer VOTs
+than voiced bilabial stops (<span
+class="math inline">\(\beta=93.49\)</span>, SE = 0.65, <span
+class="math inline">\(p&lt;.001\)</span>).</p>
+</blockquote>
+<p>The important point here is not simply that voiceless stops have
+longer VOTs. Rather, the interaction will tell us whether the effect of
+<strong>place of articulation</strong> differs between voiced and
+voiceless stops.</p>
+</div>
+<div id="place-of-articulation-1" class="section level3"
+number="11.2.3">
+<h3><span class="header-section-number">11.2.3</span> Place of
+articulation</h3>
+<p>Because <code>Voiced</code> is the reference level of
+<code>Voicing</code>, the main <code>Place</code> coefficients describe
+place differences specifically among <strong>voiced stops</strong>.</p>
+<p>For dental stops:</p>
+<pre class="text"><code>Place: Dental
+β = -9.50
+SE = 0.65
+p &lt; .001</code></pre>
+<p>For velar stops:</p>
+<pre class="text"><code>Place: Velar
+β = 5.90
+SE = 0.65
+p &lt; .001</code></pre>
+<p>We can therefore say:</p>
+<blockquote>
+<p>Among voiced stops, dental stops had significantly shorter VOTs than
+bilabial stops (<span class="math inline">\(\beta=-9.50\)</span>, SE =
+0.65, <span class="math inline">\(p&lt;.001\)</span>), while velar stops
+had significantly longer VOTs than bilabial stops (<span
+class="math inline">\(\beta=5.90\)</span>, SE = 0.65, <span
+class="math inline">\(p&lt;.001\)</span>).</p>
+</blockquote>
+<p>However, these coefficients describe the place effect only for
+<strong>voiced stops</strong>. To determine what happens among voiceless
+stops, we must also consider the interaction.</p>
+</div>
+</div>
+<div id="report-the-interaction" class="section level2" number="11.3">
+<h2><span class="header-section-number">11.3</span> Report the
+interaction</h2>
+<p>The model contains two interaction coefficients because
+<code>Place</code> has three levels and <code>Bilabial</code> is the
+reference level.</p>
+<pre class="text"><code>Voiceless * Dental
+β = 12.13
+SE = 0.92
+p &lt; .001
+
+Voiceless * Velar
+β = 18.45
+SE = 0.92
+p &lt; .001</code></pre>
+<p>Both interaction terms are significant, showing that the effect of
+<code>place of articulation</code> differs between voiced and voiceless
+stops.</p>
+<p>For <strong>voiceless dental stops</strong>, the dental-bilabial
+difference is:</p>
+<p><span class="math display">\[
+-9.50+12.13=2.63\text{ ms}
+\]</span></p>
+<p>The model therefore predicts that voiceless dental stops have VOTs
+approximately <strong>2.63 ms longer than voiceless bilabial
+stops</strong>.</p>
+<p>For <strong>voiceless velar stops</strong>, the velar-bilabial
+difference is:</p>
+<p><span class="math display">\[
+5.90+18.45=24.35\text{ ms}
+\]</span></p>
+<p>The model therefore predicts that voiceless velar stops have VOTs
+approximately <strong>24.35 ms longer than voiceless bilabial
+stops</strong>.</p>
+<p>The predicted pattern among voiceless stops is therefore:</p>
+<p><span class="math display">\[
+Bilabial &lt; Dental &lt; Velar
+\]</span></p>
+<p>This is the phonetic pattern of primary interest. Voiceless bilabial
+stops have the shortest predicted VOTs, dental stops are slightly
+longer, and velar stops are substantially longer.</p>
+<p>We can summarize the interaction as:</p>
+<blockquote>
+<p>There was a significant interaction between <em>voicing</em> and
+<em>place of articulation</em>. The effect of <em>place</em> differed
+between voiced and voiceless stops, with significant interaction
+coefficients for both dental (<span
+class="math inline">\(\beta=12.13\)</span>, SE = 0.92, <span
+class="math inline">\(p&lt;.001\)</span>) and velar stops (<span
+class="math inline">\(\beta=18.45\)</span>, SE = 0.92, <span
+class="math inline">\(p&lt;.001\)</span>). Among voiceless stops, the
+model predicted slightly longer VOTs for dentals than bilabials and
+substantially longer VOTs for velars than bilabials.</p>
+</blockquote>
+<p>Notice that we say the model <strong>predicted</strong> a 2.63 ms
+dental-bilabial difference among voiceless stops. The coefficient table
+does not directly provide a significance test for this combined
+contrast. If that particular comparison needs to be tested
+statistically, we would calculate a simple contrast using a method such
+as <code>emmeans</code> or refit the model with different reference
+levels.</p>
+</div>
+<div id="following-vowel" class="section level2" number="11.4">
+<h2><span class="header-section-number">11.4</span> Following vowel</h2>
+<p><code>/a/</code> is the reference level of
+<code>Following_Vowel</code>.</p>
+<p>The model produced the following contrasts:</p>
+<pre class="text"><code>/e/
+β = 0.23
+SE = 0.60
+p = 0.696
+
+/i/
+β = 1.66
+SE = 0.60
+p = 0.006
+
+/o/
+β = -0.95
+SE = 0.60
+p = 0.113
+
+/u/
+β = 0.37
+SE = 0.60
+p = 0.537</code></pre>
+<p>Only <code>/i/</code> differed significantly from the reference vowel
+<code>/a/</code>.</p>
+<blockquote>
+<p>Stops preceding /i/ had slightly longer VOTs than those preceding /a/
+(<span class="math inline">\(\beta=1.66\)</span>, SE = 0.60, <span
+class="math inline">\(p=.006\)</span>). The remaining following-vowel
+contrasts were not significant.</p>
+</blockquote>
+<p>Although statistically significant, the estimated difference is only
+approximately <strong>1.66 ms</strong>, so its linguistic importance
+should not be exaggerated.</p>
+</div>
+<div id="report-non-significant-predictors" class="section level2"
+number="11.5">
+<h2><span class="header-section-number">11.5</span> Report
+non-significant predictors</h2>
+<p><code>Sex</code> did not significantly affect VOT:</p>
+<pre class="text"><code>Sex: Male
+β = -1.67
+SE = 2.16
+p = .464</code></pre>
+<p>This can be reported briefly:</p>
+<blockquote>
+<p>Sex did not significantly affect VOT (<span
+class="math inline">\(\beta=-1.67\)</span>, SE = 2.16, <span
+class="math inline">\(p=.464\)</span>).</p>
+</blockquote>
+<p>There is usually no need to devote the same amount of discussion to a
+non-significant predictor unless the absence of an effect is
+theoretically important.</p>
+</div>
+<div id="report-the-random-effects" class="section level2"
+number="11.6">
+<h2><span class="header-section-number">11.6</span> Report the random
+effects</h2>
+<p>The random intercepts describe remaining systematic differences among
+speakers and words after the fixed effects have been taken into
+account.</p>
+<p><em>Note: Reporting the random-effect estimates in the prose is
+usually optional. I have only reported them explicitly in publications
+when they were important to the analysis.</em></p>
+<pre class="text"><code>Speaker SD = 3.30 ms
+Word SD = 0.90 ms
+Residual SD = 7.96 ms</code></pre>
+<p>If random-effect information is reported, a brief statement is
+usually sufficient:</p>
+<blockquote>
+<p>The estimated random-intercept standard deviations were 3.30 ms for
+speakers and 0.90 ms for words, with a residual standard deviation of
+7.96 ms.</p>
+</blockquote>
+</div>
+<div id="put-everything-together-1" class="section level2"
+number="11.7">
+<h2><span class="header-section-number">11.7</span> Put everything
+together</h2>
+<p>A complete publication-style write-up could therefore read:</p>
+<blockquote>
+<p>All five fixed-effect predictors described in §4.4 were retained in
+the analysis. An alternative binary coding of <em>place of
+articulation</em> was evaluated before fitting the final model. The
+three-level coding distinguishing <em>bilabial</em>, <em>dental</em>,
+and <em>velar</em> stops provided a better fit than the binary
+front–back coding (AIC = 14275.1 vs. 14290.6; BIC = 14347.9
+vs. 14357.8). A likelihood-ratio test similarly favoured the three-level
+representation, <span class="math inline">\(\chi^2(1)=17.50\)</span>,
+<span class="math inline">\(p&lt;.001\)</span>. The three-level coding
+of <em>Place</em> was therefore retained.</p>
+<p>Given the well-established relationship between place of articulation
+and VOT, particularly among voiceless stops, we also evaluated a
+<em>Voicing x Place</em> interaction. The interaction model provided a
+substantially better fit than the additive model (AIC = 14049.2
+vs. 14275.1; BIC = 14133.2 vs. 14347.9), and the likelihood-ratio test
+confirmed that the interaction significantly improved model fit, <span
+class="math inline">\(\chi^2(2)=229.87\)</span>, <span
+class="math inline">\(p&lt;.001\)</span>. The final model therefore
+retained the three-level coding of <em>Place</em> together with the
+<em>Voicing x Place</em> interaction. Model results are presented in
+Table X. <em>Sex</em> and most <em>following-vowel</em> contrasts did
+not reach conventional significance and are therefore not discussed at
+length below.</p>
+</blockquote>
+<p><em>Table X. Linear mixed-effects regression predicting VOT (ms).
+Estimates are shown with standard errors, 95% profile-likelihood
+confidence intervals, Satterthwaite degrees of freedom, t-values, and
+p-values. Reference levels are Madrid, Female, Voiced, Bilabial, and
+/a/.</em>
+<img src="LinearMEMs_images/output2.jpg" alt="Final model table with interaction" width="1000"/></p>
+<blockquote>
+<p>A linear mixed-effects regression was fitted with VOT as the
+dependent variable, with <em>dialect</em>, <em>sex</em>,
+<em>voicing</em>, <em>place of articulation</em>, and <em>following
+vowel</em> as fixed effects and a <em>Voicing x Place</em> interaction.
+Random intercepts were included for <em>speaker</em> and <em>word</em>.
+The interaction model provided a substantially better fit than the
+additive model, <span class="math inline">\(\chi^2(2)=229.87\)</span>,
+<span class="math inline">\(p&lt;.001\)</span>, and also produced
+substantially lower AIC and BIC values.</p>
+<p>Mexico City speakers had significantly longer VOTs than Madrid
+speakers (<span class="math inline">\(\beta=9.76\)</span>, SE = 2.16,
+<span class="math inline">\(p=.003\)</span>). As expected, voiceless
+bilabial stops had substantially longer VOTs than voiced bilabial stops
+(<span class="math inline">\(\beta=93.49\)</span>, SE = 0.65, <span
+class="math inline">\(p&lt;.001\)</span>). Among voiced stops, dental
+stops had shorter VOTs than bilabial stops (<span
+class="math inline">\(\beta=-9.50\)</span>, SE = 0.65, <span
+class="math inline">\(p&lt;.001\)</span>), while velar stops had longer
+VOTs than bilabial stops (<span
+class="math inline">\(\beta=5.90\)</span>, SE = 0.65, <span
+class="math inline">\(p&lt;.001\)</span>).</p>
+<p>Importantly, there was a significant interaction between
+<em>voicing</em> and <em>place of articulation</em>. The interaction
+coefficients were significant for both dental (<span
+class="math inline">\(\beta=12.13\)</span>, SE = 0.92, <span
+class="math inline">\(p&lt;.001\)</span>) and velar stops (<span
+class="math inline">\(\beta=18.45\)</span>, SE = 0.92, <span
+class="math inline">\(p&lt;.001\)</span>), demonstrating that the effect
+of <code>place</code> differed between voiced and voiceless stops. Among
+voiceless stops, the model predicted VOTs approximately 2.63 ms longer
+for dental than bilabial stops and 24.35 ms longer for velar than
+bilabial stops. The resulting pattern was therefore bilabial &lt; dental
+&lt; velar, consistent with the expected longer VOTs associated
+particularly with velar stops.</p>
+<p>Following vowel also had a small effect. Stops preceding /i/ had VOTs
+approximately 1.66 ms longer than those preceding /a/ (<span
+class="math inline">\(\beta=1.66\)</span>, SE = 0.60, <span
+class="math inline">\(p=.006\)</span>), while the remaining vowel
+contrasts were not significant. Sex did not significantly affect VOT
+(<span class="math inline">\(\beta=-1.67\)</span>, SE = 2.16, <span
+class="math inline">\(p=.464\)</span>).</p>
+</blockquote>
+<p>The important point is that a Results section should <strong>describe
+the linguistic pattern represented by the model</strong>, rather than
+simply reproduce the coefficient table in sentence form.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
