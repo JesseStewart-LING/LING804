@@ -1,0 +1,2804 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Dr. Jesse Stewart" />
+
+<meta name="date" content="2026-09-12" />
+
+<title>Logistic Mixed Effects Model</title>
+
+<script src="Glmems_files/header-attrs-2.28/header-attrs.js"></script>
+<script src="Glmems_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="Glmems_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="Glmems_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="Glmems_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="Glmems_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="Glmems_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="Glmems_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="Glmems_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="Glmems_files/navigation-1.1/tabsets.js"></script>
+<link href="Glmems_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="Glmems_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Logistic Mixed Effects Model</h1>
+<h4 class="author">Dr. Jesse Stewart</h4>
+<h4 class="date">2026-09-12</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>In the previous unit, we used linear mixed-effects models to analyse
+a <strong>continuous</strong> dependent variable. We now turn to a
+closely related situation in which the dependent variable has only
+<strong>two</strong> possible outcomes.</p>
+<p>In this unit, we will analyse <strong>Spanish subject
+expression</strong>. Spanish allows both overt subjects and null
+subjects, and we will ask what linguistic factors affect the probability
+that a subject is overt.</p>
+<p>The statistical logic is very similar to the linear mixed-effects
+models we have already used. We still need to:</p>
+<ol style="list-style-type: decimal">
+<li>identify the dependent variable;<br />
+</li>
+<li>decide which predictors belong in the model;<br />
+</li>
+<li>set useful reference levels;<br />
+</li>
+<li>include appropriate random effects;<br />
+</li>
+<li>consider theoretically relevant interactions;<br />
+</li>
+<li>compare competing models;<br />
+</li>
+<li>interpret the final model;<br />
+</li>
+<li>translate the statistical output back into the linguistic
+question.</li>
+</ol>
+<p>The important difference is that our dependent variable is now
+<strong>binary</strong> rather than continuous.</p>
+<p>For a binary dependent variable, we use a <strong>logistic
+mixed-effects model</strong>, also called a <strong>generalized linear
+mixed-effects model</strong> or <strong>GLMM</strong>.</p>
+<p>We will fit the model with <code>glmer()</code> from the
+<code>lme4</code> package.</p>
+<pre class="r"><code>library(tidyverse)
+library(lme4)</code></pre>
+</div>
+<div id="understand-the-dataset" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Understand the
+dataset</h1>
+<p>We will use a simulated dataset on Spanish subject expression.</p>
+<p>Speech was collected from 24 Spanish speakers, 12 from Mexico City
+and 12 from Havana. Participants completed sociolinguistic interviews
+and narrative tasks. Finite clauses with referential subjects were
+extracted from the recordings. Each clause was coded for whether the
+grammatical subject was <code>overt</code> or <code>null</code>,
+<code>grammatical person</code>, <code>tense</code>, <code>verb</code>,
+and whether the subject referent was the <code>same</code> as or
+<code>different</code> from the subject referent of the preceding
+clause.</p>
+<p>Download <a href="subj.xlsx">Spanish_subj.xlsx</a></p>
+<pre class="r"><code>library(readxl)
+subj &lt;- read_excel(&quot;C:/Users/mikey/Dropbox/website/GitHub/LING804/Glmems/subj.xlsx&quot;)
+View(subj)
+
+head(subj)
+str(subj)</code></pre>
+<p><img src="Glmems_images/dataset.jpg" alt="subject dataset" width="1000"/></p>
+<p>The dataset contains 1,728 finite clauses from 24 speakers. Each
+speaker contributes 72 observations.</p>
+<p>The dependent variable is subject expression.</p>
+<p><code>Subject</code> will be our dependent variable with levels:
+<code>Overt</code> or <code>Null</code>. These typically appear as
+numeric values (<code>0</code> and <code>1</code>) for GLMMs. They are
+already converted in our dataset in the <code>Overt</code> column.</p>
+<p>If they were not already converted you could run:</p>
+<pre class="r"><code>subj$Overt=ifelse(subj$Subject==&quot;Overt&quot;, 1, 0)
+table(subj$Overt)
+
+  0   1 
+850 878</code></pre>
+<ul>
+<li>1 = overt subject<br />
+</li>
+<li>0 = null subject</li>
+</ul>
+<p>Again, <code>Subject</code> is useful for reading and tabulating the
+data. <code>Overt</code> is the numeric binary variable that we will use
+in the logistic regression.</p>
+<p>The main predictors are:</p>
+<ul>
+<li><code>SwitchRef</code>
+<ul>
+<li><code>Same</code></li>
+<li><code>Different</code></li>
+</ul></li>
+<li><code>Person</code>
+<ul>
+<li><code>1st</code></li>
+<li><code>2nd</code></li>
+<li><code>3rd</code></li>
+</ul></li>
+<li><code>Tense</code>
+<ul>
+<li><code>Present</code><br />
+</li>
+<li><code>Past</code><br />
+</li>
+</ul></li>
+<li><code>Dialect</code>
+<ul>
+<li><code>Mexico City</code><br />
+</li>
+<li><code>Havana</code><br />
+</li>
+</ul></li>
+<li><code>Sex</code>
+<ul>
+<li><code>Female</code><br />
+</li>
+<li><code>Male</code><br />
+</li>
+</ul></li>
+<li><code>Age</code>
+<ul>
+<li>Numeric continuous predictor<br />
+</li>
+<li>Range: 22–71 years<br />
+</li>
+<li>Mean: 45.6 years<br />
+</li>
+<li>Median: 45 years<br />
+</li>
+<li>Some ages are represented by more than one speaker<br />
+</li>
+<li>Age will be centred around the sample mean before modelling</li>
+</ul></li>
+</ul>
+<p>The dataset also contains:</p>
+<p><code>Speaker</code> <code>Verb</code> <code>Context_ID</code>
+<code>Trial</code> <code>Token</code></p>
+<p>Each <code>speaker</code> contributes multiple observations, and the
+same <code>verb</code> lemmas occur repeatedly across the dataset. We
+will therefore include random intercepts for <code>Speaker</code> and
+<code>Verb</code>.</p>
+</div>
+<div id="explore-the-data" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Explore the data</h1>
+<p>As always, we should inspect the data before fitting a statistical
+model.</p>
+<p>First, look at the overall distribution of overt and null
+subjects.</p>
+<pre class="r"><code>table(subj$Subject)
+
+ Null Overt 
+  850   878
+  
+prop.table(table(subj$Subject))
+     Null     Overt 
+0.4918981 0.5081019 </code></pre>
+<p><em>Note: <code>prop.table</code> is a built-in function used to
+convert raw frequency counts in a table or matrix into relative
+frequencies (proportions)</em></p>
+<p>These outputs show that the dataset is fairly balanced overall.</p>
+<p>However, our main question is not whether <code>overt</code> and
+<code>null</code> subjects are equally common overall. We want to know
+whether the <strong>probability</strong> of an <code>overt</code>
+subject changes according to the <strong>linguistic
+context</strong>.</p>
+<p>Start with <code>SwitchRef</code>.</p>
+<pre class="r"><code>subj %&gt;%
+  group_by(SwitchRef) %&gt;%
+  summarise(
+    N = n(),
+    Overt_N = sum(Overt),
+    Overt_Proportion = mean(Overt)
+  )
+  
+# A tibble: 2 × 4
+  SwitchRef     N Overt_N Overt_Proportion
+  &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt;            &lt;dbl&gt;
+1 Different   864     575            0.666
+2 Same        864     303            0.351</code></pre>
+<p>There is already a clear descriptive pattern. <code>Overt</code>
+subjects occur much more frequently in <code>different-reference</code>
+contexts than in <code>same-reference</code> contexts.</p>
+<pre class="r"><code>subj %&gt;%
+  group_by(SwitchRef) %&gt;%
+  summarise(
+    Overt_Proportion = mean(Overt)
+  ) %&gt;%
+  ggplot(aes(x = SwitchRef, y = Overt_Proportion, fill=SwitchRef)) +
+  geom_col() +
+  ylim(0, 1) +
+  labs(
+    x = &quot;Reference relation&quot;,
+    y = &quot;Proportion of overt subjects&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="Glmems_images/switchRef.jpg" alt="Switch Reference Distribution" width="600"/></p>
+<p>We are also interested in whether the effect of
+<code>switch reference</code> differs according to
+<code>grammatical person</code>.</p>
+<pre class="r"><code>subj %&gt;%
+  group_by(SwitchRef, Person) %&gt;%
+  summarise(
+    N = n(),
+    Overt_Proportion = mean(Overt),
+    .groups = &quot;drop&quot;
+  )
+  
+# A tibble: 6 × 4
+  SwitchRef Person     N Overt_Proportion
+  &lt;chr&gt;     &lt;chr&gt;  &lt;int&gt;            &lt;dbl&gt;
+1 Different 1st      288            0.601
+2 Different 2nd      288            0.549
+3 Different 3rd      288            0.847
+4 Same      1st      288            0.306
+5 Same      2nd      288            0.319
+6 Same      3rd      288            0.427</code></pre>
+<p>The difference between <code>same-reference</code> and
+<code>different-reference</code> contexts appears especially large for
+<code>third-person</code> subjects.</p>
+<p>We can visualize this possible interaction.</p>
+<pre class="r"><code># Calculate the proportion of overt subjects
+# for each SwitchRef x Person combination
+subj %&gt;%
+  group_by(SwitchRef, Person) %&gt;%
+  summarise(
+    Overt_Proportion = mean(Overt),
+    .groups = &quot;drop&quot;
+  ) %&gt;%
+
+  # Plot the proportion of overt subjects
+  ggplot(aes(
+    x = SwitchRef,
+    y = Overt_Proportion,
+    group = Person,
+    linetype = Person
+  )) +
+
+  # Add points for each group and connect them with lines
+  geom_point(size = 3) +
+  geom_line() +
+
+  # Keep the y-axis on the probability scale from 0 to 1
+  ylim(0, 1) +
+
+  # Add informative axis and legend labels
+  labs(
+    x = &quot;Reference relation&quot;,
+    y = &quot;Proportion of overt subjects&quot;,
+    linetype = &quot;Person&quot;
+  ) +
+
+  theme_minimal()</code></pre>
+<p><img src="Glmems_images/Person.jpg" alt="Proportion of overt subjects by reference relation" width="600"/></p>
+<div id="should-person-have-three-levels" class="section level2"
+number="3.1">
+<h2><span class="header-section-number">3.1</span> Should Person have
+three levels?</h2>
+<p><code>Person</code> currently contains three levels:</p>
+<ul>
+<li><code>1st</code></li>
+<li><code>2nd</code></li>
+<li><code>3rd</code></li>
+</ul>
+<p>However, first- and second-person subjects are both
+<strong>speech-act participants</strong>, while third-person subjects
+refer to individuals outside the speaker-addressee relationship.</p>
+<p>The descriptive results also suggest that first and second person
+behave relatively similarly, while third person shows a noticeably
+different pattern.</p>
+<p>We can therefore test whether a simpler binary distinction provides
+an adequate representation of <code>Person</code>:</p>
+<ul>
+<li><code>SAP</code> = first and second person (<em>SAP = speech-act
+participants</em>)</li>
+<li><code>3rd</code> = third person</li>
+</ul>
+<pre class="r"><code># Collapse first and second person into one category
+subj$Person_binary = ifelse(
+  subj$Person %in% c(&quot;1st&quot;, &quot;2nd&quot;),
+  &quot;SAP&quot;,
+  &quot;3rd&quot;
+)
+
+subj$Person_binary = factor(
+  subj$Person_binary,
+  levels = c(&quot;SAP&quot;, &quot;3rd&quot;)
+)
+
+table(subj$Person, subj$Person_binary)
+
+      SAP 3rd
+  1st 576   0
+  2nd 576   0
+  3rd   0 576</code></pre>
+<p>Another predictor that requires close inspection is that of
+<code>age</code>.</p>
+<pre class="r"><code>#Age by Dialect
+age_plot = subj %&gt;%
+  group_by(Speaker, Age, Dialect) %&gt;%
+  summarise(
+    Overt_Proportion = mean(Overt),
+    .groups = &quot;drop&quot;
+  )
+
+ggplot(age_plot, aes(
+    x = Age,
+    y = Overt_Proportion,
+    color = Dialect,
+    linetype = Dialect
+)) +
+    geom_point() +
+    geom_smooth(
+        method = &quot;lm&quot;,
+        se = FALSE
+    ) +
+    ylim(0, 1) +
+    labs(
+        title = &quot;Age by Dialect&quot;,
+        x = &quot;Age&quot;,
+        y = &quot;Proportion of overt subjects&quot;,
+        linetype = &quot;Dialect&quot;
+    ) +
+    theme_minimal()
+
+#Age by Sex
+sex_plot = subj %&gt;%
+  group_by(Speaker, Age, Sex) %&gt;%
+  summarise(
+    Overt_Proportion = mean(Overt),
+    .groups = &quot;drop&quot;
+  )
+
+ggplot(sex_plot, aes(
+    x = Age,
+    y = Overt_Proportion,
+    color = Sex,
+    linetype = Sex
+)) +
+    geom_point() +
+    geom_smooth(
+        method = &quot;lm&quot;,
+        se = FALSE
+    ) +
+    ylim(0, 1) +
+    labs(
+        title = &quot;Age by Sex&quot;,
+        x = &quot;Age&quot;,
+        y = &quot;Proportion of overt subjects&quot;,
+        linetype = &quot;Sex&quot;
+    ) +
+    theme_minimal()
+</code></pre>
+<p><img src="Glmems_images/Age.jpg" alt="age by dialect and Age by sex" width="900"/></p>
+<p>Based on these figures, <code>age</code> may have an interaction with
+both <code>Dialect</code> and <code>Sex</code>. As the trend lines show
+distinct trajectories for <code>Mexico City</code> speakers and
+<code>Havana</code> speakers and distinct trajectories for
+<code>Males</code> vs. <code>Females</code>.</p>
+<p>These are <strong>descriptive patterns</strong>. We have not yet
+determined whether the differences are statistically reliable once the
+other predictors and repeated observations are taken into account.</p>
+</div>
+</div>
+<div id="hypothesis" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Hypothesis</h1>
+<p>Our main hypothesis is:</p>
+<blockquote>
+<p><strong>H1.</strong> <code>Overt</code> subjects will be more likely
+in <code>different-reference</code> contexts than in
+<code>same-reference</code> contexts, with the difference expected to be
+especially strong for <code>third-person subjects</code>.</p>
+</blockquote>
+<p>The corresponding null hypothesis is:</p>
+<blockquote>
+<p><strong>H0.</strong> The probability of an <code>overt</code> subject
+will not differ systematically between <code>same-reference</code> and
+<code>different-reference</code> contexts, and the apparent difference
+across <code>grammatical person</code> will not represent a reliable
+interaction.</p>
+</blockquote>
+</div>
+<div id="review-the-predictors" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Review the
+predictors</h1>
+<p>Before fitting the model, check the variables and their levels.</p>
+<pre class="r"><code>table(subj$SwitchRef)
+table(subj$Person)
+table(subj$Tense)
+table(subj$Dialect)
+table(subj$Sex)
+table(subj$Age)
+summary(subj$Age)
+
+table(subj$Speaker)
+table(subj$Verb)
+
+#Outputs
+
+#Switch Reference
+Different      Same 
+      864       864 
+
+#Person
+1st 2nd 3rd 
+576 576 576 
+
+#Tense
+Past Present 
+864     864 
+
+#Dialect
+Havana Mexico City 
+  864         864 
+
+#Sex
+Female   Male 
+   864    864
+
+#Age
+ 22  23  25  26  31  33  37  39  42  45  54  55  56  57  60  63  65  66  71 
+ 72 144  72  72  72  72 144  72  72 144 144  72  72  72  72  72  72 144  72 
+
+Min.   1st Qu.  Median    Mean  3rd Qu.    Max. 
+22.00   32.50    45.00   45.62   57.75    71.00 
+
+#Speaker
+S01 S02 S03 S04 S05 S06 S07 S08 S09 S10 S11 S12 S13 S14 S15 S16 S17 S18 S19 S20 S21 S22 S23 S24 
+ 72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72  72 
+
+#Verb
+buscar    72
+comer       72
+comprar   72
+creer       72
+decir       72
+encontrar   72
+escribir    72
+estudiar    72
+hablar      72
+hacer       72
+leer        72
+llamar    72
+llevar    72
+mirar       72
+pensar    72
+querer    72
+saber       72
+salir       72
+tener       72
+trabajar    72
+vender    72
+venir       72
+vivir       72
+volver    72</code></pre>
+<p>For this analysis, the variables have the following roles.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Type</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Overt</code></td>
+<td>Binary</td>
+<td>Dependent variable</td>
+</tr>
+<tr class="even">
+<td><code>SwitchRef</code></td>
+<td>Categorical</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="odd">
+<td><code>Person</code></td>
+<td>Categorical</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="even">
+<td><code>Tense</code></td>
+<td>Categorical</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="odd">
+<td><code>Dialect</code></td>
+<td>Categorical</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="even">
+<td><code>Sex</code></td>
+<td>Categorical</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="odd">
+<td><code>Age</code></td>
+<td>Continuous</td>
+<td>Fixed effect</td>
+</tr>
+<tr class="even">
+<td><code>Speaker</code></td>
+<td>Categorical</td>
+<td>Random effect</td>
+</tr>
+<tr class="odd">
+<td><code>Verb</code></td>
+<td>Categorical</td>
+<td>Random effect</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="continuous-fixed-effects" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Continuous fixed
+effects</h1>
+<p>Most of the predictors we have worked with so far have been
+<strong>categorical</strong>. For example, <code>Dialect</code> contains
+two categories (<code>Mexico City</code> and <code>Havana</code>) and
+<code>Sex</code> contains two categories (<code>Female</code> and
+<code>Male</code>). Categorical predictors are interpreted relative to a
+<strong>reference level</strong>.</p>
+<p><code>Age</code> is different. Although ages are naturally ordered,
+age measured in years also contains meaningful information about the
+<strong>distance between values</strong>. The difference between ages 22
+and 23 is one year, whereas the difference between ages 22 and 45 is 23
+years.</p>
+<p>For this reason, we will treat <code>Age</code> as a <strong>numeric
+continuous predictor</strong> rather than as an ordered factor.</p>
+<p>If the observed ages were:</p>
+<pre class="text"><code>22, 23, 27, 45, 71</code></pre>
+<p>R uses those actual numerical values. It does not automatically
+recode them according to their position in the ordered list:</p>
+<pre class="text"><code>22 = 0
+23 = 1
+27 = 2
+45 = 3
+71 = 4</code></pre>
+<p>Doing so would discard the actual distances between ages. For
+example, it would treat the difference between 22 and 23 as equivalent
+to the difference between 45 and 71. I was actually taught to do it this
+way, and I used to teach it this way, but I am trying to do better
+🥴.</p>
+<p>When <code>Age</code> is entered directly into a regression model,
+its coefficient represents the predicted change associated with a
+one-year increase in age.</p>
+<p>For example, suppose a logistic regression produced:</p>
+<pre class="text"><code>Age
+β = -0.04</code></pre>
+<p>This means that each additional year of age is associated with a
+decrease of <code>0.04</code> in the log-odds of producing an overt
+subject, holding the other predictors constant.</p>
+<p>If the intercept were <code>0.32</code> and the age coefficient were
+<code>-0.04</code>, the predicted log-odds for a
+<code>45-year-old</code> would be:</p>
+<pre class="r"><code>(0.32)+(-0.04*45)
+[1] -1.48</code></pre>
+<p>The coefficient is therefore multiplied by the speaker’s actual
+numerical age, not by the speaker’s position in the list of observed
+ages.</p>
+<div id="the-problem-with-age-0" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> The problem with age
+0</h2>
+<p>There is one inconvenience with using raw age.</p>
+<p>The intercept represents the predicted outcome when all numerical
+predictors equal <code>0</code>. If we enter <code>Age</code> directly,
+the intercept therefore describes a speaker who is <strong>0 years
+old</strong>.</p>
+<p>That value is outside the range of our data and is not useful for
+interpreting adult Spanish speakers.</p>
+<p>We can solve this by <strong>centering age</strong>.</p>
+<pre class="r"><code># Centre age around the mean age of the speakers
+subj$Age_c = subj$Age - mean(subj$Age)
+
+table(subj$Age_c)
+
+-23.625 -22.625 -20.625 -19.625 -14.625 -12.625  -8.625  -6.625  -3.625  -0.625   8.375   9.375  10.375  11.375  14.375 
+     72     144      72      72      72      72     144      72      72     144     144      72      72      72      72 
+ 17.375  19.375  20.375  25.375 
+     72      72     144      72 
+     
+#compared to
+table(subj$Age)
+22  23  25  26  31  33  37  39  42  45  54  55  56  57  60  63  65  66  71 
+72 144  72  72  72  72 144  72  72 144 144  72  72  72  72  72  72 144  72 </code></pre>
+<p>The <strong>mean age</strong> in this dataset is approximately
+<strong>45.6 years</strong>.</p>
+<p>After centering:</p>
+<ul>
+<li>Age_c = 0 represents a speaker approximately 45.6 years old<br />
+</li>
+<li>negative values represent speakers younger than the mean<br />
+</li>
+<li>positive values represent speakers older than the mean</li>
+</ul>
+<p>Importantly, centering does not change the distances between ages. A
+ten-year age difference is still represented by a difference of 10.</p>
+<p>It simply changes where <code>0</code> is located.</p>
+<p>The coefficient for <code>Age_c</code> still represents the predicted
+change associated with a one-year increase in age.</p>
+<p>If the model gives:</p>
+<pre class="r"><code>Age_c
+β = -0.04</code></pre>
+<p>we would interpret this as: Each one-year increase in
+<code>age</code> was associated with a decrease of <code>0.04</code> in
+the log-odds of producing an <code>overt</code> subject, holding the
+other predictors constant.</p>
+<p>Because the coefficient is expressed in log-odds, <code>-0.04</code>
+does not mean that the probability of an <code>overt</code> subject
+decreases by four percentage points per year.</p>
+<p>Later, we can use <code>plogis()</code> to convert model predictions
+from log-odds into probabilities.</p>
+</div>
+<div id="age-is-not-a-categorical-reference-level"
+class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Age is not a
+categorical reference level</h2>
+<p>It is important to distinguish the zero point of a continuous
+predictor from the <strong>reference level</strong> of a categorical
+predictor.</p>
+<p>For example:</p>
+<ul>
+<li><code>Mexico City</code> can be the reference level of
+<code>Dialect</code><br />
+</li>
+<li><code>Female</code> can be the reference level of
+<code>Sex</code><br />
+</li>
+<li><code>Same</code> can be the reference level of
+<code>SwitchRef</code></li>
+</ul>
+<p><code>Age_c</code> has no categorical reference level. Instead, its
+value of <code>0</code> corresponds to the mean age because we
+deliberately centred the variable there.</p>
+<p>The intercept in our model therefore represents the predicted
+log-odds for a speaker in all of the categorical reference groups at the
+mean age of the sample.</p>
+</div>
+</div>
+<div id="decide-what-belongs-in-the-model" class="section level1"
+number="7">
+<h1><span class="header-section-number">7</span> Decide what belongs in
+the model</h1>
+<p>We now need to decide which predictors and interactions should be
+included in the model.</p>
+<p>Our <strong>dependent variable</strong> is:</p>
+<ul>
+<li><code>Overt</code>
+<ul>
+<li><code>0</code> = null subject</li>
+<li><code>1</code> = overt subject</li>
+</ul></li>
+</ul>
+<p>Our <strong>fixed effects</strong> are:</p>
+<ul>
+<li><code>SwitchRef</code><br />
+</li>
+<li><code>Person</code><br />
+</li>
+<li><code>Tense</code><br />
+</li>
+<li><code>Dialect</code><br />
+</li>
+<li><code>Sex</code><br />
+</li>
+<li><code>Age_c</code></li>
+</ul>
+<p>Our <strong>random effects</strong> are:</p>
+<ul>
+<li><code>Speaker</code></li>
+<li><code>Verb</code></li>
+</ul>
+<p>The exploratory analysis also suggested three possible
+interactions:</p>
+<ul>
+<li><code>SwitchRef * Person</code></li>
+<li><code>Age_c * Dialect</code></li>
+<li><code>Age_c * Sex</code></li>
+</ul>
+<p>And the binary vs. trinary variables for <code>Person_binary</code>
+and <code>Person</code>:</p>
+<ul>
+<li><code>Binary</code> (Levels: SAP, Third)<br />
+</li>
+<li><code>Trinary</code> (Levels: 1st, 2nd, 3rd)</li>
+</ul>
+<p>The <code>SwitchRef * Person</code> interaction tests whether the
+effect of <code>switch reference</code> differs according to grammatical
+person. The descriptive results suggest that the difference between
+<code>same-reference</code> and <code>different-reference</code>
+contexts may be particularly strong for <code>third-person</code>
+subjects.</p>
+<p>The <code>Age_c x Dialect</code> interaction tests whether the
+relationship between <code>age</code> and <code>overt</code> subject use
+differs between speakers from <code>Mexico City</code> and
+<code>Havana</code>. We can see the difference in <code>dialect</code>
+in the previous graph.</p>
+<p>The <code>Age_c x Sex</code> interaction tests whether the
+relationship between <code>age</code> and <code>overt</code> subject use
+differs between <code>female</code> and <code>male</code> speakers.
+Again, we can see the difference in <code>sex</code> in the previous
+graph.</p>
+<p>Remember that an apparent interaction in a graph does not necessarily
+mean that the interaction will improve the statistical model. We will
+compare models to determine which interactions should be retained.</p>
+<p>The binary vs. trinary arrangements of <code>Person</code> are both
+theoretically and observationally motivated. The theoretically motivated
+binary arrangment comes from the fact that <code>first</code> and
+<code>second</code> person are both speech-act participants, whereas
+third person is not. So a binary contrast of 1st/2nd vs. 3rd person is
+defensible theoretically. It also matches the descriptive pattern fairly
+well:</p>
+<ul>
+<li>Same reference: 1st = 30.6%, 2nd = 31.9%, 3rd = 42.7%</li>
+<li>Different reference: 1st = 60.1%, 2nd = 54.9%, 3rd = 84.7%</li>
+</ul>
+<p>Third person is clearly behaving differently, while first and second
+are relatively similar.</p>
+</div>
+<div id="set-the-reference-levels" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Set the reference
+levels</h1>
+<p>Before fitting the model, we need to set useful reference levels for
+the categorical predictors.</p>
+<p>We will use:</p>
+<ul>
+<li><code>Same</code> for <code>SwitchRef</code></li>
+<li><code>1st</code> for <code>Person</code></li>
+<li><code>SAP</code> for <code>Person_binary</code></li>
+<li><code>Present</code> for <code>Tense</code></li>
+<li><code>Mexico City</code> for <code>Dialect</code></li>
+<li><code>Female</code> for <code>Sex</code></li>
+</ul>
+<pre class="r"><code>subj$SwitchRef = relevel(factor(subj$SwitchRef), ref = &quot;Same&quot;)
+subj$Person = relevel(factor(subj$Person), ref = &quot;1st&quot;)
+subj$Person_binary = relevel(factor(subj$Person_binary), ref = &quot;SAP&quot;)
+subj$Tense = relevel(factor(subj$Tense), ref = &quot;Present&quot;)
+subj$Dialect = relevel(factor(subj$Dialect), ref = &quot;Mexico City&quot;)
+subj$Sex = relevel(factor(subj$Sex), ref = &quot;Female&quot;)
+
+# Check the reference levels
+levels(subj$SwitchRef)
+levels(subj$Person)
+levels(subj$Person_binary)
+levels(subj$Tense)
+levels(subj$Dialect)
+levels(subj$Sex)
+
+#Output
+[1] &quot;Same&quot; &quot;Different&quot;
+[1] &quot;1st&quot; &quot;2nd&quot; &quot;3rd&quot;
+[1] &quot;SAP&quot; &quot;3rd&quot;
+[1] &quot;Present&quot; &quot;Past&quot;
+[1] &quot;Mexico City&quot; &quot;Havana&quot;
+[1] &quot;Female&quot; &quot;Male&quot;</code></pre>
+<p><code>Age_c</code> does not require a reference level because it is
+continuous. Its value of <code>0</code> represents the mean age of
+approximately 45.6 years.</p>
+<p>The <strong>intercept</strong> will therefore represent the predicted
+log-odds of an overt subject for:</p>
+<ul>
+<li>a <code>same-reference</code> context</li>
+<li>Person
+<ul>
+<li>a <code>first-person</code> subject (<em>for the binary
+model</em>)</li>
+<li>a <code>SAP</code> subject (<em>speech-act participant</em> and
+<em>for the trinary model</em>)</li>
+</ul></li>
+<li><code>present</code> tense</li>
+<li>a <code>female</code> speaker</li>
+<li>from <code>Mexico City</code></li>
+<li>of approximately average age (<em>45.6</em>)</li>
+</ul>
+</div>
+<div id="build-the-model" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Build the model</h1>
+<p>We fit <strong>generalized linear mixed-effects models</strong>
+(GLMMs), also called <strong>logistic mixed-effects regressions</strong>
+when the dependent variable is binary, using <code>glmer()</code> from
+the <code>lme4</code> package. The syntax is very similar to
+<code>lmer()</code>, with two important differences.</p>
+<p>First, GLMMs require us to specify a <code>family</code>. Because our
+dependent variable is binary (<code>0</code> or <code>1</code>), we
+use:</p>
+<pre class="r"><code>family = binomial</code></pre>
+<details>
+<summary>
+Click here for more information on <code>family</code> types.
+</summary>
+<p>Some common model families are:</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Family</th>
+<th>Typical dependent variable</th>
+<th>Default link</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gaussian</code></td>
+<td>Continuous measurements</td>
+<td>identity</td>
+<td>VOT, duration, F0</td>
+</tr>
+<tr class="even">
+<td><code>binomial</code></td>
+<td>Binary outcomes</td>
+<td>logit</td>
+<td>overt vs. null subject</td>
+</tr>
+<tr class="odd">
+<td><code>poisson</code></td>
+<td>Counts</td>
+<td>log</td>
+<td>number of tokens/events</td>
+</tr>
+<tr class="even">
+<td><code>Gamma</code></td>
+<td>Positive, continuous, right-skewed values</td>
+<td>inverse</td>
+<td>reaction time, duration</td>
+</tr>
+<tr class="odd">
+<td>negative binomial</td>
+<td>Overdispersed counts</td>
+<td>log</td>
+<td>token counts with more variability than a Poisson model allows</td>
+</tr>
+</tbody>
+</table>
+<p>For example:</p>
+<pre class="r"><code>family = binomial
+family = poisson
+family = Gamma</code></pre>
+<p>A <code>gaussian</code> model with an identity link is essentially
+the type of linear mixed-effects model we fitted previously with
+<code>lmer()</code>, so we would normally just use <code>lmer()</code>
+for that case.</p>
+<p>For count data, <code>poisson</code> assumes that the variance is
+approximately equal to the mean. When the data show substantially more
+variation than this assumption allows, a negative-binomial model is
+often preferable.</p>
+<p><code>Gamma</code> is typically used for positive continuous outcomes
+that are right-skewed, such as reaction times, durations, or costs.</p>
+negative binomial uses <code>glmer.nb()</code>. We will not be going
+over this in this unit.
+</details>
+<p>This tells R to fit a binomial model using the <em>logit link</em>,
+so the model predicts the log-odds that the outcome coded as
+<code>1</code> will occur. In our dataset, this is the probability that
+a subject is <code>overt</code>.</p>
+<p>Second, unlike the linear mixed-effects models fitted with
+<code>lmer()</code>, there is no <code>REML</code> option or
+<code>REML</code> refitting step for a logistic mixed-effects model.
+Models fitted with <code>glmer()</code> are estimated using maximum
+likelihood, so we can compare competing models directly using
+<code>AIC</code>, <code>BIC</code>, and <code>likelihood-ratio</code>
+tests with <code>anova()</code>.</p>
+<details>
+<summary>
+Why does a binomial model use <strong>log-odds</strong> rather than
+percentages?
+</summary>
+<p>Probabilities are restricted to values between <code>0</code> and
+<code>1</code> (or 0% and 100%). A linear regression equation, however,
+can produce any value from negative infinity to positive infinity. If we
+modelled percentages directly, the model could therefore predict
+impossible values such as <code>-15%</code> or <code>130%</code>.</p>
+<p>The logistic model solves this by transforming probabilities into
+<strong>log-odds</strong>. Log-odds can range from negative infinity to
+positive infinity, so they can be modelled with an ordinary linear
+equation. The model works on the log-odds scale internally and then
+converts those values back into probabilities between <code>0</code> and
+<code>1</code>.</p>
+<p>This is why binomial GLMM coefficients are expressed in log-odds
+rather than percentage points. A one-unit change in a predictor produces
+a constant change in <strong>log-odds</strong>, but the corresponding
+change in probability depends on where you are on the probability
+scale.</p>
+For example, a coefficient of <code>0.5</code> cannot simply mean “+50
+percentage points,” because moving from 10% to 20% is not statistically
+equivalent to moving from 80% to 90% on the logistic scale.
+</details>
+<div id="build-and-test-the-person-models" class="section level2"
+number="9.1">
+<h2><span class="header-section-number">9.1</span> Build and test the
+<code>person</code> models</h2>
+<p>We first need to decide whether <code>Person</code> is better
+represented by three levels (<code>1st</code>, <code>2nd</code>,
+<code>3rd</code>) or by the simpler binary distinction
+(<code>SAP</code>, <code>3rd</code>).</p>
+<p>Because our hypothesis concerns whether the effect of
+<code>SwitchRef</code> differs according to person, we should include
+the <code>SwitchRef * Person</code> interaction in <strong>both</strong>
+models.</p>
+<div id="trinary-person-model" class="section level3" number="9.1.1">
+<h3><span class="header-section-number">9.1.1</span> Trinary
+<code>person</code> model</h3>
+<p>First, fit the model using the original three-level
+<code>Person</code> variable.</p>
+<pre class="r"><code>model_person3 = glmer(Overt ~ SwitchRef * Person + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb), family = binomial, data = subj)
+
+summary(model_person3)
+
+#Output:
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+ Family: binomial  ( logit )
+Formula: Overt ~ SwitchRef * Person + Tense + Dialect + Sex + Age_c +      (1 | Speaker) + (1 | Verb)
+   Data: subj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1948.7    2014.2    -962.4    1924.7      1716 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3779 -0.6899  0.1697  0.7070  5.1705 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Speaker (Intercept) 0.7126   0.8442  
+ Verb    (Intercept) 0.1227   0.3503  
+Number of obs: 1728, groups:  Speaker, 24; Verb, 24
+
+Fixed effects:
+                                 Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                      -1.43207    0.36207  -3.955 7.65e-05 ***
+SwitchRef: Different              1.48518    0.24137   6.153 7.60e-10 ***
+Person: 2nd                       0.08271    0.24255   0.341  0.73311    
+Person: 3rd                       0.63342    0.19149   3.308  0.00094 ***
+Tense: Past                       0.31768    0.11682   2.719  0.00654 ** 
+Dialect:Havana                    0.66722    0.36544   1.826  0.06789 .  
+Sex: Male                        -0.11174    0.37465  -0.298  0.76551    
+Age_c                            -0.01917    0.01212  -1.581  0.11386    
+SwitchRef: Different* Person:2nd -0.34127    0.39353  -0.867  0.38583    
+SwitchRef: Different*Person: 3rd  0.90651    0.29205   3.104  0.00191 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SwtcRD Prsn2n Prsn3r TnsPst DlctHv SexMal Age_c  SRD:P2
+SwtchRfDffr -0.355                                                        
+Person2nd   -0.338  0.682                                                 
+Person3rd   -0.288  0.428  0.418                                          
+TensePast   -0.168  0.014 -0.006  0.006                                   
+DialectHavn -0.500  0.015  0.001  0.008  0.007                            
+SexMale     -0.504 -0.003  0.000 -0.002 -0.001 -0.025                     
+Age_c       -0.065 -0.012 -0.001 -0.006 -0.006 -0.106  0.246              
+SwtchRfD:P2  0.282 -0.821 -0.831 -0.259  0.001 -0.002  0.000  0.002       
+SwtchRfD:P3  0.173 -0.517 -0.274 -0.650  0.018  0.006  0.000 -0.009  0.320</code></pre>
+<p>This model distinguishes:</p>
+<ul>
+<li>first person</li>
+<li>second person</li>
+<li>third person</li>
+</ul>
+<p>and allows the effect of <code>SwitchRef</code> to differ across all
+three.</p>
+</div>
+<div id="binary-person-model" class="section level3" number="9.1.2">
+<h3><span class="header-section-number">9.1.2</span> Binary
+<code>person</code> model</h3>
+<p>Now fit the same model using <code>Person_binary</code>.</p>
+<pre class="r"><code>model_person2 = glmer(Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb), family = binomial, data = subj)
+summary(model_person2)
+
+#Output
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+ Family: binomial  ( logit )
+Formula: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c +      (1 | Speaker) + (1 | Verb)
+   Data: subj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1945.9    2000.5    -963.0    1925.9      1718 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3620 -0.6890  0.1694  0.7104  5.1558 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Speaker (Intercept) 0.7123   0.8440  
+ Verb    (Intercept) 0.1285   0.3584  
+Number of obs: 1728, groups:  Speaker, 24; Verb, 24
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         -1.39113    0.34112  -4.078 4.54e-05 ***
+SwitchRefDifferent                   1.31475    0.13771   9.547  &lt; 2e-16 ***
+Person_binary3rd                     0.63957    0.17195   3.720 0.000200 ***
+TensePast                            0.31783    0.11691   2.719 0.006556 ** 
+DialectHavana                        0.66699    0.36536   1.826 0.067915 .  
+SexMale                             -0.11176    0.37455  -0.298 0.765416    
+Age_c                               -0.01916    0.01212  -1.581 0.113898    
+SwitchRefDifferent:Person_binary3rd  0.98296    0.27737   3.544 0.000394 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SwtcRD Prsn_3 TnsPst DlctHv SexMal Age_c 
+SwtchRfDffr -0.230                                          
+Prsn_bnry3r -0.175  0.424                                   
+TensePast   -0.180  0.027  0.012                            
+DialectHavn -0.530  0.024  0.010  0.007                     
+SexMale     -0.534 -0.005 -0.002 -0.001 -0.025              
+Age_c       -0.069 -0.019 -0.007 -0.006 -0.106  0.246       
+SwtchRD:P_3  0.092 -0.472 -0.666  0.016  0.007  0.000 -0.010</code></pre>
+<p>This model distinguishes:</p>
+<ul>
+<li><code>SAP</code> = first and second person</li>
+<li><code>3rd</code> = third person</li>
+</ul>
+<p>It therefore asks whether third-person subjects differ from the two
+speech-act participants as a group.</p>
+</div>
+<div id="compare-the-person-models" class="section level3"
+number="9.1.3">
+<h3><span class="header-section-number">9.1.3</span> Compare the
+<code>person</code> models</h3>
+<p>The binary model is simpler because it assumes that first- and
+second-person subjects can be treated as members of the same
+category.</p>
+<p>The trinary model estimates:</p>
+<ul>
+<li>a separate difference between first and second person</li>
+<li>a separate difference between first and third person</li>
+<li>a separate <code>SwitchRef</code> interaction for second person</li>
+<li>a separate <code>SwitchRef</code> interaction for third person</li>
+</ul>
+<p>The binary model instead estimates:</p>
+<ul>
+<li>one difference between SAP and third person</li>
+<li>one <code>SwitchRef x Person</code> interaction comparing SAP with
+third person</li>
+</ul>
+<p>We can compare the two models using AIC and BIC.</p>
+<pre class="r"><code>AIC(model_person2, model_person3)
+
+              df      AIC
+model_person2 10 1945.916
+model_person3 12 1948.710
+
+BIC(model_person2, model_person3)
+
+              df      BIC
+model_person2 10 2000.463
+model_person3 12 2014.167</code></pre>
+<p>Because the binary model represents a constrained version of the
+trinary model, we can also compare them with a likelihood-ratio
+test.</p>
+<pre class="r"><code>anova(model_person2,model_person3)
+#this runs the default &quot;Chisq&quot; test
+
+#Output
+Data: subj
+Models:
+model_person2: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb)
+model_person3: Overt ~ SwitchRef * Person + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb)
+              npar    AIC    BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)
+model_person2   10 1945.9 2000.5 -962.96    1925.9                     
+model_person3   12 1948.7 2014.2 -962.36    1924.7 1.2056  2     0.5473</code></pre>
+<p>The likelihood-ratio test is <strong>not significant</strong>, <span
+class="math inline">\(\chi^2(2)=1.21\)</span>, <span
+class="math inline">\(p=.547\)</span>. This means that distinguishing
+first- and second-person subjects does not significantly improve model
+fit relative to the simpler binary distinction between speech-act
+participants (<code>SAP</code>) and third person.</p>
+<p>The information criteria lead to the same conclusion. The binary
+model has lower AIC and BIC values than the trinary model:</p>
+<ul>
+<li>Binary model: AIC = 1945.9, BIC = 2000.5</li>
+<li>Trinary model: AIC = 1948.7, BIC = 2014.2</li>
+</ul>
+<p>We therefore retain the <strong>binary <code>Person</code>
+variable</strong>. The simpler <code>SAP</code> versus <code>3rd</code>
+distinction captures the relevant person pattern without requiring
+separate parameters for first and second person.</p>
+<p>Once the comparison is complete, assign the preferred model to a new
+object.</p>
+<pre class="r"><code>model_person = model_person2</code></pre>
+</div>
+</div>
+<div id="test-the-age-interactions" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Test the
+<code>Age</code> interactions</h2>
+<p>Our exploratory plots also suggested that the relationship between
+<code>Age</code> and <code>overt</code> subject expression may differ
+according to both <code>Dialect</code> and <code>Sex</code>.</p>
+<p>We can test these interactions after selecting the preferred
+representation of <code>Person</code>.</p>
+</div>
+<div id="age-dialect" class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> <code>Age</code> *
+<code>Dialect</code></h2>
+<p>First, add the <code>Age_c * Dialect</code> interaction to the
+selected Person model.</p>
+<pre class="r"><code>model_age_dialect = glmer(Overt ~ SwitchRef * Person_binary + Tense + Sex + Age_c*Dialect + (1 | Speaker) + (1 | Verb), family = binomial, data = subj)
+summary(model_age_dialect)
+
+#Output
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+ Family: binomial  ( logit )
+Formula: Overt ~ SwitchRef * Person_binary + Tense + Sex + Age_c * Dialect +      (1 | Speaker) + (1 | Verb)
+   Data: subj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1946.5    2006.5    -962.3    1924.5      1717 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3508 -0.6931  0.1684  0.7069  5.2716 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Speaker (Intercept) 0.6708   0.8190  
+ Verb    (Intercept) 0.1283   0.3582  
+Number of obs: 1728, groups:  Speaker, 24; Verb, 24
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         -1.49203    0.34467  -4.329  1.5e-05 ***
+SwitchRefDifferent                   1.31427    0.13768   9.545  &lt; 2e-16 ***
+Person_binary3rd                     0.63927    0.17191   3.719 0.000200 ***
+TensePast                            0.31785    0.11691   2.719 0.006552 ** 
+SexMale                              0.04674    0.38830   0.120 0.904187    
+Age_c                               -0.03256    0.01636  -1.990 0.046552 *  
+DialectHavana                        0.66480    0.35569   1.869 0.061619 .  
+SwitchRefDifferent:Person_binary3rd  0.98474    0.27747   3.549 0.000387 ***
+Age_c:DialectHavana                  0.02891    0.02437   1.187 0.235396    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SwtcRD Prsn_3 TnsPst SexMal Age_c  DlctHv SRD:P_
+SwtchRfDffr -0.230                                                 
+Prsn_bnry3r -0.174  0.424                                          
+TensePast   -0.180  0.027  0.012                                   
+SexMale     -0.571 -0.001  0.000  0.000                            
+Age_c        0.128 -0.022 -0.009 -0.008 -0.072                     
+DialectHavn -0.511  0.024  0.010  0.007 -0.025 -0.076              
+SwtchRD:P_3  0.088 -0.472 -0.666  0.016  0.004 -0.015  0.007       
+Ag_c:DlctHv -0.254  0.012  0.005  0.005  0.344 -0.693 -0.002  0.010</code></pre>
+<p>Because <code>Mexico City</code> is the reference level of
+<code>Dialect</code>, the coefficient for <code>Age_c</code> describes
+the relationship between <code>age</code> and <code>overt</code> subject
+expression among <strong>Mexico City speakers</strong>.</p>
+<p>The <code>Age_c:DialectHavana</code> interaction tells us whether
+that age effect differs among <strong>Havana speakers</strong>.</p>
+<p>The <code>Age_c * Dialect</code> interaction is <strong>not
+significant</strong> (<span class="math inline">\(\beta =
+0.029\)</span>, SE = 0.024, <span class="math inline">\(z =
+1.19\)</span>, <span class="math inline">\(p = 0.235\)</span>). This
+indicates that the relationship between <code>age</code> and the
+probability of producing an <code>overt</code> subject does not differ
+significantly between <code>Mexico City</code> and <code>Havana</code>
+speakers.</p>
+<p>The main effect of <code>Age_c</code> is significant for the
+reference dialect, <code>Mexico City</code> (<span
+class="math inline">\(\beta = -0.033\)</span>, SE = 0.016, <span
+class="math inline">\(z = -1.99\)</span>, <span class="math inline">\(p
+= 0.047\)</span>), indicating that <code>overt</code> subjects become
+less likely as age increases among <code>Mexico City</code> speakers.
+However, the non-significant interaction suggests that there is not
+sufficient evidence that this age effect differs in
+<code>Havana</code>.</p>
+<p>Although the estimated <code>age</code> slopes differ descriptively
+between <code>Mexico City</code> and <code>Havana</code>, the
+coefficient does not provide evidence that the slopes differ
+significantly. However, we should not decide whether to retain the
+interaction from this coefficient alone. We will compare this model with
+the simpler model using AIC, BIC, and a likelihood-ratio test. If we
+remove it based solely on significance, we risk falling into post-hoc
+territory.</p>
+<pre class="r"><code>AIC(model_person2, model_age_dialect)
+BIC(model_person2, model_age_dialect)
+
+anova(model_person2, model_age_dialect)
+
+#Outputs
+
+                  df      AIC
+model_person2     10 1945.916
+model_age_dialect 11 1946.541
+
+                  df      BIC
+model_person2     10 2000.463
+model_age_dialect 11 2006.543
+
+Data: subj
+Models:
+model_person2: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb)
+model_age_dialect: Overt ~ SwitchRef * Person_binary + Tense + Sex + Age_c * Dialect + (1 | Speaker) + (1 | Verb)
+                  npar    AIC    BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)
+model_person2       10 1945.9 2000.5 -962.96    1925.9                     
+model_age_dialect   11 1946.5 2006.5 -962.27    1924.5 1.3748  1      0.241</code></pre>
+<p>For <code>Age_c * Dialect</code>, the interaction model has slightly
+higher AIC and BIC values than the simpler model, and the
+likelihood-ratio test is not significant, <span
+class="math inline">\(\chi^2(1)=1.37\)</span>, <span
+class="math inline">\(p=0.241\)</span>. We therefore retain the simpler
+model without the <code>Age_c * Dialect</code> interaction. Taken
+together, this evidence supports the simpler model and helps us avoid
+falling into post-hoc purgatory.</p>
+</div>
+<div id="age-sex" class="section level2" number="9.4">
+<h2><span class="header-section-number">9.4</span> <code>Age</code> *
+<code>Sex</code></h2>
+<p>Next, test the <code>Age_c x Sex</code> interaction.</p>
+<pre class="r"><code>model_age_sex = glmer(Overt ~ SwitchRef * Person_binary + Tense + Dialect + Age_c*Sex + (1 | Speaker) + (1 | Verb), family = binomial, data = subj)
+summary(model_age_sex)
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+ Family: binomial  ( logit )
+Formula: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Age_c *      Sex + (1 | Speaker) + (1 | Verb)
+   Data: subj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1946.3    2006.3    -962.2    1924.3      1717 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3240 -0.6881  0.1688  0.7100  4.9996 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Speaker (Intercept) 0.6578   0.8110  
+ Verb    (Intercept) 0.1284   0.3584  
+Number of obs: 1728, groups:  Speaker, 24; Verb, 24
+
+Fixed effects:
+                                     Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         -1.354195   0.331869  -4.081 4.49e-05 ***
+SwitchRefDifferent                   1.315524   0.137764   9.549  &lt; 2e-16 ***
+Person_binary3rd                     0.640195   0.172020   3.722 0.000198 ***
+TensePast                            0.317710   0.116918   2.717 0.006580 ** 
+DialectHavana                        0.507088   0.373496   1.358 0.174566    
+Age_c                               -0.007538   0.014764  -0.511 0.609647    
+SexMale                             -0.153703   0.362843  -0.424 0.671853    
+SwitchRefDifferent:Person_binary3rd  0.979215   0.277190   3.533 0.000411 ***
+Age_c:SexMale                       -0.033720   0.026266  -1.284 0.199219    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SwtcRD Prsn_3 TnsPst DlctHv Age_c  SexMal SRD:P_
+SwtchRfDffr -0.235                                                 
+Prsn_bnry3r -0.180  0.425                                          
+TensePast   -0.185  0.027  0.012                                   
+DialectHavn -0.523  0.017  0.006  0.005                            
+Age_c       -0.006 -0.003  0.000 -0.003 -0.281                     
+SexMale     -0.534 -0.007 -0.003 -0.002  0.006  0.139              
+SwtchRD:P_3  0.094 -0.472 -0.667  0.016  0.008 -0.011  0.000       
+Age_c:SexMl -0.078 -0.020 -0.009 -0.004  0.330 -0.610  0.090  0.005</code></pre>
+<p>The <code>Age_c * Sex</code> interaction is <strong>not
+significant</strong> (<span class="math inline">\(\beta=-0.034\)</span>,
+SE = 0.026, <span class="math inline">\(z=-1.28\)</span>, <span
+class="math inline">\(p=0.199\)</span>). This means that the
+relationship between <code>age</code> and the probability of producing
+an <code>overt</code> subject does not differ significantly between
+<code>female</code> and <code>male</code> speakers.</p>
+<p>For the reference group, <code>Female</code>, the main effect of
+<code>Age_c</code> is also not significant (<span
+class="math inline">\(\beta=-0.008\)</span>, SE = 0.015, <span
+class="math inline">\(z=-0.51\)</span>, <span
+class="math inline">\(p=0.610\)</span>). The estimated <code>age</code>
+slope is somewhat more negative for <code>male</code> speakers, but the
+non-significant interaction indicates that there is not sufficient
+evidence that the <code>male</code> and <code>female</code> age slopes
+differ from one another.</p>
+<p>We therefore do <strong>not</strong> have evidence to retain the
+<code>Age_c * Sex</code> interaction.</p>
+<p>We will determine whether this interaction should be retained by
+comparing the model with the simpler model using AIC, BIC, and a
+likelihood-ratio test. Again, taken together, the model comparisons
+support the simpler model and keep us from wandering further into
+post-hoc purgatory.</p>
+<pre class="r"><code>AIC(model_person2, model_age_sex)
+BIC(model_person2, model_age_sex)
+
+anova(model_person2, model_age_sex)
+
+#Outputs
+
+              df      AIC
+model_person2 10 1945.916
+model_age_sex 11 1946.327
+
+             df      BIC
+model_person2 10 2000.463
+model_age_sex 11 2006.329
+
+Data: subj
+Models:
+model_person2: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c + (1 | Speaker) + (1 | Verb)
+model_age_sex: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Age_c * Sex + (1 | Speaker) + (1 | Verb)
+              npar    AIC    BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)
+model_person2   10 1945.9 2000.5 -962.96    1925.9                     
+model_age_sex   11 1946.3 2006.3 -962.16    1924.3 1.5884  1     0.2076</code></pre>
+<p>The interaction model again has slightly higher AIC and BIC values,
+and the likelihood-ratio test is not significant, <span
+class="math inline">\(\chi^2(1)=1.59\)</span>, <span
+class="math inline">\(p=0.208\)</span>. We therefore also retain the
+simpler model without the <code>Age_c * Sex</code> interaction. Again,
+taken together, this evidence supports the simpler model and helps us
+avoid falling into post-hoc purgatory.</p>
+</div>
+</div>
+<div id="select-the-final-model" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Select the final
+model</h1>
+<p>Based on the analyses from the previous section, the final model
+retains the binary <code>Person_binary</code> structure and the
+<code>SwitchRef * Person_binary</code> interaction, but does not include
+either of the <code>age</code> interactions.</p>
+<p>We have now considered:</p>
+<ol style="list-style-type: decimal">
+<li>whether <code>Person</code> should be trinary or binary</li>
+<li>whether <code>Age_c * Dialect</code> improves the model</li>
+<li>whether <code>Age_c * Sex</code> improves the model</li>
+</ol>
+<pre class="r"><code>final_model = model_person2</code></pre>
+</div>
+<div id="examine-the-final-model" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Examine the final
+model</h1>
+<pre class="r"><code>summary(final_model)
+
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) [&#39;glmerMod&#39;]
+ Family: binomial  ( logit )
+Formula: Overt ~ SwitchRef * Person_binary + Tense + Dialect + Sex + Age_c +      (1 | Speaker) + (1 | Verb)
+   Data: subj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1945.9    2000.5    -963.0    1925.9      1718 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3620 -0.6890  0.1694  0.7104  5.1558 
+
+Random effects:
+ Groups  Name        Variance Std.Dev.
+ Speaker (Intercept) 0.7123   0.8440  
+ Verb    (Intercept) 0.1285   0.3584  
+Number of obs: 1728, groups:  Speaker, 24; Verb, 24
+
+Fixed effects:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         -1.39113    0.34112  -4.078 4.54e-05 ***
+SwitchRefDifferent                   1.31475    0.13771   9.547  &lt; 2e-16 ***
+Person_binary3rd                     0.63957    0.17195   3.720 0.000200 ***
+TensePast                            0.31783    0.11691   2.719 0.006556 ** 
+DialectHavana                        0.66699    0.36536   1.826 0.067915 .  
+SexMale                             -0.11176    0.37455  -0.298 0.765416    
+Age_c                               -0.01916    0.01212  -1.581 0.113898    
+SwitchRefDifferent:Person_binary3rd  0.98296    0.27737   3.544 0.000394 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+            (Intr) SwtcRD Prsn_3 TnsPst DlctHv SexMal Age_c 
+SwtchRfDffr -0.230                                          
+Prsn_bnry3r -0.175  0.424                                   
+TensePast   -0.180  0.027  0.012                            
+DialectHavn -0.530  0.024  0.010  0.007                     
+SexMale     -0.534 -0.005 -0.002 -0.001 -0.025              
+Age_c       -0.069 -0.019 -0.007 -0.006 -0.106  0.246       
+SwtchRD:P_3  0.092 -0.472 -0.666  0.016  0.007  0.000 -0.010</code></pre>
+<p>The fixed-effects portion of the output contains four important
+columns:</p>
+<pre class="text"><code>Estimate
+Std. Error
+z value
+Pr(&gt;|z|)</code></pre>
+<p>We can also calculate 95% confidence intervals for the fixed
+effects.</p>
+<pre class="r"><code>confint(final_model, parm = &quot;beta_&quot;, method = &quot;Wald&quot;)
+
+                                         2.5 %       97.5 %
+(Intercept)                         -2.05970440 -0.722550451
+SwitchRefDifferent                   1.04484169  1.584661797
+Person_binary3rd                     0.30256605  0.976583376
+TensePast                            0.08869196  0.546972627
+DialectHavana                       -0.04910237  1.383076060
+SexMale                             -0.84587027  0.622354538
+Age_c                               -0.04292095  0.004594674
+SwitchRefDifferent:Person_binary3rd  0.43932087  1.526608348</code></pre>
+<p><em><code>parm = "beta_"</code> tells R to calculate confidence
+intervals only for the <strong>fixed-effect coefficients</strong>
+(<code>β</code> values), rather than for the random-effect variance
+parameters as well.</em></p>
+</div>
+<div id="understanding-the-z-value" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> Understanding the
+z-value</h1>
+<p>In our linear mixed-effects models, the test statistic was a
+<strong>t-value</strong>.</p>
+<p>With <code>glmer()</code>, R instead reports a
+<strong>z-value</strong>.</p>
+<p>The calculation is similar:</p>
+<p><span class="math display">\[
+z = \frac{\text{Estimate}}{\text{Standard Error}}
+\]</span></p>
+<p>For example,</p>
+<pre class="text"><code>Estimate for `SwitchRef: Different` = 1.31475
+Standard Error for `SwitchRef: Different` = 0.13771</code></pre>
+<p>Then:</p>
+<p><span class="math display">\[
+z = \frac{1.31475}{0.13771} = 9.547237
+\]</span></p>
+<p>The coefficient is therefore 9.5 standard errors away from zero.</p>
+<p>The important difference is that <code>glmer()</code> evaluates the
+<code>z-value</code> using a standard normal curve, whereas the linear
+mixed-effects models we fitted with <code>lmerTest</code> used a
+t-distribution. For our purposes, the interpretation is the same; larger
+absolute values provide stronger evidence that the coefficient differs
+from <code>zero</code>.</p>
+<p>You do not need to calculate the z-value manually. R reports it
+automatically.</p>
+</div>
+<div id="understanding-log-odds" class="section level1" number="13">
+<h1><span class="header-section-number">13</span> Understanding
+log-odds</h1>
+<p>The most important difference between a linear and logistic model is
+the scale of the coefficient estimates.</p>
+<p>A linear mixed-effects model predicts a continuous dependent variable
+directly.</p>
+<p>For example:</p>
+<pre class="text"><code>β = 10</code></pre>
+<p>might mean that VOT increases by approximately 10 ms.</p>
+<p>A logistic model cannot work this way because the dependent variable
+has only two possible outcomes.</p>
+<p>Instead, logistic regression models the <strong>log-odds</strong>
+that the outcome coded as <code>1</code> will occur.</p>
+<p>In our model:</p>
+<pre class="text"><code>1 = Overt
+0 = Null</code></pre>
+<p>Therefore:</p>
+<ul>
+<li>a <strong>positive coefficient</strong> means that
+<code>overt</code> subjects become more likely</li>
+<li>a <strong>negative coefficient</strong> means that
+<code>overt</code> subjects become less likely</li>
+<li>a coefficient near <code>0</code> indicates little change in the
+likelihood of an overt subject</li>
+</ul>
+<p>For example:</p>
+<pre class="text"><code>SwitchRef: Different
+β = 1.31475</code></pre>
+<p>does <strong>not</strong> mean that overt subjects increase by 1.30
+or by 130%.</p>
+<p>It means that moving from <code>Same</code> to <code>Different</code>
+reference increases the <strong>log-odds</strong> of an
+<code>overt</code> subject by 1.30. This means <code>overt</code>
+subjects become more likely.</p>
+</div>
+<div id="odds-and-log-odds" class="section level1" number="14">
+<h1><span class="header-section-number">14</span> Odds and log-odds</h1>
+<p>Probability and odds are related, but they are not the same
+thing.</p>
+<p>Suppose the probability of an <code>overt</code> subject is:</p>
+<p><span class="math display">\[
+p = 0.199
+\]</span></p>
+<p>The odds are calculated as:</p>
+<p><span class="math display">\[
+\frac{p}{1-p}
+\]</span></p>
+<p>So:</p>
+<p><span class="math display">\[
+\frac{0.199}{1-0.199}
+=
+\frac{0.199}{0.801}
+=
+0.248
+\]</span></p>
+<p>The odds of an <code>overt</code> subject are therefore approximately
+<strong>0.25 to 1</strong>. Put more intuitively, we expect roughly
+<strong>1 <code>overt</code> subject for every 4 <code>null</code>
+subjects</strong>.</p>
+<p>Logistic regression takes the natural logarithm of these odds:</p>
+<p><span class="math display">\[
+\log\left(\frac{p}{1-p}\right)
+\]</span></p>
+<p>So:</p>
+<p><span class="math display">\[
+\log\left(\frac{0.199}{0.801}\right) = -1.393
+\]</span></p>
+<p>This gives us the <strong>log-odds</strong> used by the statistical
+model.</p>
+<p>Fortunately, we do not normally need to calculate these manually.</p>
+</div>
+<div id="convert-log-odds-into-probabilities" class="section level1"
+number="15">
+<h1><span class="header-section-number">15</span> Convert log-odds into
+probabilities</h1>
+<p>Log-odds are useful statistically, but probabilities are usually
+easier to interpret linguistically.</p>
+<p>There are two steps involved in converting log-odds into
+probabilities.</p>
+<p>Given the <strong>log-odds</strong>:</p>
+<p><span class="math display">\[
+\text{Odds} = \exp(\text{LO})
+\]</span></p>
+<p>Given the <strong>odds</strong>:</p>
+<p><span class="math display">\[
+p = \frac{\text{Odds}}{1+\text{Odds}}
+\]</span></p>
+<p>R combines these two steps for us with:</p>
+<pre class="r"><code>plogis()</code></pre>
+<p>which converts log-odds directly into probabilities.</p>
+<div id="start-with-the-intercept" class="section level2" number="15.1">
+<h2><span class="header-section-number">15.1</span> Start with the
+intercept</h2>
+<p>In our model, the intercept is:</p>
+<pre class="text"><code>-1.39113</code></pre>
+<p>This represents the predicted log-odds for the <strong>reference
+condition</strong>.</p>
+<p>We can first convert the log-odds into odds:</p>
+<p><span class="math display">\[ \text{Odds} = \exp(-1.39113) \]</span>
+<span class="math display">\[ \text{Odds} = 0.249 \]</span></p>
+<p>Then convert the odds into probability:</p>
+<p><span class="math display">\[ p = \frac{0.249}{1+0.249} \]</span>
+<span class="math display">\[ p = 0.199 \]</span></p>
+<p>So the predicted probability of an overt subject in the reference
+condition is approximately <strong>19.9%</strong>.</p>
+<p>R gives us the same answer directly:</p>
+<pre class="r"><code>plogis(-1.39113)
+
+[1] 0.1992274</code></pre>
+</div>
+<div id="add-coefficients-before-converting-to-probability"
+class="section level2" number="15.2">
+<h2><span class="header-section-number">15.2</span> Add coefficients
+before converting to probability</h2>
+<p>This is extremely important.</p>
+<p>Suppose we want the predicted probability for a
+<code>different-reference</code> context.</p>
+<p>Our model gives:</p>
+<pre class="text"><code>(Intercept)          = -1.39113
+SwitchRefDifferent   =  1.31475</code></pre>
+<p>We <strong>cannot</strong> simply run:</p>
+<pre class="r"><code>plogis(1.31475)</code></pre>
+<p>That would give:</p>
+<pre class="r"><code>[1] 0.788</code></pre>
+<p>but this is not the predicted probability of an <code>overt</code>
+subject in a <code>different-reference</code> context.</p>
+<p>Why not?</p>
+<p>Because <code>1.31475</code> is a <strong>change in log-odds relative
+to the intercept</strong>. It is not a complete predicted value on its
+own.</p>
+<p>We first have to do the model arithmetic on the log-odds scale:</p>
+<p><span class="math display">\[ -1.39113 + 1.31475 = -0.07638
+\]</span></p>
+<p>Only after calculating the complete predicted log-odds can we convert
+that value into a probability.</p>
+<pre class="r"><code>plogis(-1.39113 + 1.31475)
+[1] 0.4809143</code></pre>
+<p>The predicted probability of an <code>overt</code> subject in a
+<code>different-reference</code> context is therefore approximately
+<code>48.1%</code>.</p>
+<p>The model therefore predicts:</p>
+<pre class="text"><code>Same reference       ≈ 19.9%
+Different reference  ≈ 48.1%</code></pre>
+<p>The key rule is:</p>
+<blockquote>
+<p>Do all of the model arithmetic in log-odds first. Convert to
+probability only <strong>after</strong> you have calculated the complete
+predicted log-odds for the condition you want.</p>
+</blockquote>
+<p>A regression coefficient such as
+<code>SwitchRef: Different = 1.31475</code> is not itself a probability
+and should not be converted to one in isolation.</p>
+<p>That last distinction is worth emphasizing because
+<code>plogis(1.31475) = 78.8%</code> looks perfectly plausible, which
+makes it an easy mistake to make.</p>
+<details>
+<summary>
+Different interpretations from odds (1:4) and probabilities (20%)? wtf?
+</summary>
+<p>It may seem confusing at first that our odds calcuation resulted in
+<code>0.248</code> (basically <code>1:4</code>), while our probability
+calculation resulted in 19.9% (basically 20%, which means approximately
+1 out of 5 observations). So, why is the probability approximately
+<strong>20%</strong> rather than 25%?</p>
+<p>The reason is that <strong>odds and probability use different
+denominators</strong>.</p>
+<p>Odds of <code>1:4</code> mean:</p>
+<ul>
+<li>1 overt subject</li>
+<li>for every 4 null subjects</li>
+</ul>
+<p>That gives us <strong>5 observations in total</strong>:</p>
+<p><span class="math display">\[
+1 + 4 = 5
+\]</span></p>
+<p>The probability of an overt subject is therefore:</p>
+<p><span class="math display">\[
+p=\frac{1}{5}=0.20
+\]</span></p>
+<p>So:</p>
+<ul>
+<li><strong>Odds = 1:4</strong> means 1 <code>overt</code> for every 4
+<code>null</code> subjects.</li>
+<li><strong>Probability = 20%</strong> means about 1 out of every 5
+subjects is <code>overt</code>.</li>
+</ul>
+These describe the same situation in two different ways
+</details>
+</div>
+</div>
+<div id="interpreting-binary-person" class="section level1" number="16">
+<h1><span class="header-section-number">16</span> Interpreting binary
+Person</h1>
+<p>The model comparison showed that distinguishing <code>first</code>
+and <code>second</code> person did not improve model fit, so the final
+model uses the binary <code>Person_binary</code> variable:</p>
+<ul>
+<li><code>SAP</code> = first and second person</li>
+<li><code>3rd</code> = third person</li>
+</ul>
+<p>The relevant coefficients are:</p>
+<pre class="text"><code>SwitchRef: Different
+Person_binary: 3rd
+SwitchRef: Different * Person_binary: 3rd</code></pre>
+<p>Because <code>SAP</code> is the reference level of
+<code>Person_binary</code> and <code>Same</code> is the reference level
+of <code>SwitchRef</code>, the intercept represents a
+<code>same-reference SAP</code> subject when all other predictors are at
+their reference values and <code>Age_c = 0</code>.</p>
+<div id="same-reference-sap-subjects" class="section level2"
+number="16.1">
+<h2><span class="header-section-number">16.1</span> Same-reference SAP
+subjects</h2>
+<p>The intercept is:</p>
+<pre class="text"><code>-1.39113</code></pre>
+<p>We can convert this directly to probability:</p>
+<pre class="r"><code>plogis(-1.39113)
+[1] 0.199</code></pre>
+<p>The predicted probability of an overt subject for the reference
+condition is therefore approximately 19.9%.</p>
+</div>
+<div id="different-reference-sap-subjects" class="section level2"
+number="16.2">
+<h2><span class="header-section-number">16.2</span> Different-reference
+SAP subjects</h2>
+<p>The coefficient for SwitchRefDifferent is:</p>
+<pre class="text"><code>1.31475</code></pre>
+<p>This is the change in log-odds when we move from <code>Same</code> to
+<code>Different reference</code> among <code>SAP</code> subjects.</p>
+<p>We therefore first add it to the intercept:</p>
+<p><span class="math display">\[ -1.39113 + 1.31475 = -0.07638
+\]</span></p>
+<p>and then convert the resulting log-odds to probability:</p>
+<pre class="r"><code>plogis(-1.39113 + 1.31475)
+
+[1] 0.4809143</code></pre>
+<p>The predicted probability therefore increases from approximately
+19.9% in <code>same-reference</code> contexts to <strong>48.1%</strong>
+in <code>different-reference</code> contexts for <code>SAP</code>
+subjects.</p>
+</div>
+<div id="same-reference-third-person-subjects" class="section level2"
+number="16.3">
+<h2><span class="header-section-number">16.3</span> Same-reference
+third-person subjects</h2>
+<p><code>Person_binary: 3rd</code> represents the
+<code>difference</code> between <code>third-person</code> and
+<code>SAP</code> subjects in the <code>same-reference</code>
+condition.</p>
+<p>We therefore add <code>Person_binary: 3rd</code> to the intercept
+before converting to probability:</p>
+<pre class="r"><code>plogis(-1.391127 + 0.6395747)
+
+#Another way to do this is:
+plogis(
+  fixef(final_model)[&quot;(Intercept)&quot;] +
+  fixef(final_model)[&quot;Person_binary3rd&quot;]
+)
+
+#Both result in:
+[1] 0.3204832</code></pre>
+<p>This gives a predicted probability of 32% that the subject is
+<code>overt</code> for a <code>same-reference</code>
+<code>third-person</code> subject.</p>
+<p>The positive and statistically significant
+<code>Person_binary: 3rd</code> coefficient shows that
+<code>third-person subjects</code> are more likely to be
+<code>overt</code> than <code>SAP</code> subjects in
+<code>same-reference</code> contexts.</p>
+<p>Statistically, the interpretation is right because <code>Same</code>
+is the reference level of <code>SwitchRef</code>, so the
+<code>Person_binary: 3rd</code> coefficient is specifically the
+third-vs-SAP contrast within same-reference contexts.</p>
+</div>
+<div id="different-reference-third-person-subjects"
+class="section level2" number="16.4">
+<h2><span class="header-section-number">16.4</span> Different-reference
+third-person subjects</h2>
+<p>A <code>different-reference</code> <code>third-person</code> subject
+involves both predictors and their interaction.</p>
+<p>We therefore need four terms:</p>
+<p><span class="math display">\[ \text{Intercept} + \text{SwitchRef:
+Different} + \text{Person\_binary: 3rd} + \text{SwitchRef:
+Different:Person\_binary: 3rd} \]</span></p>
+<p>In R:</p>
+<pre><code>plogis(-1.391127 + 1.314752 + 0.6395747 + 0.9829646)
+
+#or
+
+plogis(
+  fixef(final_model)[&quot;(Intercept)&quot;] +
+  fixef(final_model)[&quot;SwitchRefDifferent&quot;] +
+  fixef(final_model)[&quot;Person_binary3rd&quot;] +
+  fixef(final_model)[&quot;SwitchRefDifferent:Person_binary3rd&quot;]
+)
+
+#Both resulting in:
+[1] 0.824359</code></pre>
+<p>This gives a predicted probability of approximately
+<strong>82.4%</strong> that the subject is <code>overt</code> for a
+<code>different-reference</code> <code>third-person</code> subject. In
+other words, <code>different-reference</code> contexts strongly favour
+<code>overt</code> subjects in <code>third person</code>, with the model
+predicting an <code>overt</code> subject in about <strong>4 out of 5
+cases</strong>.</p>
+<p>The <code>SwitchRef: Different:Person_binary 3rd</code> coefficient
+is positive and statistically significant. This means that the increase
+in <code>overt</code> subject use from <code>Same</code> to
+<code>Different</code> reference is larger for <code>third-person</code>
+subjects than for <code>SAP</code> subjects.</p>
+<p>This is the interaction predicted by our hypothesis.</p>
+<p>It is worth emphasizing yet again that the important rule is that we
+must first add together all of the coefficients that apply to the
+condition being predicted on the log-odds scale. Only after that
+arithmetic is complete do we use <code>plogis()</code> to convert the
+result into a probability.</p>
+</div>
+</div>
+<div id="interpret-age" class="section level1" number="17">
+<h1><span class="header-section-number">17</span> Interpret Age</h1>
+<p>Because <code>Age_c</code> is centred around the sample mean:</p>
+<pre class="text"><code>Age_c = 0</code></pre>
+<p>represents a speaker approximately <strong>45.6 years
+old</strong>.</p>
+<p>In the final model, the coefficient for <code>Age_c</code> is:</p>
+<pre class="text"><code>Age_c
+β = -0.019
+SE = 0.012
+z = -1.58
+p = 0.114</code></pre>
+<p>The negative coefficient indicates that the probability of producing
+an <code>overt</code> subject tends to <strong>decrease as speaker age
+increases</strong>.</p>
+<p>More specifically, each additional year of <code>age</code> is
+associated with a decrease of approximately <code>0.019</code> in the
+log-odds of producing an <code>overt</code> subject, holding the other
+predictors constant.</p>
+<p>This effect does <strong>not</strong> reach the conventional <span
+class="math inline">\(p&lt;.05\)</span> threshold (<span
+class="math inline">\(p=.114\)</span>). However, that does not mean that
+the coefficient suddenly becomes meaningless or that there is no
+<code>age</code> pattern in the data. The coefficient still tells us the
+<strong>estimated direction and size of the relationship</strong>. The
+p-value tells us how strong the statistical evidence is for that
+relationship.</p>
+<p>In this case, the estimated relationship is negative, but there is
+considerable uncertainty around it. We therefore describe the pattern
+while being clear that the statistical evidence is not strong enough to
+meet the conventional, and ultimately arbitrary, <span
+class="math inline">\(p&lt;0.05\)</span> cutoff.</p>
+<div id="convert-the-age-effect-to-probabilities" class="section level2"
+number="17.1">
+<h2><span class="header-section-number">17.1</span> Convert the age
+effect to probabilities</h2>
+<p>Because the <code>age</code> coefficient is in log-odds, it may be
+easier to understand by comparing predicted probabilities.</p>
+<p>For a <code>speaker</code> at the mean <code>age</code>
+(<code>Age_c = 0</code>) in the reference condition:</p>
+<pre class="r"><code>plogis(-1.391127)
+
+[1] 0.199</code></pre>
+<p>The predicted probability of an <code>overt</code> subject is
+approximately <strong>19.9%</strong>.</p>
+<p>For a speaker <strong>10 years older</strong> than the mean:</p>
+<pre class="r"><code>plogis(-1.391127 + (-0.019166 * 10))
+[1] 0.1704011</code></pre>
+<p>The predicted probability decreases to approximately
+<strong>17.0%</strong>.</p>
+<p>For a speaker <strong>10 years younger</strong> than the mean:</p>
+<pre class="r"><code>plogis(-1.391127 + (-0.019166 * -10))
+[1] 0.23157</code></pre>
+<p>The predicted probability increases to approximately
+<strong>23.2%</strong>.</p>
+<p>So, descriptively, the model estimates that younger speakers are
+somewhat more likely to produce <code>overt</code> subjects than older
+speakers. However, because the <code>age</code> effect does not reach
+statistical significance (<span class="math inline">\(p=0.114\)</span>),
+we should treat this pattern as <strong>suggestive rather than
+conclusive</strong>.</p>
+<p>Notice again that the <code>age</code> coefficient is multiplied by
+the <strong>number of years away from the mean</strong>, and all
+arithmetic is completed in log-odds before converting the final value to
+probability.</p>
+</div>
+</div>
+<div id="writing-up-the-statistical-analysis-in-the-methods-section"
+class="section level1" number="18">
+<h1><span class="header-section-number">18</span> Writing up the
+statistical analysis in the Methods section</h1>
+<p>The <strong>Methods</strong> section explains how the statistical
+analysis was conducted. It should describe the model structure and the
+decisions made during model building, but it should not report the
+substantive results.</p>
+<p>For this analysis, we need to identify:</p>
+<ul>
+<li>the type of model</li>
+<li>the dependent variable</li>
+<li>the fixed effects</li>
+<li>the random effects</li>
+<li>how <code>Person</code> was coded and compared</li>
+<li>how <code>Age</code> was centred</li>
+<li>which interactions were tested</li>
+<li>the categorical reference levels</li>
+<li>how competing models were compared</li>
+</ul>
+<p>First, let’s summarize our decisions…</p>
+<div id="describe-the-model" class="section level2" number="18.1">
+<h2><span class="header-section-number">18.1</span> Describe the
+model</h2>
+<p>Subject expression was analysed using a binomial logistic
+mixed-effects regression fitted with <code>glmer()</code> from the
+<code>lme4</code> package (Bates et al. 2015).</p>
+<p>The dependent variable was:</p>
+<ul>
+<li><code>1</code> = <code>overt</code> subject</li>
+<li><code>0</code> = <code>null</code> subject</li>
+</ul>
+<p>The fixed effects were:</p>
+<ul>
+<li><code>SwitchRef</code></li>
+<li><code>Person</code></li>
+<li><code>Tense</code></li>
+<li><code>Dialect</code></li>
+<li><code>Sex</code></li>
+<li><code>Age</code></li>
+</ul>
+<p>Random intercepts were included for:</p>
+<ul>
+<li><code>Speaker</code></li>
+<li><code>Verb</code></li>
+</ul>
+</div>
+<div id="describe-person-coding-and-model-selection"
+class="section level2" number="18.2">
+<h2><span class="header-section-number">18.2</span> Describe Person
+coding and model selection</h2>
+<p>We considered two possible representations of grammatical person.</p>
+<p>The first distinguished:</p>
+<ul>
+<li>first person</li>
+<li>second person</li>
+<li>third person</li>
+</ul>
+<p>The second collapsed first and second person into the theoretically
+motivated category of <strong>speech-act participants</strong>
+(<code>SAP</code>) and contrasted this category with third person.</p>
+<p>Both versions included a <code>SwitchRef * Person</code> interaction
+because our main hypothesis concerned whether the effect of switch
+reference differed according to grammatical person.</p>
+<p>The two representations were compared using:</p>
+<ul>
+<li>AIC</li>
+<li>BIC</li>
+<li>a likelihood-ratio test (anova)</li>
+</ul>
+<p>The binary representation was retained for the final model.</p>
+</div>
+<div id="describe-age" class="section level2" number="18.3">
+<h2><span class="header-section-number">18.3</span> Describe Age</h2>
+<p><code>Age</code> was treated as a continuous numeric predictor and
+mean-centred before modelling:</p>
+<pre class="r"><code>subj$Age_c = subj$Age - mean(subj$Age)</code></pre>
+<p>A value of:</p>
+<pre class="text"><code>Age_c = 0</code></pre>
+<p>therefore represents the mean speaker age of approximately
+<strong>45.6 years</strong>.</p>
+<p>The exploratory analysis suggested possible interactions between:</p>
+<ul>
+<li><code>Age_c * Dialect</code></li>
+<li><code>Age_c * Sex</code></li>
+</ul>
+<p>Each interaction was tested by comparing the interaction model with
+the simpler model. Neither interaction improved model fit, so neither
+was retained in the final model.</p>
+</div>
+<div id="reference-levels" class="section level2" number="18.4">
+<h2><span class="header-section-number">18.4</span> Reference
+levels</h2>
+<p>The final model used the following categorical reference levels:</p>
+<ul>
+<li><code>Same</code> for <code>SwitchRef</code></li>
+<li><code>SAP</code> for <code>Person_binary</code></li>
+<li><code>Present</code> for <code>Tense</code></li>
+<li><code>Mexico City</code> for <code>Dialect</code></li>
+<li><code>Female</code> for <code>Sex</code></li>
+</ul>
+<p>Because <code>Age_c</code> was centred, <code>0</code> represents the
+mean age.</p>
+<p>The intercept therefore represents a:</p>
+<ul>
+<li>same-reference</li>
+<li>SAP</li>
+<li>present-tense</li>
+<li>female</li>
+<li>Mexico City speaker</li>
+<li>of approximately mean age</li>
+</ul>
+</div>
+<div id="model-comparison-and-significance-testing"
+class="section level2" number="18.5">
+<h2><span class="header-section-number">18.5</span> Model comparison and
+significance testing</h2>
+<p>Competing models were compared using AIC, BIC, and likelihood-ratio
+tests.</p>
+<p>Individual fixed-effect coefficients were evaluated using the Wald
+z-tests reported by <code>glmer()</code>. We also calculated 95% Wald
+confidence intervals for the fixed effects.</p>
+</div>
+<div id="put-everything-together" class="section level2" number="18.6">
+<h2><span class="header-section-number">18.6</span> Put everything
+together</h2>
+<p>A complete statistical-analysis paragraph could therefore read:</p>
+<blockquote>
+<p>Subject expression was analysed using binomial logistic mixed-effects
+regression in R using the <code>lme4</code> package (Bates et al. 2015).
+<em>Overt</em> subject expression was coded as <em>1</em> and
+<em>null</em> subject expression as <em>0</em>. <em>Switch
+reference</em>, <em>Person</em>, <em>Tense</em>, <em>Dialect</em>,
+<em>Sex</em>, and <em>Age</em> were included as fixed effects, with
+random intercepts for <em>Speaker</em> and <em>Verb</em>.
+<em>Grammatical person</em> was evaluated using both a three-level
+coding distinguishing <em>first</em>, <em>second</em>, and
+<em>third</em> person and a binary coding contrasting <em>speech-act
+participants (SAP)</em> (first and second person) with <em>third
+person</em>. Both representations included a <em>Switch reference x
+Person</em> interaction and were compared using AIC, BIC, and a
+likelihood-ratio test. The binary representation was retained for
+subsequent analysis. <em>Age</em> was entered as a continuous predictor
+and mean-centred such that zero represented the mean speaker age of
+approximately 45.6 years. <em>Age x Dialect</em> and <em>Age x Sex</em>
+interactions were subsequently evaluated through model comparison but
+were not retained in the final model. <em>Same reference</em>,
+<em>SAP</em>, <em>present tense</em>, <em>Mexico City</em>, and
+<em>female</em> were used as the reference levels for the categorical
+predictors. Competing models were compared using AIC, BIC, and
+likelihood-ratio tests. Fixed-effect coefficients were evaluated using
+Wald z-tests, and 95% Wald confidence intervals were calculated.</p>
+</blockquote>
+</div>
+</div>
+<div id="writing-up-the-results" class="section level1" number="19">
+<h1><span class="header-section-number">19</span> Writing up the
+results</h1>
+<p>The <strong>Results</strong> section reports what the analysis
+found.</p>
+<p>We do not need to reproduce every line of the R output. Instead, we
+should:</p>
+<ol style="list-style-type: decimal">
+<li>report the important model-selection decisions</li>
+<li>identify the final model</li>
+<li>report and interpret the important fixed effects</li>
+<li>explain the interaction</li>
+<li>describe non-significant effects without pretending that their
+estimates are meaningless</li>
+<li>briefly report the random effects</li>
+</ol>
+<div id="report-the-model-selection-decisions" class="section level2"
+number="19.1">
+<h2><span class="header-section-number">19.1</span> Report the
+model-selection decisions</h2>
+<div id="binary-versus-trinary-person" class="section level3"
+number="19.1.1">
+<h3><span class="header-section-number">19.1.1</span> Binary versus
+trinary Person</h3>
+<p>The binary and trinary representations of <code>Person</code> were
+compared first.</p>
+<pre class="text"><code>Binary Person
+AIC = 1945.9
+BIC = 2000.5
+
+Trinary Person
+AIC = 1948.7
+BIC = 2014.2</code></pre>
+<p>The binary model had lower AIC and BIC values.</p>
+<p>The likelihood-ratio test also showed that distinguishing first and
+second person did not significantly improve model fit:</p>
+<p><span class="math display">\[
+\chi^2(2)=1.21,\ p=0.547
+\]</span></p>
+<p>We can therefore report:</p>
+<blockquote>
+<p>Distinguishing <em>first</em> from <em>second</em> person did not
+improve model fit, <span class="math inline">\(\chi^2(2)=1.21\)</span>,
+<span class="math inline">\(p=0.547\)</span>. The binary <em>SAP</em>
+versus <em>third-person</em> model also had lower AIC and BIC values
+(AIC = 1945.9, BIC = 2000.5) than the trinary model (AIC = 1948.7, BIC =
+2014.2). The binary representation of grammatical person was therefore
+retained.</p>
+</blockquote>
+</div>
+</div>
+<div id="age-interactions" class="section level2" number="19.2">
+<h2><span class="header-section-number">19.2</span> Age
+interactions</h2>
+<p>The <code>Age_c * Dialect</code> interaction did not improve model
+fit:</p>
+<pre class="text"><code>No interaction
+AIC = 1945.9
+BIC = 2000.5
+
+Age x Dialect
+AIC = 1946.5
+BIC = 2006.5</code></pre>
+<p>The likelihood-ratio test was also not significant:</p>
+<p><span class="math display">\[
+\chi^2(1)=1.37,\ p=0.241
+\]</span></p>
+<p>Similarly, the <code>Age_c * Sex</code> interaction did not improve
+model fit:</p>
+<pre class="text"><code>No interaction
+AIC = 1945.9
+BIC = 2000.5
+
+Age x Sex
+AIC = 1946.3
+BIC = 2006.3</code></pre>
+<p>and the likelihood-ratio test was not significant:</p>
+<p><span class="math display">\[
+\chi^2(1)=1.59,\ p=0.208
+\]</span></p>
+<p>We can summarize these comparisons quite briefly:</p>
+<blockquote>
+<p>Neither of the proposed <em>age</em> interactions improved model fit.
+The <em>Age x Dialect</em> model had higher AIC and BIC values than the
+simpler model and did not provide a significant improvement in fit,
+<span class="math inline">\(\chi^2(1)=1.37\)</span>, <span
+class="math inline">\(p=0.241\)</span>. The same was true of the <em>Age
+x Sex</em> interaction, <span
+class="math inline">\(\chi^2(1)=1.59\)</span>, <span
+class="math inline">\(p=0.208\)</span>. Both interactions were therefore
+excluded from the final model.</p>
+</blockquote>
+</div>
+</div>
+<div id="describe-the-final-model" class="section level1" number="20">
+<h1><span class="header-section-number">20</span> Describe the final
+model</h1>
+<p>The final model was:</p>
+<pre class="r"><code>Overt ~ SwitchRef * Person_binary +
+  Tense + Dialect + Sex + Age_c +
+  (1 | Speaker) + (1 | Verb)</code></pre>
+<p>The fixed-effect results were:</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Effect</th>
+<th align="right">β</th>
+<th align="right">SE</th>
+<th align="right">z</th>
+<th align="right">p</th>
+<th align="right">95% CI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercept</td>
+<td align="right">-1.391</td>
+<td align="right">0.341</td>
+<td align="right">-4.08</td>
+<td align="right">&lt;.001</td>
+<td align="right">[-2.060, -0.723]</td>
+</tr>
+<tr class="even">
+<td><code>SwitchRefDifferent</code></td>
+<td align="right">1.315</td>
+<td align="right">0.138</td>
+<td align="right">9.55</td>
+<td align="right">&lt;.001</td>
+<td align="right">[1.045, 1.585]</td>
+</tr>
+<tr class="odd">
+<td><code>Person_binary3rd</code></td>
+<td align="right">0.640</td>
+<td align="right">0.172</td>
+<td align="right">3.72</td>
+<td align="right">&lt;.001</td>
+<td align="right">[0.303, 0.977]</td>
+</tr>
+<tr class="even">
+<td><code>TensePast</code></td>
+<td align="right">0.318</td>
+<td align="right">0.117</td>
+<td align="right">2.72</td>
+<td align="right">.007</td>
+<td align="right">[0.089, 0.547]</td>
+</tr>
+<tr class="odd">
+<td><code>DialectHavana</code></td>
+<td align="right">0.667</td>
+<td align="right">0.365</td>
+<td align="right">1.83</td>
+<td align="right">.068</td>
+<td align="right">[-0.049, 1.383]</td>
+</tr>
+<tr class="even">
+<td><code>SexMale</code></td>
+<td align="right">-0.112</td>
+<td align="right">0.375</td>
+<td align="right">-0.30</td>
+<td align="right">.765</td>
+<td align="right">[-0.846, 0.622]</td>
+</tr>
+<tr class="odd">
+<td><code>Age_c</code></td>
+<td align="right">-0.019</td>
+<td align="right">0.012</td>
+<td align="right">-1.58</td>
+<td align="right">.114</td>
+<td align="right">[-0.043, 0.005]</td>
+</tr>
+<tr class="even">
+<td><code>SwitchRefDifferent:Person_binary3rd</code></td>
+<td align="right">0.983</td>
+<td align="right">0.277</td>
+<td align="right">3.54</td>
+<td align="right">&lt;.001</td>
+<td align="right">[0.439, 1.527]</td>
+</tr>
+</tbody>
+</table>
+<p>The intercept usually does not require much discussion in the Results
+section. Its main use here is as the starting point for calculating
+predicted probabilities.</p>
+<div id="report-switchref-person-and-their-interaction"
+class="section level2" number="20.1">
+<h2><span class="header-section-number">20.1</span> Report SwitchRef,
+Person, and their interaction</h2>
+<p>Because <code>SwitchRef</code> and <code>Person_binary</code>
+interact, their main effects must be interpreted relative to their
+reference levels.</p>
+<p><code>SwitchRef: Different</code> gives the effect of moving from
+<code>Same</code> to <code>Different</code> reference among <strong>SAP
+subjects</strong>.</p>
+<p>This effect was positive and statistically significant:</p>
+<p><span class="math display">\[
+\beta=1.315,\ SE=0.138,\ z=9.55,\ p&lt;0.001
+\]</span></p>
+<p>For the reference condition, the predicted probability of an
+<code>overt</code> subject was approximately:</p>
+<pre class="text"><code>Same-reference SAP = 19.9%</code></pre>
+<p>Changing to different reference increases the predicted probability
+to:</p>
+<pre class="text"><code>Different-reference SAP = 48.1%</code></pre>
+<p>We can report:</p>
+<blockquote>
+<p>Among <em>speech-act participants (SAP)</em>,
+<em>different-reference</em> contexts substantially increased the
+likelihood of <em>overt</em> subject expression relative to
+<em>same-reference</em> contexts (<span
+class="math inline">\(\beta=1.315\)</span>, SE = 0.138, <span
+class="math inline">\(z=9.55\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [1.045, 1.585]). The
+predicted probability of an overt subject increased from approximately
+19.9% in same-reference contexts to 48.1% in different-reference
+contexts.</p>
+</blockquote>
+<p><code>Person_binary: 3rd</code> compares third-person subjects with
+SAP subjects specifically in the <strong>same-reference
+condition</strong>.</p>
+<p>The effect was also positive and statistically significant:</p>
+<p><span class="math display">\[
+\beta=0.640,\ SE=0.172,\ z=3.72,\ p&lt;0.001
+\]</span></p>
+<p>The predicted probabilities were:</p>
+<pre class="text"><code>Same-reference SAP = 19.9%
+Same-reference 3rd = 32.0%</code></pre>
+<p>We can therefore say:</p>
+<blockquote>
+<p>In <em>same-reference</em> contexts, <em>third-person</em> subjects
+were more likely to be <em>overt</em> than <em>SAP</em> subjects (<span
+class="math inline">\(\beta=0.640\)</span>, SE = 0.172, <span
+class="math inline">\(z=3.72\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [0.303, 0.977]). The
+predicted probability of an <em>overt</em> subject was approximately
+19.9% for <em>SAP</em> subjects and 32.0% for <em>third-person</em>
+subjects.</p>
+</blockquote>
+<p>Most importantly, the
+<code>SwitchRef: Different * Person_binary: 3rd</code> interaction was
+positive and statistically significant:</p>
+<p><span class="math display">\[
+\beta=0.983,\ SE=0.277,\ z=3.54,\ p&lt;0.001
+\]</span></p>
+<p>This confirms our hypothesis that the effect of switch reference is
+stronger for third-person subjects than for SAP subjects.</p>
+<p>The four predicted probabilities make the interaction particularly
+clear.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Same reference</th>
+<th align="right">Different reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SAP</td>
+<td align="right">19.9%</td>
+<td align="right">48.1%</td>
+</tr>
+<tr class="even">
+<td>Third person</td>
+<td align="right">32.0%</td>
+<td align="right">82.4%</td>
+</tr>
+</tbody>
+</table>
+<p><em>Note: These predicted probabilities hold the remaining predictors
+at their reference values and age at the sample mean.</em></p>
+<p>We can report:</p>
+<blockquote>
+<p>There was also a significant interaction between <em>Switch
+reference</em> and <em>Person</em> (<span
+class="math inline">\(\beta=0.983\)</span>, SE = 0.277, <span
+class="math inline">\(z=3.54\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [0.439, 1.527]). The
+increase in <em>overt</em> subject use from <em>same-</em> to
+<em>different-reference</em> contexts was substantially greater for
+<em>third-person</em> subjects than for <em>SAP</em> subjects. In
+<em>different-reference</em> <em>third-person</em> contexts, the
+predicted probability of an <em>overt</em> subject reached approximately
+82.4%.</p>
+</blockquote>
+<p>This interaction directly supports our original hypothesis.</p>
+</div>
+<div id="report-tense" class="section level2" number="20.2">
+<h2><span class="header-section-number">20.2</span> Report Tense</h2>
+<p><code>Tense: Past</code> was positive and statistically
+significant:</p>
+<p><span class="math display">\[
+\beta=0.318,\ SE=0.117,\ z=2.72,\ p=0.007
+\]</span></p>
+<p>Because <code>Present</code> is the reference level, this indicates
+that past-tense clauses were more likely to contain overt subjects than
+present-tense clauses.</p>
+<p>We can report:</p>
+<blockquote>
+<p><em>Past-tense</em> clauses were more likely to contain
+<em>overt</em> subjects than <em>present-tense</em> clauses (<span
+class="math inline">\(\beta=0.318\)</span>, SE = 0.117, <span
+class="math inline">\(z=2.72\)</span>, <span
+class="math inline">\(p=0.007\)</span>, 95% CI [0.089, 0.547]).</p>
+</blockquote>
+</div>
+<div id="report-dialect" class="section level2" number="20.3">
+<h2><span class="header-section-number">20.3</span> Report Dialect</h2>
+<p>The coefficient for <code>Dialect: Havana</code> was positive:</p>
+<p><span class="math display">\[
+\beta=0.667,\ SE=0.365,\ z=1.83,\ p=0.068
+\]</span></p>
+<p>The model therefore estimates higher log-odds of <code>overt</code>
+subject expression among <code>Havana</code> speakers than among
+<code>Mexico City</code> speakers.</p>
+<p>However, the 95% confidence interval includes zero:</p>
+<p><span class="math display">\[
+[-0.049,\ 1.383]
+\]</span></p>
+<p>and the p-value does not reach the conventional <span
+class="math inline">\(p&lt;0.05\)</span> threshold.</p>
+<p>We should not turn this into the claim that there is <strong>no
+dialect effect</strong>. Instead, report the estimate together with its
+uncertainty:</p>
+<blockquote>
+<p><em>Havana</em> speakers were estimated to have higher log-odds of
+<em>overt</em> subject expression than <em>Mexico City</em> speakers
+(<span class="math inline">\(\beta=0.667\)</span>, SE = 0.365, <span
+class="math inline">\(z=1.83\)</span>, <span
+class="math inline">\(p=0.068\)</span>, 95% CI [-0.049, 1.383]). The
+direction of the estimate suggests greater <em>overt</em> subject use in
+<em>Havana</em>, although the statistical evidence for this difference
+was limited.</p>
+</blockquote>
+</div>
+<div id="report-sex" class="section level2" number="20.4">
+<h2><span class="header-section-number">20.4</span> Report Sex</h2>
+<p>The estimated effect of <code>Sex</code> was small:</p>
+<p><span class="math display">\[
+\beta=-0.112,\ SE=0.375,\ z=-0.30,\ p=0.765
+\]</span></p>
+<p>The confidence interval is also wide and includes zero:</p>
+<p><span class="math display">\[
+[-0.846,\ 0.622]
+\]</span></p>
+<p>We can therefore report:</p>
+<blockquote>
+<p><em>Male</em> speakers had slightly lower estimated log-odds of
+<em>overt</em> subject expression than <em>female</em> speakers, but the
+estimate was small and highly uncertain (<span
+class="math inline">\(\beta=-0.112\)</span>, SE = 0.375, <span
+class="math inline">\(z=-0.30\)</span>, <span
+class="math inline">\(p=0.765\)</span>, 95% CI [-0.846, 0.622]).</p>
+</blockquote>
+</div>
+<div id="report-age" class="section level2" number="20.5">
+<h2><span class="header-section-number">20.5</span> Report Age</h2>
+<p>The coefficient for <code>Age_c</code> was negative:</p>
+<p><span class="math display">\[
+\beta=-0.019,\ SE=0.012,\ z=-1.58,\ p=0.114
+\]</span></p>
+<p>This indicates that <code>overt</code> subject use was estimated to
+decrease as speaker <code>age</code> increased.</p>
+<p>The 95% confidence interval was:</p>
+<p><span class="math display">\[
+[-0.043,\ 0.005]
+\]</span></p>
+<p>which includes zero.</p>
+<p>Again, failing to cross an arbitrary <span
+class="math inline">\(p&lt;0.05\)</span> threshold does not make the
+estimate uninterpretable. We can still report its direction and
+magnitude while being clear about the uncertainty.</p>
+<blockquote>
+<p><em>Age</em> showed a negative relationship with <em>overt</em>
+subject expression (<span class="math inline">\(\beta=-0.019\)</span>,
+SE = 0.012, <span class="math inline">\(z=-1.58\)</span>, <span
+class="math inline">\(p=0.114\)</span>, 95% CI [-0.043, 0.005]). Each
+additional year of <em>age</em> was associated with an estimated
+decrease of 0.019 in the log-odds of an <em>overt</em> subject. The
+evidence for this relationship was not strong enough to meet the
+conventional <span class="math inline">\(p&lt;0.05\)</span>
+threshold.</p>
+</blockquote>
+<p>To make the estimated relationship easier to understand, we can
+report predicted probabilities for the reference condition:</p>
+<pre class="text"><code>10 years younger than the mean = 23.2%
+Mean age                     = 19.9%
+10 years older than the mean = 17.0%</code></pre>
+<p>This can be summarized as:</p>
+<blockquote>
+<p>Descriptively, the model predicts somewhat greater <em>overt</em>
+subject use among younger speakers, although the uncertainty around the
+<em>age</em> coefficient means that this pattern should be treated
+cautiously.</p>
+</blockquote>
+</div>
+<div id="report-the-random-effects" class="section level2"
+number="20.6">
+<h2><span class="header-section-number">20.6</span> Report the random
+effects</h2>
+<p>The final model included random intercepts for both
+<code>Speaker</code> and <code>Verb</code>.</p>
+<pre class="text"><code>Speaker
+Variance = 0.712
+SD = 0.844
+
+Verb
+Variance = 0.129
+SD = 0.358</code></pre>
+<p>The larger <code>speaker</code> variance indicates greater variation
+in overall <code>overt</code>-subject use across <code>speakers</code>
+than across <code>verbs</code>.</p>
+<p>A brief write-up is sufficient:</p>
+<blockquote>
+<p>Random intercepts were included for <em>speakers</em> and
+<em>verbs</em>, with greater variability across <em>speakers</em> (SD =
+0.844) than across <em>verbs</em> (SD = 0.358).</p>
+</blockquote>
+</div>
+</div>
+<div id="putting-the-results-section-together" class="section level1"
+number="21">
+<h1><span class="header-section-number">21</span> Putting the Results
+section together</h1>
+<p>We can now combine the important results into a coherent
+Results-style write-up.</p>
+<p><em>Figure X: Fixed effects from the final binomial logistic
+mixed-effects model predicting overt subject expression. Estimates are
+reported in log-odds, with standard errors, 95% confidence intervals,
+Wald z-values, and p-values.</em>
+<img src="Glmems_images/Final_model.jpg" alt="final model" width="1000"/></p>
+<blockquote>
+<p>Models containing binary and trinary representations of grammatical
+person were first compared. Distinguishing <em>first</em> from
+<em>second</em> person did not improve model fit, <span
+class="math inline">\(\chi^2(2)=1.21\)</span>, <span
+class="math inline">\(p=0.547\)</span>, and the binary <em>SAP</em>
+versus <em>third-person</em> model had lower AIC and BIC values (AIC =
+1945.9, BIC = 2000.5) than the trinary model (AIC = 1948.7, BIC =
+2014.2). The binary representation was therefore retained. Neither the
+<em>Age x Dialect</em> interaction, <span
+class="math inline">\(\chi^2(1)=1.37\)</span>, <span
+class="math inline">\(p=0.241\)</span>, nor the <em>Age x Sex</em>
+interaction, <span class="math inline">\(\chi^2(1)=1.59\)</span>, <span
+class="math inline">\(p=0.208\)</span>, improved model fit, and both
+were excluded from the final model.</p>
+<p>The final binomial logistic mixed-effects model included fixed
+effects of <em>Switch reference</em>, binary <em>Person</em>,
+<em>Tense</em>, <em>Dialect</em>, <em>Sex</em>, and mean-centred
+<em>Age</em>, together with a <em>Switch reference x Person</em>
+interaction. Random intercepts were included for <em>Speaker</em> and
+<em>Verb</em>. Among <em>speech-act participants (SAP)</em>,
+<em>different-reference</em> contexts substantially increased the
+likelihood of <em>overt</em> subject expression relative to
+<em>same-reference</em> contexts (<span
+class="math inline">\(\beta=1.315\)</span>, SE = 0.138, <span
+class="math inline">\(z=9.55\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [1.045, 1.585]). The
+predicted probability of an <em>overt</em> subject increased from
+approximately 19.9% in <em>same-reference</em> contexts to 48.1% in
+<em>different-reference</em> contexts. In <em>same-reference</em>
+contexts, <em>third-person</em> subjects were also more likely to be
+<em>overt</em> than <em>SAP</em> subjects (<span
+class="math inline">\(\beta=0.640\)</span>, SE = 0.172, <span
+class="math inline">\(z=3.72\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [0.303, 0.977]).</p>
+<p>Crucially, the <em>Switch reference x Person</em> interaction was
+significant (<span class="math inline">\(\beta=0.983\)</span>, SE =
+0.277, <span class="math inline">\(z=3.54\)</span>, <span
+class="math inline">\(p&lt;0.001\)</span>, 95% CI [0.439, 1.527]). The
+effect of <em>switch reference</em> was larger for <em>third-person</em>
+subjects than for <em>speech-act participants (SAP)</em>. The predicted
+probability of an <em>overt</em> subject was 32.0% for
+<em>same-reference</em> <em>third-person</em> subjects but increased to
+82.4% in <em>different-reference</em> <em>third-person</em> contexts.
+This interaction supports the hypothesis that switch reference has an
+especially strong effect on <em>third-person</em> subject
+expression.</p>
+<p><em>Tense</em> also affected subject expression, with
+<em>past-tense</em> clauses more likely to contain <em>overt</em>
+subjects than <em>present-tense</em> clauses (<span
+class="math inline">\(\beta=0.318\)</span>, SE = 0.117, <span
+class="math inline">\(z=2.72\)</span>, <span
+class="math inline">\(p=0.007\)</span>, 95% CI [0.089, 0.547]).
+<em>Havana</em> speakers showed higher estimated log-odds of
+<em>overt</em> subject expression than <em>Mexico City</em> speakers,
+although the evidence for this difference was limited (<span
+class="math inline">\(\beta=0.667\)</span>, SE = 0.365, <span
+class="math inline">\(z=1.83\)</span>, <span
+class="math inline">\(p=0.068\)</span>, 95% CI [-0.049, 1.383]). The
+effect of <em>sex</em> was small and uncertain (<span
+class="math inline">\(\beta=-0.112\)</span>, SE = 0.375, <span
+class="math inline">\(z=-0.30\)</span>, <span
+class="math inline">\(p=0.765\)</span>, 95% CI [-0.846, 0.622]).</p>
+<p><em>Age</em> showed a negative estimated relationship with
+<em>overt</em> subject expression (<span
+class="math inline">\(\beta=-0.019\)</span>, SE = 0.012, <span
+class="math inline">\(z=-1.58\)</span>, <span
+class="math inline">\(p=0.114\)</span>, 95% CI [-0.043, 0.005]). The
+model predicts somewhat lower <em>overt</em> subject use as <em>age</em>
+increases, although the statistical evidence for this relationship was
+limited. Random-intercept variability was greater across
+<em>speakers</em> (SD = 0.844) than across <em>verbs</em> (SD =
+0.358).</p>
+</blockquote>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
